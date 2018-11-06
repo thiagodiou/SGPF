@@ -1,0 +1,329 @@
+package br.com.banestes.car.bean;	
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.enterprise.inject.Produces;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
+
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+
+import org.omnifaces.cdi.ViewScoped;
+import org.omnifaces.util.Messages;
+
+import br.com.banestes.car.core.bean.AbstractWebBean;
+import br.com.banestes.car.core.enumerators.OperacoesEnum;
+import br.com.banestes.car.core.enumerators.TipoArquivoEnum;
+import br.com.banestes.car.core.exportacao.ExportarDataModel;
+import br.com.banestes.car.core.paginacao.ParametroDataModel;
+import br.com.banestes.car.jpa.core.util.MessagesPropertiesUtil;
+import br.com.banestes.car.jpa.entity.AdquirenteEntity;
+import br.com.banestes.car.jpa.entity.BandeiraEntity;
+import br.com.banestes.car.jpa.entity.HistoricoAgendaEntity;
+import br.com.banestes.car.jpa.model.repository.aplicacao.AdquirenteRepository;
+import br.com.banestes.car.jpa.model.repository.aplicacao.BandeiraRepository;
+import br.com.banestes.car.jpa.model.repository.aplicacao.HistoricoAgendaRepository;
+import br.com.banestes.car.jpa.vo.AgendaVO;
+import br.com.banestes.car.web.security.Usuario;
+
+
+
+
+
+@Named
+@ViewScoped
+public class ConsultaAgendaWebBean extends AbstractWebBean {
+
+	private static final long serialVersionUID = 5653645873997247062L;
+
+	private List<AgendaVO> historicosAgenda;
+
+	private ConsultaAgendaFiltroBean agendaFiltro;	
+	
+	private ExportarDataModel exportar;
+	
+	@Inject
+	private transient BandeiraRepository bandeiraRepository;
+	
+	@Inject
+	private transient AdquirenteRepository adquirenteRepository;
+	
+	@Inject
+	private transient HistoricoAgendaRepository historicoAgendaRepository;
+		
+	@Inject
+	private Usuario usuario;
+	
+	private List<AdquirenteEntity> listaAdquirentes;
+	
+	private List<BandeiraEntity> listaBandeiras;	
+	
+	private boolean gestor;	
+	
+	private String tipoRelatorio;	
+	
+	@Named("agendaDados")
+	@Produces
+	private ParametroDataModel<AgendaVO> dados;
+	
+	
+	public void preRenderView() {
+		if (!FacesContext.getCurrentInstance().isPostback()) 
+		{					
+			gestor = usuario.isGestor();		
+			agendaFiltro = new ConsultaAgendaFiltroBean();
+			if( !gestor )
+				agendaFiltro.setAgenciaEstabelecimento(usuario.getCidLotacao().toString());
+			
+			exportar = new ExportarDataModel();
+			this.setOperacao(OperacoesEnum.FILTRAGEM);
+			preencheCombos();
+		}
+	}
+
+	public String filtrar() 
+	{			
+		
+		tipoRelatorio = TipoArquivoEnum.PDF.valor;					
+		
+		if( !validarFiltro() )
+			return null;
+		
+		historicosAgenda = historicoAgendaRepository
+									.findByParameters(	agendaFiltro.getIdAdquirente(), agendaFiltro.getIdBandeira(),agendaFiltro.getCnpjCpfEstabelecimento(), 
+														agendaFiltro.getAgenciaEstabelecimento(), agendaFiltro.getContaEstabelcimento(),
+														agendaFiltro.getValorInicial(),agendaFiltro.getValorFinal(), 
+														agendaFiltro.getDataInicial(), agendaFiltro.getDataFinal());
+		
+		if(historicosAgenda.size() == 0)
+		{
+			adicionarMensagemErro(
+					MessagesPropertiesUtil
+							.getMessage("label.consulta.vazia"),
+					"");
+			setOperacao(OperacoesEnum.FILTRAGEM);			
+			return null;
+		}
+		
+		dados = new ParametroDataModel<AgendaVO>(historicosAgenda);
+		dados.redefinir();
+		dados.ativar();
+		dados.getLista();
+		dados.iniciarPesquisa();
+		setOperacao(OperacoesEnum.LISTAGEM);
+				
+		
+		return null;
+	}
+	
+
+	public boolean validarFiltro()
+	{
+		if( agendaFiltro.isEmpty() )
+		{
+			adicionarMensagemErro("Favor informar ao menos um filtro.","");
+			return false;
+		}
+		
+		
+		if( agendaFiltro.getDataInicial() == null && agendaFiltro.getDataFinal() != null )
+		{
+		
+			Calendar c = Calendar.getInstance();
+			c.setTime(agendaFiltro.getDataFinal());
+			c.add(Calendar.DAY_OF_WEEK, getLimitePeriodo()*(-1));			
+			agendaFiltro.setDataInicial(c.getTime()); 
+		
+		}	
+			
+		if( agendaFiltro.getDataFinal() == null && agendaFiltro.getDataInicial() != null )
+		{
+			Calendar c = Calendar.getInstance();
+			c.setTime(agendaFiltro.getDataInicial());
+			c.add(Calendar.DAY_OF_WEEK, getLimitePeriodo());			
+			agendaFiltro.setDataFinal(c.getTime()); 
+		}
+			
+		
+		if( agendaFiltro.getDataInicial() != null )
+		{
+			if( agendaFiltro.getDataInicial().after(agendaFiltro.getDataFinal()) )
+			{
+				adicionarMensagemErro(
+						MessagesPropertiesUtil
+								.getMessage("label.consulta.data.fim.maior.inicio"),
+						"");
+				
+				return false;
+			}
+			
+			Calendar dataInicial = Calendar.getInstance();
+			Calendar dataFinal = Calendar.getInstance();
+			
+			dataInicial.setTime(agendaFiltro.getDataInicial());
+			dataFinal.setTime(agendaFiltro.getDataFinal());
+			
+			if( dataFinal.get(Calendar.DAY_OF_YEAR) - dataInicial.get(Calendar.DAY_OF_YEAR) > getLimitePeriodo())
+			{
+				adicionarMensagemErro("Período entre datas maior do que o limite parametrizado.","");
+				return false;
+			}
+			
+		}
+		
+		if( agendaFiltro.getDataFinal() == null && agendaFiltro.getDataInicial() == null )
+		{
+			agendaFiltro.setDataInicial(new Date());
+			
+			Calendar c = Calendar.getInstance();
+			c.setTime(agendaFiltro.getDataInicial());
+			c.add(Calendar.DAY_OF_WEEK, getLimitePeriodo());			
+			agendaFiltro.setDataFinal(c.getTime()); 
+			
+		}
+		
+		return true;
+	}
+	
+	
+	public void preencheCombos()
+	{
+		
+		listaAdquirentes 	= adquirenteRepository.getAll();
+		listaBandeiras 		= bandeiraRepository.getAll(); 
+		
+	}
+	
+	public String exportar()
+	{				
+												
+
+		HashMap<String, Object> param = new HashMap<String, Object>();
+		String pathReport = "/pages/relatorio/ConsultaAgendaPDF.jrxml";
+		List<String> contents = new ArrayList<String>();
+		
+		if(tipoRelatorio.equals(TipoArquivoEnum.CSV.valor))
+		{								
+			contents.add(preencheCabecalhoCSV());
+			contents.add(preencheContentCSV());
+			exportar.exportar(tipoRelatorio, param, pathReport, this.historicoAgendaRepository, contents);
+		}
+		else
+		{
+			JRBeanCollectionDataSource jrb = new JRBeanCollectionDataSource(historicosAgenda);
+			exportar.exportar(tipoRelatorio, param, pathReport, this.historicoAgendaRepository, contents, jrb);				
+		}
+												
+		
+		Messages.addInfo(null, MessagesPropertiesUtil.getMessage("label.exportado.sucesso"), "");
+		
+		tipoRelatorio = TipoArquivoEnum.PDF.valor;
+		
+		return null;
+	}
+	
+	public String preencheCabecalhoCSV()
+	{
+		StringBuilder cabecalho = new StringBuilder();
+		cabecalho.append("Adquirente;Bandeira;CPF/CNPJ E.C;Agência E.C;Conta Corrente E.C;Data Prevista;Valor Previsto");
+		cabecalho.append("\n");
+		return cabecalho.toString();
+	}
+	
+	public String preencheContentCSV()
+	{
+		StringBuilder content = new StringBuilder();
+		for(AgendaVO agn : this.historicosAgenda)
+		{						
+			content.append(agn.getNomeAdquirente());
+			content.append(";");
+			content.append(agn.getNomeBandeira());			
+			content.append(";");
+			content.append(agn.getCpfCnpjEstabelecimento());
+			content.append(";");
+			content.append(agn.getAgenciaEstabelecimento());
+			content.append(";");
+			content.append(agn.getContaEstabelecimento());
+			content.append(";");
+			content.append(agn.getDataTexto());
+			content.append(";");
+			content.append(agn.getValorPrevisto());
+			content.append("\n");
+		}
+		
+		return content.toString();
+	}
+
+
+	public String limpar()
+	{
+		this.agendaFiltro = new ConsultaAgendaFiltroBean();
+		if( !gestor )
+			agendaFiltro.setAgenciaEstabelecimento(usuario.getCidLotacao().toString());
+		return null;
+	}	
+		
+	public String cancelar()
+	{
+		dados = new ParametroDataModel<AgendaVO>(historicosAgenda);
+		setOperacao(OperacoesEnum.FILTRAGEM);							
+		
+		return null;
+	}
+		
+	
+	public List<AgendaVO> getHistoricosAgenda() {
+		return historicosAgenda;
+	}
+
+	public void setHistoricosAgenda(List<AgendaVO> historicosAgenda) {
+		this.historicosAgenda = historicosAgenda;
+	}
+
+	public List<AdquirenteEntity> getListaAdquirentes() {
+		return listaAdquirentes;
+	}
+
+	public void setListaAdquirentes(List<AdquirenteEntity> listaAdquirentes) {
+		this.listaAdquirentes = listaAdquirentes;
+	}
+
+	public List<BandeiraEntity> getListaBandeiras() {
+		return listaBandeiras;
+	}
+
+	public void setListaBandeiras(List<BandeiraEntity> listaBandeiras) {
+		this.listaBandeiras = listaBandeiras;
+	}
+
+	public String getTipoRelatorio() {
+		return tipoRelatorio;
+	}
+
+	public void setTipoRelatorio(String tipoRelatorio) {
+		this.tipoRelatorio = tipoRelatorio;
+	}
+
+	public ConsultaAgendaFiltroBean getAgendaFiltro() {
+		return agendaFiltro;
+	}
+
+	public void setAgendaFiltro(ConsultaAgendaFiltroBean agendaFiltro) {
+		this.agendaFiltro = agendaFiltro;
+	}
+
+	public boolean isGestor() {
+		return gestor;
+	}
+
+
+	
+	
+}

@@ -1,0 +1,164 @@
+package br.com.banestes.car.bean;	
+
+import java.util.List;
+
+import javax.enterprise.inject.Produces;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.omnifaces.cdi.ViewScoped;
+
+import br.com.banestes.car.core.bean.AbstractWebBean;
+import br.com.banestes.car.core.enumerators.OperacoesEnum;
+import br.com.banestes.car.core.enumerators.TipoArquivoEnum;
+import br.com.banestes.car.core.exportacao.ExportarDataModel;
+import br.com.banestes.car.core.paginacao.ParametroDataModel;
+import br.com.banestes.car.jpa.core.util.MessagesPropertiesUtil;
+import br.com.banestes.car.jpa.entity.AdquirenteEntity;
+import br.com.banestes.car.jpa.entity.ArquivoProcessamentoEntity;
+import br.com.banestes.car.jpa.entity.FuncaoEntity;
+import br.com.banestes.car.jpa.model.repository.aplicacao.AdquirenteRepository;
+import br.com.banestes.car.jpa.model.repository.aplicacao.ArquivoRepository;
+import br.com.banestes.car.jpa.model.repository.aplicacao.FuncaoRepository;
+import br.com.banestes.car.jpa.vo.ArquivoVO;
+
+@Named
+@ViewScoped
+public class ConsultaArquivoWebBean extends AbstractWebBean {
+	
+	private ExportarDataModel exportar;
+
+	@Named("arquivoDados")
+	@Produces
+	private ParametroDataModel<ArquivoVO> dados;
+	
+	
+	
+	private ConsultaArquivoFiltroBean consultaArquivofiltro;
+	private List<AdquirenteEntity> listaAdquirentes;
+	private List<FuncaoEntity> listaFuncoes;
+	private List<ArquivoProcessamentoEntity> listaSituacoesArquivos;
+	
+	@Inject
+	private transient FuncaoRepository funcaoRepository;
+
+	@Inject
+	private transient AdquirenteRepository adquirenteRepository;
+	
+	@Inject
+	private transient ArquivoRepository arquivoRepository;
+	
+	
+	private List<ArquivoVO> dadosArquivos;
+	private String tipoRelatorio;
+	
+	
+	
+	public void preRenderView() {
+		if (!FacesContext.getCurrentInstance().isPostback()) 
+		{			
+			consultaArquivofiltro = new ConsultaArquivoFiltroBean();
+			exportar = new ExportarDataModel();
+			preencheCombos();
+			this.setOperacao(OperacoesEnum.FILTRAGEM);			
+		}
+	}
+		
+	public String filtrar() 
+	{
+		tipoRelatorio = TipoArquivoEnum.PDF.valor;
+	
+		dadosArquivos = arquivoRepository
+						.findByParameters( 	consultaArquivofiltro.getDataArquivo(), consultaArquivofiltro.getIdAdquirente(),
+											consultaArquivofiltro.getCodigoFuncao(), consultaArquivofiltro.getIdStatusProcessamento(),
+											consultaArquivofiltro.getNomeArquivo());
+		
+		if(dadosArquivos.size() == 0)
+		{
+			adicionarMensagemErro(
+					MessagesPropertiesUtil
+							.getMessage("label.consulta.vazia"),
+					"");
+			setOperacao(OperacoesEnum.FILTRAGEM);			
+			return null;
+		}
+		
+		dados = new ParametroDataModel<ArquivoVO>(dadosArquivos);
+		dados.redefinir();
+		dados.ativar();
+		dados.getLista();
+		dados.iniciarPesquisa();
+		setOperacao(OperacoesEnum.LISTAGEM);
+				
+		
+		return null;
+	}
+	
+	private void preencheCombos()
+	{
+		this.listaAdquirentes = adquirenteRepository.getAll();
+		this.listaFuncoes = funcaoRepository.getAll();
+		this.listaSituacoesArquivos = arquivoRepository.getAllSituacoes();
+	}
+
+	public ParametroDataModel<ArquivoVO> getDados() {
+		return dados;
+	}
+
+	public void setDados(ParametroDataModel<ArquivoVO> dados) {
+		this.dados = dados;
+	}
+
+	public ConsultaArquivoFiltroBean getConsultaArquivofiltro() {
+		return consultaArquivofiltro;
+	}
+
+	public void setConsultaArquivofiltro(
+			ConsultaArquivoFiltroBean consultaArquivofiltro) {
+		this.consultaArquivofiltro = consultaArquivofiltro;
+	}
+
+	public List<AdquirenteEntity> getListaAdquirentes() {
+		return listaAdquirentes;
+	}
+
+	public void setListaAdquirentes(List<AdquirenteEntity> listaAdquirentes) {
+		this.listaAdquirentes = listaAdquirentes;
+	}
+
+	public List<FuncaoEntity> getListaFuncoes() {
+		return listaFuncoes;
+	}
+
+	public void setListaFuncoes(List<FuncaoEntity> listaFuncoes) {
+		this.listaFuncoes = listaFuncoes;
+	}
+
+	public List<ArquivoProcessamentoEntity> getListaSituacoesArquivos() {
+		return listaSituacoesArquivos;
+	}
+
+	public void setListaSituacoesArquivos(
+			List<ArquivoProcessamentoEntity> listaSituacoesArquivos) {
+		this.listaSituacoesArquivos = listaSituacoesArquivos;
+	}
+
+	public List<ArquivoVO> getDadosArquivos() {
+		return dadosArquivos;
+	}
+
+	public void setDadosArquivos(List<ArquivoVO> dadosArquivos) {
+		this.dadosArquivos = dadosArquivos;
+	}
+
+	public String getTipoRelatorio() {
+		return tipoRelatorio;
+	}
+
+	public void setTipoRelatorio(String tipoRelatorio) {
+		this.tipoRelatorio = tipoRelatorio;
+	}
+	
+	
+}

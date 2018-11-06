@@ -1,0 +1,426 @@
+
+package br.com.banestes.car.bean;	
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.enterprise.inject.Produces;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.omnifaces.cdi.ViewScoped;
+import org.omnifaces.util.Messages;
+
+import br.com.banestes.car.core.bean.AbstractWebBean;
+import br.com.banestes.car.core.enumerators.OperacoesEnum;
+import br.com.banestes.car.core.enumerators.SituacaoEnum;
+import br.com.banestes.car.core.enumerators.TipoArquivoEnum;
+import br.com.banestes.car.core.exportacao.ExportarDataModel;
+import br.com.banestes.car.core.paginacao.ParametroDataModel;
+import br.com.banestes.car.core.util.autoComplete.AutoComplete;
+import br.com.banestes.car.jpa.core.util.DateUtil;
+import br.com.banestes.car.jpa.core.util.MessagesPropertiesUtil;
+import br.com.banestes.car.jpa.entity.AdquirenteEntity;
+import br.com.banestes.car.jpa.entity.EventoContabilEntity;
+import br.com.banestes.car.jpa.entity.FuncaoEntity;
+import br.com.banestes.car.jpa.model.repository.aplicacao.AdquirenteRepository;
+import br.com.banestes.car.jpa.model.repository.aplicacao.EventoContabilRepository;
+import br.com.banestes.car.jpa.model.repository.aplicacao.FuncaoRepository;
+import br.com.banestes.car.service.EventoContabilServiceBean;
+
+
+
+@Named
+@ViewScoped
+public class EventoContabilWebBean extends AbstractWebBean {
+
+	
+	private static final long serialVersionUID = 5653645873997247062L;
+
+	
+	
+	private EventoContabilEntity eventoContabil;
+	private List<EventoContabilEntity> eventosContabeis;
+	private EventoContabilFiltroBean eventoContabilFiltro;	
+	private AutoComplete autoComplete;
+	private List<AdquirenteEntity> listaAdquirente;
+	private List<FuncaoEntity> listaFuncao;
+	private String tipoRelatorio;	
+	private ExportarDataModel exportar;
+	
+	
+	@Named("eventoContabilDados")
+	@Produces
+	private ParametroDataModel<EventoContabilEntity> dados;
+	@Inject
+	private transient AdquirenteRepository adquirenteRepository;
+	@Inject
+	private transient FuncaoRepository funcaoRepository;
+	@Inject
+	private transient EventoContabilRepository eventoContabilRepository;
+	@Inject
+	private transient EventoContabilServiceBean eventoContabilService;
+	
+	
+	
+	
+	
+	
+	//GETTERS AND SETTERS...		
+	public AutoComplete getAutoComplete() {
+		return autoComplete;
+	}
+
+	public void setAutoComplete(AutoComplete autoComplete) {
+		this.autoComplete = autoComplete;
+	}
+
+	public EventoContabilEntity getEventoContabil() {
+		return eventoContabil;
+	}
+
+	public void setEventoContabil(EventoContabilEntity eventoContabil) {
+		this.eventoContabil = eventoContabil;
+	}
+
+	public List<EventoContabilEntity> getEventosContabeis() {
+		return eventosContabeis;
+	}
+
+	public void setEventosContabeis(List<EventoContabilEntity> eventosContabeis) {
+		this.eventosContabeis = eventosContabeis;
+	}
+
+	public EventoContabilFiltroBean getEventoContabilFiltro() {
+		return eventoContabilFiltro;
+	}
+
+	public void setEventoContabilFiltro(
+			EventoContabilFiltroBean eventoContabilFiltro) {
+		this.eventoContabilFiltro = eventoContabilFiltro;
+	}
+
+	public EventoContabilRepository getEventoContabilRepository() {
+		return eventoContabilRepository;
+	}
+
+	public void setEventoContabilRepository(
+			EventoContabilRepository eventoContabilRepository) {
+		this.eventoContabilRepository = eventoContabilRepository;
+	}
+
+	public EventoContabilServiceBean getEventoContabilService() {
+		return eventoContabilService;
+	}
+
+	public void setEventoContabilService(
+			EventoContabilServiceBean eventoContabilService) {
+		this.eventoContabilService = eventoContabilService;
+	}
+
+	public ParametroDataModel<EventoContabilEntity> getDados() {
+		return dados;
+	}
+
+	public void setDados(ParametroDataModel<EventoContabilEntity> dados) {
+		this.dados = dados;
+	}
+
+	
+	
+	
+	public List<AdquirenteEntity> getListaAdquirente() {
+		return listaAdquirente;
+	}
+
+	public void setListaAdquirente(List<AdquirenteEntity> listaAdquirente) {
+		this.listaAdquirente = listaAdquirente;
+	}
+
+	public List<FuncaoEntity> getListaFuncao() {
+		return listaFuncao;
+	}
+
+	public void setListaFuncao(List<FuncaoEntity> listaFuncao) {
+		this.listaFuncao = listaFuncao;
+	}
+
+	public FuncaoRepository getFuncaoRepository() {
+		return funcaoRepository;
+	}
+
+	public void setFuncaoRepository(FuncaoRepository funcaoRepository) {
+		this.funcaoRepository = funcaoRepository;
+	}
+
+	
+		
+	
+	public String getTipoRelatorio() {
+		return tipoRelatorio;
+	}
+
+	public void setTipoRelatorio(String tipoRelatorio) {
+		this.tipoRelatorio = tipoRelatorio;
+	}
+
+	public void preRenderView() {
+		if (!FacesContext.getCurrentInstance().isPostback()) 
+		{			
+			
+			autoComplete = new AutoComplete(eventoContabilRepository.getAllNames());
+			preencheCombos();
+			exportar = new ExportarDataModel();
+			eventoContabilFiltro = new EventoContabilFiltroBean();			
+			this.setOperacao(OperacoesEnum.FILTRAGEM);					
+		}
+	}
+	
+	
+	
+	private void preencheCombos()
+	{
+		buscaAdquirentes();
+		buscaFuncoes();
+	}
+	
+	private void buscaAdquirentes(){
+						
+		this.listaAdquirente = adquirenteRepository.getAll();
+	}
+
+	private void buscaFuncoes(){
+						
+		this.listaFuncao = funcaoRepository.getAll();
+	}
+		
+	public String filtrar() {		
+		
+		tipoRelatorio = TipoArquivoEnum.PDF.valor;
+		
+		eventosContabeis = eventoContabilRepository
+						.findAtivosByParameters(eventoContabilFiltro.getCodigo() , eventoContabilFiltro.getNome(),
+								eventoContabilFiltro.getStatus());		
+		
+		if(eventosContabeis.size() == 0)
+		{
+			adicionarMensagemErro(
+					MessagesPropertiesUtil
+							.getMessage("label.consulta.vazia"), "");
+			setOperacao(OperacoesEnum.FILTRAGEM);
+			return null;
+		}
+				
+		dados = new ParametroDataModel<EventoContabilEntity>(eventosContabeis);							
+		dados.redefinir();
+		dados.ativar();
+		dados.getLista();
+		dados.iniciarPesquisa();
+		
+		setOperacao(OperacoesEnum.LISTAGEM);	
+		
+		return null;
+	}
+		
+	public String incluir()
+	{
+		eventoContabil = new EventoContabilEntity();
+		setOperacao(OperacoesEnum.INSERCAO);
+		return null;
+	}
+		
+	
+	public String salvar(){
+		
+		if(!validar())
+		{	
+			eventoContabil = eventoContabilService.gravar(eventoContabil);
+			
+			if(this.getOperacao().equals(OperacoesEnum.ALTERACAO)) 
+				Messages.addInfo(null, MessagesPropertiesUtil.getMessage("mensage.sucesso.alteracao"), "");		
+			else
+				Messages.addInfo(null, MessagesPropertiesUtil.getMessage("mensage.sucesso.insercao"), "");	
+			filtrar();
+			autoComplete = new AutoComplete(eventoContabilRepository.getAllNames());	
+		}		
+		
+		return null;
+	}
+	
+	
+	public String alterar(EventoContabilEntity eventoContabilSelecionado)
+	{		
+		this.eventoContabil = eventoContabilSelecionado;
+		setOperacao(OperacoesEnum.ALTERACAO);
+		
+		return null;
+	}
+	
+	
+	public String excluir(EventoContabilEntity eventoContabilSelecionado)
+	{
+		this.eventoContabil = eventoContabilSelecionado;
+		
+		if(eventoContabil.getStatus().equals(SituacaoEnum.INATIVO.valor))
+		{
+			adicionarMensagemErro(
+					MessagesPropertiesUtil
+							.getMessage("label.registro.inativo"), "");
+			
+			return null;
+		}
+		
+		if(!validaVinculo())
+		{			
+			eventoContabilService.deletar(eventoContabil);		
+			Messages.addInfo(null, MessagesPropertiesUtil.getMessage("mensage.sucesso.exclusao"), "");	
+			filtrar();
+		}
+		return null;
+	}
+	
+	
+	public boolean validaVinculo()
+	{
+		boolean vinculoProcessoLiquidacao = false;
+		
+		vinculoProcessoLiquidacao = eventoContabilRepository.findVinculoProcessosLiquidacao(eventoContabil.getIdEventoContabil());
+		
+		if(vinculoProcessoLiquidacao){
+			
+			Messages.addError(null,String.format("%s não permitida. Existe(m) registro(s) associado(s) na(s) tabela(s): %s ", 
+					getOperacao().equals(OperacoesEnum.ALTERACAO) ? "Alteração" : "Exlcusão",
+					vinculoProcessoLiquidacao ? "TB_PRL_PROCESSO_LIQUIDACAO" : ""));
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
+	private boolean validar(){
+		
+		boolean dadosJaExistentes = false;
+		
+		List<Integer> codigosEventosContabeis;
+		
+		codigosEventosContabeis = eventoContabilRepository.findAlteracaoByParameters(	eventoContabil.getCodigo(), eventoContabil.getAdquirente().getIdAdquirente(),
+																				eventoContabil.getFuncao().getIdFuncao(), eventoContabil.getIdEventoContabil());
+
+		dadosJaExistentes = codigosEventosContabeis.size() > 0 ? true : false;		
+		
+			
+		
+		if(dadosJaExistentes){
+			if(codigosEventosContabeis.contains( eventoContabil.getCodigo() ))
+				Messages.addError(null, MessagesPropertiesUtil.getMessage("msg.erro.registro.duplicado.campos"), "");
+			else	
+				Messages.addError(null, MessagesPropertiesUtil.getMessage("msg.erro.registro.duplicado.campos.adq.funcao"), "");
+			return true;			
+		}
+		
+		
+		if(eventoContabil.getIdEventoContabil() != null){					
+			if(validaVinculo())
+				return true;
+		}
+		
+				
+		
+		return dadosJaExistentes;				
+	}
+	
+	
+	public String limpar(){
+		
+		this.eventoContabilFiltro = new EventoContabilFiltroBean();
+		return null;
+	}	
+	
+	
+	public String cancelar()
+	{
+		dados = new ParametroDataModel<EventoContabilEntity>(eventosContabeis);
+		if( getOperacao().equals(OperacoesEnum.LISTAGEM) )
+		{
+			setOperacao(OperacoesEnum.FILTRAGEM);
+			return null;
+		}
+		
+		else
+		{
+			setOperacao(OperacoesEnum.FILTRAGEM);
+			return filtrar();
+		}
+	}	
+	
+	public String exportar()
+	{						
+		
+		HashMap<String, Object> param = new HashMap<String, Object>();
+		String pathReport = "/pages/relatorio/EventoContabilPDF.jrxml";
+		List<String> contents = new ArrayList<String>();
+		
+		if(tipoRelatorio.equals(TipoArquivoEnum.CSV.valor))
+		{								
+			contents.add(preencheCabecalhoCSV());
+			contents.add(preencheContentCSV());		
+		}
+		else
+		{
+			param.put("nome", this.eventoContabilFiltro.getNome().isEmpty() ? null : this.eventoContabilFiltro.getNome().toLowerCase());
+			param.put("codigo", this.eventoContabilFiltro.getCodigo() == null ? null : this.eventoContabilFiltro.getCodigo().toString());
+			param.put("situacao", this.eventoContabilFiltro.getStatus().isEmpty() ? null : this.eventoContabilFiltro.getStatus().toString());	
+				
+			
+		}
+		String nomeArquivo = "EventoContabil" + DateUtil.dateToString(new Date(), "yyyyMMdd");
+		
+		exportar.exportar(tipoRelatorio, param, nomeArquivo ,pathReport, this.eventoContabilRepository, contents);										
+		
+		Messages.addInfo(null, MessagesPropertiesUtil.getMessage("label.exportado.sucesso"), "");
+		
+		tipoRelatorio = TipoArquivoEnum.PDF.valor;
+		
+		return null;
+	}
+	
+	
+	public String preencheCabecalhoCSV()
+	{
+		StringBuilder cabecalho = new StringBuilder();
+		cabecalho.append("Código Evento Contabil;Nome Evento Contábil;Descrição;Adquirente;Função;Agência do Lançamento;Status");		
+		cabecalho.append("\n");
+		return cabecalho.toString();
+	}
+	
+	public String preencheContentCSV()
+	{
+		StringBuilder content = new StringBuilder();
+		for(EventoContabilEntity evc : eventosContabeis)
+		{						
+			content.append(evc.getCodigo());
+			content.append(";");
+			content.append(evc.getNome());
+			content.append(";");
+			content.append(evc.getDescricao() == null || evc.getDescricao().isEmpty() ? "" : evc.getDescricao());
+			content.append(";");					
+			content.append(evc.getAdquirente().getNome());
+			content.append(";");
+			content.append(evc.getFuncao().getDescricao());
+			content.append(";");
+			content.append(evc.getAgenciaLancamento() == null || evc.getAgenciaLancamento().isEmpty() ? "" : evc.getAgenciaLancamento());
+			content.append(";");
+			content.append(evc.getStatus().equals(SituacaoEnum.ATIVO.valor) ? "Ativo" : "Inativo");
+			content.append("\n");
+		}
+		
+		return content.toString();
+	}
+
+	
+	
+}//end_class...

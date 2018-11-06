@@ -1,0 +1,50 @@
+package br.com.banestes.car.bean;
+
+import java.io.Serializable;
+import java.math.BigInteger;
+
+public class EventoContabilFiltroBean implements Serializable {
+	
+	private static final long serialVersionUID = -2633465124697449408L;
+
+	
+	
+	public EventoContabilFiltroBean()
+	{
+		this.codigo = null;
+		this.nome = "";
+		this.status = "";
+	}
+	
+	private Integer codigo;
+	private String nome;
+	private String status;
+	
+	
+	
+
+	public Integer getCodigo() {		
+		return codigo == null || codigo.compareTo(new Integer(0)) == 0 ? null : codigo ;
+	}
+
+	public void setCodigo(Integer codigo) {
+		this.codigo = codigo;
+	}
+	
+	public String getNome() {
+		return nome;
+	}
+	
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+	
+	public String getStatus() {
+		return status;
+	}
+	
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+}//end_class...

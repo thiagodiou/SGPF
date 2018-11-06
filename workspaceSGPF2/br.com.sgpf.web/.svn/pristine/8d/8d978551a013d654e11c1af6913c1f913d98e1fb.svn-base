@@ -1,0 +1,391 @@
+package br.com.banestes.car.bean;	
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.enterprise.inject.Produces;
+import javax.faces.component.EditableValueHolder;
+import javax.faces.component.UIComponent;
+import javax.faces.component.UIForm;
+import javax.faces.context.FacesContext;
+import javax.faces.context.PartialViewContext;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.apache.log4j.Logger;
+import org.omnifaces.cdi.ViewScoped;
+import org.omnifaces.util.Messages;
+
+import br.com.banestes.car.core.bean.AbstractWebBean;
+import br.com.banestes.car.core.enumerators.OperacoesEnum;
+import br.com.banestes.car.core.enumerators.SituacaoEnum;
+import br.com.banestes.car.core.enumerators.TipoArquivoEnum;
+import br.com.banestes.car.core.enumerators.TipoDocumentoEnum;
+import br.com.banestes.car.core.exportacao.ExportarDataModel;
+import br.com.banestes.car.core.paginacao.ParametroDataModel;
+import br.com.banestes.car.core.util.ClearSubmittedValues;
+import br.com.banestes.car.core.util.autoComplete.AutoComplete;
+import br.com.banestes.car.jpa.core.util.Constants;
+import br.com.banestes.car.jpa.core.util.MessagesPropertiesUtil;
+import br.com.banestes.car.jpa.entity.AdquirenteEntity;
+import br.com.banestes.car.jpa.entity.BandeiraEntity;
+import br.com.banestes.car.jpa.model.repository.aplicacao.BandeiraRepository;
+import br.com.banestes.car.service.BandeiraServiceBean;
+
+
+
+
+
+@Named
+@ViewScoped
+public class BandeiraWebBean extends AbstractWebBean {
+
+	private static final long serialVersionUID = 5653645873997247062L;
+
+	protected static Logger logger = Logger
+			.getLogger(BandeiraWebBean.class);
+	
+	private List<BandeiraEntity> bandeiras;
+
+	private static BandeiraFiltroBean bandeiraFiltro;	
+	
+	private ExportarDataModel exportar;
+	
+	@Inject
+	private transient BandeiraRepository bandeiraRepository;
+	
+	@Inject
+	private transient BandeiraServiceBean bandeiraService;
+	
+	private AutoComplete autoComplete;	
+	
+	private BandeiraEntity bandeira;
+
+	private String tipoRelatorio;
+	
+	private String nomeArquivo;
+	
+	@Named("bandeiraDados")
+	@Produces
+	private ParametroDataModel<BandeiraEntity> dados;
+	
+	
+	public void preRenderView() {
+		if (!FacesContext.getCurrentInstance().isPostback()) 
+		{
+			autoComplete = new AutoComplete(bandeiraRepository.getAllNames());			
+			bandeiraFiltro = new BandeiraFiltroBean();		
+			exportar = new ExportarDataModel();
+			this.setOperacao(OperacoesEnum.FILTRAGEM);			
+		}
+	}
+
+	public String filtrar() 
+	{
+		logger.info("Filtrando");
+		System.out.println("Filtrando");
+		
+		tipoRelatorio = TipoArquivoEnum.PDF.valor;
+	
+		bandeiras = bandeiraRepository
+						.findByParameters(	bandeiraFiltro.getCodigo(),
+											bandeiraFiltro.getNome(),
+											bandeiraFiltro.getStatus()
+										);
+		
+		if(bandeiras.size() == 0)
+		{
+			adicionarMensagemErro(
+					MessagesPropertiesUtil
+							.getMessage("label.consulta.vazia"),
+					"");
+			setOperacao(OperacoesEnum.FILTRAGEM);			
+			return null;
+		}
+		
+		dados = new ParametroDataModel<BandeiraEntity>(bandeiras);
+		dados.redefinir();
+		dados.ativar();
+		dados.getLista();
+		dados.iniciarPesquisa();
+		setOperacao(OperacoesEnum.LISTAGEM);
+				
+		
+		return null;
+	}
+	
+	public String incluir()
+	{
+		bandeira = new BandeiraEntity();
+		setOperacao(OperacoesEnum.INSERCAO);			
+		
+		return null;
+	}
+	
+	public String salvar()
+	{		
+		if(!validar())		
+		{	
+			bandeira = bandeiraService.gravar(bandeira);		
+			if(this.getOperacao().equals(OperacoesEnum.ALTERACAO)) 
+				Messages.addInfo(null, MessagesPropertiesUtil.getMessage("mensage.sucesso.alteracao"), "");		
+			else
+				Messages.addInfo(null, MessagesPropertiesUtil.getMessage("mensage.sucesso.insercao"), "");	
+			filtrar();
+			autoComplete = new AutoComplete(bandeiraRepository.getAllNames());	
+		}
+		
+			
+		return null;
+	}	
+	
+	
+	public String exportar()
+	{				
+												
+		HashMap<String, Object> param = new HashMap<String, Object>();
+		String pathReport = "/pages/relatorio/BandeiraPDF.jrxml";
+		List<String> contents = new ArrayList<String>();
+		
+		if(tipoRelatorio.equals(TipoArquivoEnum.CSV.valor))
+		{								
+			contents.add(preencheCabecalhoCSV());
+			contents.add(preencheContentCSV());		
+		}
+		else
+		{
+			param.put("nome", this.bandeiraFiltro.getNome().isEmpty() ? null : this.bandeiraFiltro.getNome().toLowerCase());
+			param.put("codigo", this.bandeiraFiltro.getCodigo() == null ? null : this.bandeiraFiltro.getCodigo().toString());
+			param.put("situacao", this.bandeiraFiltro.getStatus().isEmpty() ? null : this.bandeiraFiltro.getStatus().toString());
+			
+		}
+		exportar.exportar(tipoRelatorio, param, pathReport, this.bandeiraRepository, contents);										
+		
+		Messages.addInfo(null, MessagesPropertiesUtil.getMessage("label.exportado.sucesso"), "");
+		
+		tipoRelatorio = TipoArquivoEnum.PDF.valor;
+		
+		return null;
+	}
+	
+	public String preencheCabecalhoCSV()
+	{
+		StringBuilder cabecalho = new StringBuilder();
+		cabecalho.append("Código Bandeira;Nome Bandeira;Status Bandeira");
+		cabecalho.append("\n");
+		return cabecalho.toString();
+	}
+	
+	public String preencheContentCSV()
+	{
+		StringBuilder content = new StringBuilder();
+		for(BandeiraEntity adq : this.bandeiras)
+		{						
+			content.append(adq.getCodigo());
+			content.append(";");
+			content.append(adq.getNome());
+			content.append(";");
+			content.append(adq.getStatus().equals(SituacaoEnum.ATIVO.valor) ? "Ativo" : "Inativo");
+			content.append("\n");
+		}
+		
+		return content.toString();
+	}
+	
+	public String alterar(BandeiraEntity bandeiraSelecionada)
+	{
+		this.bandeira = bandeiraSelecionada;
+		setOperacao(OperacoesEnum.ALTERACAO);
+		return null;
+	}
+	
+	public String excluir(BandeiraEntity bandeiraSelecionada)
+	{
+		this.bandeira = bandeiraSelecionada;	
+	
+		if(validaExclusao())
+			return null;	
+		
+		bandeiraService.deletar(bandeira);			
+		Messages.addInfo(null, MessagesPropertiesUtil.getMessage("mensage.sucesso.exclusao"), "");		
+		filtrar();
+		autoComplete = new AutoComplete(bandeiraRepository.getAllNames());
+		
+		return null;
+	}
+	
+	/*
+	 * TRUE- ERRO
+	 * FALSE - OK
+	 */
+	private boolean validaExclusao()
+	{
+		if(bandeira.getStatus().equals(SituacaoEnum.INATIVO.valor))
+		{
+			adicionarMensagemErro(
+					MessagesPropertiesUtil
+							.getMessage("label.registro.inativo"), "");
+			
+			return true;
+		}
+		
+		boolean vinculoProcessoLiquidacao  = false;
+		boolean dadosGenericos = false;
+		
+		vinculoProcessoLiquidacao = validaVinculo();
+		
+		if(vinculoProcessoLiquidacao)
+			return true;
+		
+		dadosGenericos = validaDadosGenerico();
+		
+		if(dadosGenericos)
+			return true;
+	
+		return false;
+	}
+	
+	/*
+	 * Valida registro duplicado, vinculo com processo de liquidacao e registro generico
+	 * 
+	 */
+	private boolean validar(){
+		
+		boolean dadosJaExistentes = false;
+		boolean vinculoProcessoLiquidacao  = false;
+		boolean dadosGenericos = false;
+		
+		bandeiras = bandeiraRepository.findAlteracaoByParameters(bandeira.getCodigo(), bandeira.getId());
+		
+		if(bandeiras.size() > 0){
+			dadosJaExistentes = true;
+		}
+		else{
+			dadosJaExistentes = false;
+		}
+		 
+										
+		if(dadosJaExistentes)
+		{
+			Messages.addError(null, MessagesPropertiesUtil.getMessage("msg.erro.registro.duplicado"), "");
+			return true;
+		}		
+		
+		vinculoProcessoLiquidacao = validaVinculo();
+		
+		if(vinculoProcessoLiquidacao)
+			return true;
+		
+		dadosGenericos = validaDadosGenerico();
+		
+		if(dadosGenericos)
+			return true;
+			
+		
+		return false;				
+	}
+	
+	private boolean validaVinculo()
+	{		
+		boolean vinculoProcessoLiquidacao = bandeiraRepository.findVinculoProcessosLiquidacao(bandeira.getIdBandeira());
+		if(vinculoProcessoLiquidacao)
+		{			
+			Messages.addError(null,String.format("%s não permitida. Existe(m) registro(s) associado(s) na(s) tabela(s): %s ", 
+					getOperacao().equals(OperacoesEnum.ALTERACAO) ? "Alteração" : "Exclusão",
+					vinculoProcessoLiquidacao ? "TB_PRL_PROCESSO_LIQUIDACAO" : ""));
+			
+			return true;
+		}
+		return false;		
+	}
+	
+	private boolean validaDadosGenerico()
+	{
+		boolean registroGenerico = bandeira.getCodigo().equals(Constants.CODIGO_BANDEIRA_GENERICA);
+		if(registroGenerico)
+		{
+			adicionarMensagemErro(
+					MessagesPropertiesUtil
+							.getMessage("mensagem.erro.bandeira.codigo.generico"), "");
+			
+			return true;
+		}			
+		
+		return false;
+	}
+	
+	public String limpar()
+	{
+		this.bandeiraFiltro = new BandeiraFiltroBean();
+		return null;
+	}	
+		
+	public String cancelar()
+	{
+		dados = new ParametroDataModel<BandeiraEntity>(bandeiras);
+		setOperacao(OperacoesEnum.FILTRAGEM);	
+					
+		return filtrar();
+		
+	}
+		
+	
+	public String limparNomeArquivo()
+	{
+		this.nomeArquivo = "";
+		return null;
+	}
+		
+	public List<BandeiraEntity> getBandeiras() {
+		return bandeiras;
+	}
+
+	public void setBandeiras(List<BandeiraEntity> bandeiras) {
+		this.bandeiras = bandeiras;
+	}
+
+	public BandeiraFiltroBean getBandeiraFiltro() {
+		return bandeiraFiltro;
+	}
+
+	public void setBandeiraFiltro(BandeiraFiltroBean bandeiraFiltro) {
+		this.bandeiraFiltro = bandeiraFiltro;
+	}
+
+	public BandeiraEntity getBandeira() {
+		return bandeira;
+	}
+
+	public void setBandeira(BandeiraEntity bandeira) {
+		this.bandeira = bandeira;
+	}
+
+	public AutoComplete getAutoComplete() {
+		return autoComplete;
+	}
+
+	public void setAutoComplete(AutoComplete autoComplete) {
+		this.autoComplete = autoComplete;
+	}
+
+	public String getTipoRelatorio() {
+		return tipoRelatorio;
+	}
+
+	public void setTipoRelatorio(String tipoRelatorio) {
+		this.tipoRelatorio = tipoRelatorio;
+	}
+
+	public String getNomeArquivo() {
+		return nomeArquivo;
+	}
+
+	public void setNomeArquivo(String nomeArquivo) {
+		this.nomeArquivo = nomeArquivo;
+	}
+	
+	
+	
+}

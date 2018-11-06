@@ -1,0 +1,38 @@
+package br.com.banestes.car.service;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+
+import br.com.banestes.car.jpa.entity.AdquirenteEntity;
+import br.com.banestes.car.jpa.model.repository.aplicacao.AdquirenteRepository;
+
+
+@Stateless
+@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+public class AdquirenteServiceBean 
+{
+	@Inject
+	private AdquirenteRepository adquirenteRepository;
+	
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	public AdquirenteEntity gravar(AdquirenteEntity adquirente)
+	{
+		
+		adquirente = adquirenteRepository.merge(adquirente);      
+		
+		return adquirente;
+		
+	}
+
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	public void deletar(AdquirenteEntity adquirente)
+	{
+		Object c= adquirenteRepository.merge(adquirente);
+		
+		adquirenteRepository.remove(c);			
+		
+	}
+
+}//end_clas...

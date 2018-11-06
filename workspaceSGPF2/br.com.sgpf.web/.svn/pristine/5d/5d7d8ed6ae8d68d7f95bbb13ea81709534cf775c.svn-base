@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:pdvix="http://pdvix.com/facelets"
+	xmlns:customer="http://java.sun.com/jsf/composite/components/customer">
+	<div id="titulo" align="left">
+		<h1 class="tituloForm">#{messages['label.menu.consulta.liquidacao.recusada']}</h1>
+		<h1 class="itemForm">#{messages['label.filtro']}</h1>
+	</div>
+	<script type="text/javascript">
+			function aplicaMascara() {
+				mascaraFormulario('formulario', 'valorLiquidacao', 'MOEDA142');						
+			}				
+	</script>
+
+	<a4j:outputPanel id="pnlJS" ajaxRendered="true">
+		<script type="text/javascript">
+			aplicaMascara();
+		</script>
+	</a4j:outputPanel>
+	
+	
+
+	<!-- Formulário -->
+	<div id="form" align="center">
+		<table border="0" width="100%" align="left">
+		
+			<tr>		
+			
+				<td width="20%">
+					<pdvix:label value="#{messages['label.consulta.liq.recusada.arquivo.nome']}" />	
+					<h:inputText	id="nomeArquivo"
+									value="#{consultaLiquidacaoRecusadaWebBean.consultaLiqRecusadaFiltroBean.nomeArquivo}"
+									size="30" label="#{messages['label.consulta.liq.recusada.arquivo.nome']}"/> 																																
+				</td>
+			
+			
+				<td width="20%">			 													    
+			    	<pdvix:label value="#{messages['label.menu.adquirente']}" />				    				    					   				
+			    	<h:selectOneMenu value="#{consultaLiquidacaoRecusadaWebBean.consultaLiqRecusadaFiltroBean.idAdquirente}" style="width:200px">				    				    	 				    	 					    	 						    	 										    	 								    	 										    	 									    	 										   
+			    	 	<f:selectItem 	itemLabel="#{messages['label.selecione']}" />		    	
+		                <f:selectItems 	value="#{consultaLiquidacaoRecusadaWebBean.listaAdquirentes}" var="adq" itemLabel="#{adq.nome}" itemValue="#{adq.idAdquirente}" />					                
+		            </h:selectOneMenu>					       						    
+				</td>
+			
+				<td width="20%">			 													    
+			    	<pdvix:label value="#{messages['label.evento.contabil.funcao']}" />						   						
+			    	<h:selectOneMenu 	value="#{consultaLiquidacaoRecusadaWebBean.consultaLiqRecusadaFiltroBean.codigoFuncao}" style="width:200px">				    						    	 										    	 								    	 										    	 									    	 										    	 
+			    	 	<f:selectItem 	itemLabel="#{messages['label.selecione']}" />			    	 	
+		                <f:selectItems 	value="#{consultaLiquidacaoRecusadaWebBean.listaFuncoes}" var="fun" itemLabel="#{fun.descricao}" itemValue="#{fun.codigo}" />					                
+		            </h:selectOneMenu>				       						    
+				</td>
+			
+			
+				<td width="20%">					 													    
+			    	<pdvix:label value="#{messages['label.consulta.liquidacao.status']}" />						   						
+			    	<h:selectOneMenu 	value="#{consultaLiquidacaoRecusadaWebBean.consultaLiqRecusadaFiltroBean.statusLiquidacao}" style="width:200px">				    	 						    	 										    	 								    	 										    	 									    	 										    	 	
+			    	 	<f:selectItem itemLabel="#{messages['label.selecione']}" />
+		        		<f:selectItem itemValue="L" itemLabel="#{messages['label.consulta.liquidacao.status.liquidado']}" />
+						<f:selectItem itemValue="A" itemLabel="#{messages['label.consulta.liquidacao.status.agendado']}" />
+						<f:selectItem itemValue="R" itemLabel="#{messages['label.consulta.liquidacao.status.rejeitado']}" />					                
+		            </h:selectOneMenu>				       						    
+				</td>
+			
+			</tr>
+			
+			
+			<tr>
+				
+				<td width="25%">
+					<pdvix:label for="dataArquivo" value="#{messages['label.consulta.arquivo.data']}" />					
+					<rich:calendar id="dataArquivo" value="#{consultaLiquidacaoRecusadaWebBean.consultaLiqRecusadaFiltroBean.dataArquivo}" datePattern="dd/MM/yyyy"/>																				
+				</td>		
+			
+			</tr>
+			
+			
+			<tr>				
+				<td width="25%">
+						<pdvix:label value="#{messages['label.consulta.liquidacao.numero.unico']}" />	
+						<h:inputText	id="numeroUnicoLiquidacao"
+										value="#{consultaLiquidacaoRecusadaWebBean.consultaLiqRecusadaFiltroBean.numeroUnicoLiquidacao}"
+										size="15" label="#{messages['label.consulta.liquidacao.numero.unico']}"/> 																																
+				</td>
+			
+			</tr>
+			
+						
+		</table>	
+		<h:form>
+			<rich:popupPanel id="popup" modal="false" autosized="true" resizeable="false" domElementAttachment="form">
+		        <f:facet name="header">
+		            <h:outputText value="#{messages['label.tipo.arquivo.selecione']}" />
+		        </f:facet>		
+		        <f:facet name="controls">
+		        																								
+		        </f:facet>	        
+		        <table>	        	
+		        	<tr>
+		        		<td>	        			
+					        <h:selectOneRadio 	id="tipoRelatorio" layout="pageDirection" 
+													label="teste" 
+													value="#{consultaLiquidacaoWebBean.tipoRelatorio}">											
+										
+									<f:selectItem 	itemValue="P" itemLabel="#{messages['label.tipo.arquivo.PDF']}"/>										 										 																 		
+									<f:selectItem 	itemValue="C" itemLabel="#{messages['label.tipo.arquivo.CSV']}"/>		
+							</h:selectOneRadio>
+						
+						</td>
+					</tr>				
+					<tr align="center">	
+						<td>								
+							<h:commandButton id="btnExportarEfetivo" value="#{messages['label.exportar']}"
+								 action="#{consultaLiquidacaoWebBean.exportar()}" onclick="#{rich:component('popup')}.hide(); return true;"/>
+							<h:commandButton id="btnExportarCancelar" value="#{messages['label.cancelar']}" 
+								 immediate="true" onclick="#{rich:component('popup')}.hide(); return false;">														 														 																																												 
+							</h:commandButton>
+						</td>
+					</tr>
+				</table>					
+			</rich:popupPanel>
+		</h:form> 	
+	</div>
+
+
+
+</ui:composition>

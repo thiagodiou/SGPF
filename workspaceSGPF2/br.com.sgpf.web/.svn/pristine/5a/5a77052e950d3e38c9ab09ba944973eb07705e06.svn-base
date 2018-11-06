@@ -1,0 +1,42 @@
+package br.com.banestes.car.service;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+
+import br.com.banestes.car.jpa.core.jpa.enumeration.FinalidadeHistoricoContaCorrenteEnum;
+import br.com.banestes.car.jpa.entity.BandeiraEntity;
+import br.com.banestes.car.jpa.entity.HistoricoContaCorrenteEntity;
+import br.com.banestes.car.jpa.model.repository.aplicacao.HistoricoContaCorrenteRepository;
+
+
+@Stateless
+@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+public class HistoricoContaCorrenteServiceBean 
+{
+	@Inject
+	private HistoricoContaCorrenteRepository historicoContaCorrenteRepository;
+	
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	public HistoricoContaCorrenteEntity gravar(HistoricoContaCorrenteEntity historico)
+	{
+		if(historico.getFinalidade().equals(FinalidadeHistoricoContaCorrenteEnum.ESTABELECIMENTO.valor))
+			historico.setAdquirente(null);
+		historico = historicoContaCorrenteRepository.merge(historico);
+		
+		return historico;
+		
+	}
+
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	public void deletar(HistoricoContaCorrenteEntity historico)
+	{
+		Object c = historicoContaCorrenteRepository.merge(historico);
+		
+		historicoContaCorrenteRepository.remove(c);			
+		
+	}
+
+
+}

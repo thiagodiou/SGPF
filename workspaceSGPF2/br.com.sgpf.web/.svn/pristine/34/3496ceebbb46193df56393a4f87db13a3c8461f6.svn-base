@@ -1,0 +1,38 @@
+package br.com.banestes.car.service;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+
+import br.com.banestes.car.jpa.entity.BandeiraEntity;
+import br.com.banestes.car.jpa.model.repository.aplicacao.BandeiraRepository;
+
+
+@Stateless
+@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+public class BandeiraServiceBean 
+{
+	@Inject
+	private BandeiraRepository bandeiraRepository;
+	
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	public BandeiraEntity gravar(BandeiraEntity bandeira)
+	{
+		
+		bandeira = bandeiraRepository.merge(bandeira);
+		
+		return bandeira;
+		
+	}
+
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	public void deletar(BandeiraEntity bandeira)
+	{
+		Object obj = bandeiraRepository.merge(bandeira);
+		
+		bandeiraRepository.remove(obj);
+					
+	}
+
+}

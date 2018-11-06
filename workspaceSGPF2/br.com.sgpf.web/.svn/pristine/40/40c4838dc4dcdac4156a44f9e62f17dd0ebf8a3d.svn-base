@@ -1,0 +1,18 @@
+package br.com.banestes.car.core.enumerators;
+
+public enum OperacoesEnum {
+
+	ACESSO("Acesso"), INSERCAO("Inclusão"), ALTERACAO("Alteração"), EXCLUSAO("Exclusão"), FILTRAGEM(
+			"Filtragem"), VISUALIZACAO("Visualização"), LISTAGEM("Listagem"), DESATIVACAO("Desativação"), ATIVACAO(
+			"Ativação"), NENHUM("Nenhum");
+
+	private String rotulo;
+
+	private OperacoesEnum(String rotulo) {
+		this.rotulo = rotulo;
+	}
+
+	public String getRotulo() {
+		return rotulo;
+	}
+}

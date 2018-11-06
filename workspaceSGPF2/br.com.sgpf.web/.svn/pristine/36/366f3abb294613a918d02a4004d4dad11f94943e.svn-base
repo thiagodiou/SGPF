@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	 xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:pdvix="http://pdvix.com/facelets">
+	
+	<div id="titulo" align="left">
+		<h1 class="tituloForm">#{messages['label.menu.parametro']}</h1>				
+		<h1 class="itemForm"> </h1>
+				
+	</div>
+	
+	<script type="text/javascript">
+			function aplicaMascara() {
+				mascaraFormulario('formulario', 'inicioASCG022', 'HORA');
+				mascaraFormulario('formulario', 'fimASCG022', 'HORA');
+				mascaraFormulario('formulario', 'inicioASCG023', 'HORA');
+				mascaraFormulario('formulario', 'fimASCG023', 'HORA');
+				mascaraFormulario('formulario', 'inicioASCG024', 'HORA');
+				mascaraFormulario('formulario', 'fimASCG024', 'HORA');
+				mascaraFormulario('formulario', 'inicioASCG025', 'HORA');
+				mascaraFormulario('formulario', 'fimASCG025', 'HORA');						
+			}				
+	</script>
+	
+	<a4j:outputPanel id="pnlJS2" ajaxRendered="true">
+		<script type="text/javascript">
+		aplicaMascara(); 
+		</script>
+	</a4j:outputPanel>
+	
+
+<!-- Formulário -->
+	<div id="cad" align="center">	
+		<rich:tabPanel switchType="client">
+			<rich:tab header="#{messages['label.aba.geral']}">
+				<div align="left">
+				<table>
+					<tr>
+						<td >
+							<pdvix:label value="#{messages['label.parametro.limite.consulta']}" required="true" for="limiteConsulta" />						
+							<h:inputText id="limiteConsulta" required="true" value="#{parametroWebBean.parametro.limitePeriodo}" size="15" label="#{messages['label.parametro.limite.consulta']}"/>																		
+						</td>	
+						<td >
+							<pdvix:label value="#{messages['label.parametro.limite.paginacao']}" required="true" for="limitePaginacao" />						
+							<h:inputText id="limitePaginacao" required="true" value="#{parametroWebBean.parametro.limitePaginacao}" size="15" label="#{messages['label.parametro.limite.paginacao']}"/>																		
+						</td>		
+					</tr>
+					<tr>
+						<td >
+							<pdvix:label value="#{messages['label.parametro.email']}" required="true" for="emailAlerta" />						
+							<h:inputText id="emailAlerta" required="true" value="#{parametroWebBean.parametro.emailAlerta}" size="50" label="#{messages['label.parametro.email']}"/>																		
+						</td>							
+					</tr>
+					<tr>
+						<td >
+							<pdvix:label value="#{messages['label.parametro.expurgo']}" required="true" for="tempoExpurgo" />						
+							<h:inputText id="tempoExpurgo" required="true" value="#{parametroWebBean.parametro.tempoExpurgo}" size="15" label="#{messages['label.parametro.expurgo']}"/>																		
+						</td>	
+					</tr>
+				</table>
+				</div>
+			</rich:tab>
+			<rich:tab header="#{messages['label.aba.arquivos.cip']}">
+				<table>		
+					<tr>
+						<td width="35%">
+							<hr />
+							<pdvix:label value="#{messages['label.parametro.horario.ascg022']}"  required= "true"/>																							
+						</td>											
+					</tr>	
+					<tr>
+						<td>
+							<table>
+								<tr>
+									<td>								
+										<h:inputText 	id="inicioASCG022" 									
+														required="true" value="#{parametroWebBean.parametro.horaInicioASCG022}" 
+														size="15" label="#{messages['label.parametro.horario.inicio.ascg022']}">																													
+											<f:validator validatorId="validatorHora"/>
+											<f:attribute name="nomeInput" value="Horário Início ASCG022" />																																																		
+										</h:inputText>
+									</td>
+									<td>
+										<pdvix:label value="#{messages['label.parametro.horario.inicio.ascg022']}"  required="true"/>							
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<table>
+								<tr>
+									<td>								
+										<h:inputText 	id="fimASCG022" required="true" 
+														value="#{parametroWebBean.parametro.horaFimASCG022}" 
+														size="15" label="#{messages['label.parametro.horario.fim.ascg022']}">
+										
+											<f:validator validatorId="validatorHora"/>
+											<f:attribute name="nomeInput" value="Horário Fim ASCG022" />	
+										</h:inputText>																									
+									</td>
+									<td>
+										<pdvix:label value="#{messages['label.parametro.horario.fim.ascg022']}"  required="true"/>								
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+					<td width="35%">
+						<hr />
+						<pdvix:label value="#{messages['label.parametro.horario.ascg023']}"  required= "true"/>																							
+					</td>											
+					</tr>	
+					<tr>
+						<td>
+							<table>
+								<tr>
+									<td>								
+										<h:inputText 	id="inicioASCG023" required="true" 
+														value="#{parametroWebBean.parametro.horaInicioASCG023}" 
+														size="15" label="#{messages['label.parametro.horario.inicio.ascg023']}">
+										
+											<f:validator validatorId="validatorHora"/>
+											<f:attribute name="nomeInput" value="Horário Início ASCG023" />	
+										</h:inputText>																					
+									</td>
+									<td>
+										<pdvix:label value="#{messages['label.parametro.horario.inicio.ascg023']}" />								
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>	
+					<tr>
+						<td>
+							<table>
+								<tr>
+									<td>								
+										<h:inputText 	id="fimASCG023" required="true" 
+														value="#{parametroWebBean.parametro.horaFimASCG023}" 
+														size="15" label="#{messages['label.parametro.horario.fim.ascg023']}">
+											
+											<f:validator validatorId="validatorHora"/>
+											<f:attribute name="nomeInput" value="Horário Fim ASCG023" />	
+										</h:inputText>																									
+									</td>
+									<td>
+										<pdvix:label value="#{messages['label.parametro.horario.fim.ascg023']}" required="true"/>								
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td width="35%">
+							<hr />
+							<pdvix:label value="#{messages['label.parametro.horario.ascg024']}"  required= "true"/>																							
+						</td>											
+					</tr>	
+					<tr>
+						<td>
+							<table>
+								<tr>
+									<td>								
+										<h:inputText 	id="inicioASCG024" required="true" 
+														value="#{parametroWebBean.parametro.horaInicioASCG024}" 
+														size="15" label="#{messages['label.parametro.horario.inicio.ascg024']}">
+										
+											<f:validator validatorId="validatorHora"/>
+											<f:attribute name="nomeInput" value="Horário Início ASCG024" />	
+										</h:inputText>																					
+									</td>
+									<td>
+										<pdvix:label value="#{messages['label.parametro.horario.inicio.ascg024']}" required="true"/>								
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>	
+					<tr>
+						<td>
+							<table>
+								<tr>
+									<td>								
+										<h:inputText 	id="fimASCG024" required="true" 
+														value="#{parametroWebBean.parametro.horaFimASCG024}" 
+														size="15" label="#{messages['label.parametro.horario.fim.ascg024']}">
+														
+											<f:validator validatorId="validatorHora"/>
+											<f:attribute name="nomeInput" value="Horário Fim ASCG024" />													
+										</h:inputText>																					
+									</td>
+									<td>
+										<pdvix:label value="#{messages['label.parametro.horario.fim.ascg024']}" required="true"/>								
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>	
+					<tr>
+						<td width="35%">
+							<hr />	
+							<pdvix:label value="#{messages['label.parametro.horario.ascg025']}"  required= "true"/>																							
+						</td>											
+					</tr>	
+					<tr>
+						<td>
+							<table>
+								<tr>
+									<td>								
+										<h:inputText 	id="inicioASCG025" required="true" 
+														value="#{parametroWebBean.parametro.horaInicioASCG025}" 
+														size="15" label="#{messages['label.parametro.horario.inicio.ascg025']}">
+														
+											<f:validator validatorId="validatorHora"/>
+											<f:attribute name="nomeInput" value="Horário Início ASCG025" />	
+										</h:inputText>																					
+									</td>
+									<td>
+										<pdvix:label value="#{messages['label.parametro.horario.inicio.ascg025']}" required="true"/>								
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>	
+					<tr>
+						<td>
+							<table>
+								<tr>
+									<td>								
+										<h:inputText 	id="fimASCG025" required="true" 
+														value="#{parametroWebBean.parametro.horaFimASCG025}" 
+														size="15" label="#{messages['label.parametro.horario.fim.ascg025']}">
+														
+											<f:validator validatorId="validatorHora"/>
+											<f:attribute name="nomeInput" value="Horário Fim ASCG025" />	
+										</h:inputText>																					
+									</td>
+									<td>
+										<pdvix:label value="#{messages['label.parametro.horario.fim.ascg025']}" required="true"/>								
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>	
+					<tr>
+						<td width="35%">
+							<hr />	
+							<pdvix:label value="#{messages['label.parametro.diretorio']}" required="true" />																							
+						</td>											
+					</tr>	
+					<tr>
+						<td>
+							<table>
+								<tr>
+									<td>								
+										<h:inputText 	id="diretorioASCG022" required="true" 
+														value="#{parametroWebBean.parametro.diretorioASCG022}" 
+														size="40" label="#{messages['label.parametro.diretorio.ascg022']}">
+																						
+										</h:inputText>																					
+									</td>
+									<td>
+										<pdvix:label value="#{messages['label.parametro.diretorio.ascg022']}" required="true" />								
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<table>
+								<tr>
+									<td>								
+										<h:inputText 	id="diretorioASCG023" required="true" 
+														value="#{parametroWebBean.parametro.diretorioASCG023}" 
+														size="40" label="#{messages['label.parametro.diretorio.ascg023']}">
+		
+										</h:inputText>																					
+									</td>
+									<td>
+										<pdvix:label value="#{messages['label.parametro.diretorio.ascg023']}" required="true"/>								
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<table>
+								<tr>
+									<td>								
+										<h:inputText 	id="diretorioASCG024" required="true" 
+														value= "#{parametroWebBean.parametro.diretorioASCG024}" 
+														size="40" label="#{messages['label.parametro.diretorio.ascg024']}">
+		
+										</h:inputText>																					
+									</td>
+									<td>
+										<pdvix:label value="#{messages['label.parametro.diretorio.ascg024']}"  required="true"/>								
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<table>
+								<tr>
+									<td>								
+										<h:inputText 	id="diretorioASCG025" required="true" 
+														value="#{parametroWebBean.parametro.diretorioASCG025}" 
+														size="40" label="#{messages['label.parametro.diretorio.ascg025']}">
+		
+										</h:inputText>																					
+									</td>
+									<td>
+										<pdvix:label value="#{messages['label.parametro.diretorio.ascg025']}" required="true"/>								
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>						
+				</table>	
+				
+			</rich:tab>
+			<rich:tab header="#{messages['label.aba.contabilidade']}">	
+				<div align="left">			
+					<table>
+						<tr>
+							<td>
+								<pdvix:label value="#{messages['label.parametro.remessa.ano']}" required="true" for="anoRemessa" />						
+								<h:inputText id="anoRemessa" required="true" value="#{parametroWebBean.parametro.anoRemessa}" size="15" label="#{messages['label.parametro.remessa.ano']}"/>						
+							</td>	
+							<td width="50%">
+								<pdvix:label value="#{messages['label.parametro.remessa.numero']}" required="true" for="numeroRemessa" />						
+								<h:inputText id="numeroRemessa" required="true" value="#{parametroWebBean.parametro.numeroRemessa}" size="15" label="#{messages['label.parametro.remessa.numero']}"/>																		
+							</td>		
+						</tr>
+						<tr>
+							<td>					
+								<pdvix:label value="#{messages['label.parametro.diretorio.contabilidade']}" required="true" />				
+								<h:inputText 	id="diretorioContabilidade" required="false" 
+												value="#{parametroWebBean.parametro.diretorioArquivoContabilidade}" 
+												size="40" label="#{messages['label.parametro.diretorio.contabilidade']}">
+								</h:inputText>																					
+							</td>						
+						</tr>
+					</table>
+				</div>				
+			</rich:tab>
+		</rich:tabPanel>			
+	</div>	
+	
+
+
+</ui:composition>

@@ -1,0 +1,11 @@
+package br.com.banestes.car.core.enumerators;
+
+public enum TipoAlteracaoEnum {
+	
+	INCLUSAO("01"), ALTERACAO("02"), EXLSUSAO("03"), INATIVACAO("04"), ATIVACAO("05");
+	
+	public String valor;
+	TipoAlteracaoEnum(String valor){
+		this.valor = valor;
+	}
+}

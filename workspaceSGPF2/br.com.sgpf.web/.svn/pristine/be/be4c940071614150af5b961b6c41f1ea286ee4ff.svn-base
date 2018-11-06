@@ -1,0 +1,466 @@
+package br.com.banestes.car.bean;	
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.enterprise.inject.Produces;
+import javax.faces.context.FacesContext;
+import javax.faces.context.Flash;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.http.HttpSession;
+
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+
+import org.omnifaces.cdi.ViewScoped;
+import org.omnifaces.util.Messages;
+
+import br.com.banestes.car.core.bean.AbstractWebBean;
+import br.com.banestes.car.core.enumerators.OperacoesEnum;
+import br.com.banestes.car.core.enumerators.TipoArquivoEnum;
+import br.com.banestes.car.core.exportacao.ExportarDataModel;
+import br.com.banestes.car.core.paginacao.ParametroDataModel;
+import br.com.banestes.car.jpa.core.util.Constants;
+import br.com.banestes.car.jpa.core.util.DateUtil;
+import br.com.banestes.car.jpa.core.util.MessagesPropertiesUtil;
+import br.com.banestes.car.jpa.entity.AdquirenteEntity;
+import br.com.banestes.car.jpa.entity.BandeiraEntity;
+import br.com.banestes.car.jpa.entity.CodigoOcorrenciaBanestesEntity;
+import br.com.banestes.car.jpa.entity.DominioEntity;
+import br.com.banestes.car.jpa.entity.FuncaoEntity;
+import br.com.banestes.car.jpa.model.repository.aplicacao.AdquirenteRepository;
+import br.com.banestes.car.jpa.model.repository.aplicacao.ArquivoRepository;
+import br.com.banestes.car.jpa.model.repository.aplicacao.BandeiraRepository;
+import br.com.banestes.car.jpa.model.repository.aplicacao.DominioRepository;
+import br.com.banestes.car.jpa.model.repository.aplicacao.FuncaoRepository;
+import br.com.banestes.car.jpa.model.repository.aplicacao.HistoricoLiquidacaoRepository;
+import br.com.banestes.car.jpa.model.repository.aplicacao.OcorrenciaRepository;
+import br.com.banestes.car.jpa.vo.LiquidacaoVO;
+
+@Named
+@ViewScoped
+public class ConsultaLiquidacaoWebBean extends AbstractWebBean {
+	
+	private ExportarDataModel exportar;
+
+	@Named("liquidacaoDados")
+	@Produces
+	private ParametroDataModel<LiquidacaoVO> dados;
+	
+	private LiquidacaoVO liquidacao;
+	
+	private ConsultaLiquidacaoFiltroBean consultaLiquidacaofiltro;
+	private List<AdquirenteEntity> listaAdquirentes;
+	private List<FuncaoEntity> listaFuncoes;
+	private List<BandeiraEntity> listaBandeira;
+	private List<DominioEntity> listaDominio;
+	private List<CodigoOcorrenciaBanestesEntity> listaOcorrencia;	
+	
+	@Inject
+	private transient DominioRepository dominioRepository;
+	
+	@Inject
+	private transient OcorrenciaRepository ocorrenciaRepository;
+	
+	@Inject
+	private transient BandeiraRepository bandeiraRepository;
+	
+	@Inject
+	private transient FuncaoRepository funcaoRepository;
+
+	@Inject
+	private transient AdquirenteRepository adquirenteRepository;
+	
+	@Inject
+	private transient ArquivoRepository arquivoRepository;
+	
+	
+	@Inject
+	private transient HistoricoLiquidacaoRepository historicoLiquidacaoRepository;	
+	
+	private List<LiquidacaoVO> dadosLiquidacao;
+	
+	private String tipoRelatorio;	
+	private boolean detail;
+	private int quantidadeLiquidacoes;
+	private Double valorLiquidacoes;
+	
+	
+	@PostConstruct
+	public void init() {
+				
+		HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
+		consultaLiquidacaofiltro = (ConsultaLiquidacaoFiltroBean)session.getAttribute("filtrosLiquidacao");
+		session.setAttribute("filtrosLiquidacao", null);
+		
+	}
+	
+	
+	
+	public void preRenderView() {
+		if (!FacesContext.getCurrentInstance().isPostback()) 
+		{									
+			if( consultaLiquidacaofiltro != null )									
+				filtrar();
+			
+			else
+			{
+				consultaLiquidacaofiltro = new ConsultaLiquidacaoFiltroBean();
+				this.setOperacao(OperacoesEnum.FILTRAGEM);		
+			}
+			
+			exportar = new ExportarDataModel();
+			preencheCombos();
+				
+		}
+	}
+		
+	
+	
+	public String filtrar() 
+	{
+		detail = false;
+		tipoRelatorio = TipoArquivoEnum.PDF.valor;		
+		
+		if(!validarPeriodo())			
+			return null;
+		
+		dadosLiquidacao = historicoLiquidacaoRepository
+							.findByParameters( 	consultaLiquidacaofiltro.getDataArquivo(), consultaLiquidacaofiltro.getCodigoFuncao(), consultaLiquidacaofiltro.getNomeEstabelecimento(),
+											consultaLiquidacaofiltro.getNumeroUnicoLiquidacao(), consultaLiquidacaofiltro.getDataInicio(), consultaLiquidacaofiltro.getDataFim(),
+											consultaLiquidacaofiltro.getConta(), consultaLiquidacaofiltro.getIdAdquirente(), consultaLiquidacaofiltro.getIdDominio(), 
+											consultaLiquidacaofiltro.getCpfCnpj(), consultaLiquidacaofiltro.getStatusLiquidacao(), consultaLiquidacaofiltro.getIdBandeira(),
+											consultaLiquidacaofiltro.getValor(), consultaLiquidacaofiltro.getIdOcorrencia());
+		
+		quantidadeLiquidacoes = dadosLiquidacao.size();
+		getValorTotalLiquidacoes();
+		
+		if(dadosLiquidacao.size() == 0)
+		{
+			adicionarMensagemErro(
+					MessagesPropertiesUtil
+							.getMessage("label.consulta.vazia"),
+					"");
+			setOperacao(OperacoesEnum.FILTRAGEM);			
+			return null;
+		}
+		
+		dados = new ParametroDataModel<LiquidacaoVO>(dadosLiquidacao);
+		dados.redefinir();
+		dados.ativar();
+		dados.getLista();
+		dados.iniciarPesquisa();
+		setOperacao(OperacoesEnum.LISTAGEM);
+				
+		
+		return null;
+	}
+	
+	private boolean validarPeriodo()
+	{
+		if( consultaLiquidacaofiltro.getDataArquivo() != null)
+		{
+			if(consultaLiquidacaofiltro.getDataArquivo().before(Constants.DATA_IMPLANTACAO))
+			{
+				adicionarMensagemErro(String.format("Consulta anterior a data de implantação do sistema %s. Favor utilizar o sistema DCO08, opção 70 e 54.",
+						DateUtil.dateToString(Constants.DATA_IMPLANTACAO,"dd/MM/yyyy")),	"");
+
+				return false;
+			}
+		}
+		
+		if( consultaLiquidacaofiltro.getDataInicio() == null &&  consultaLiquidacaofiltro.getDataFim() == null)
+		{
+			
+			Calendar calendar = Calendar.getInstance();
+			consultaLiquidacaofiltro.setDataFim(calendar.getTime());
+			
+			calendar.add(Calendar.DATE,getLimitePeriodo()*(-1));
+			
+			if(calendar.getTime().before(Constants.DATA_IMPLANTACAO))
+			{
+				consultaLiquidacaofiltro.setDataInicio(Constants.DATA_IMPLANTACAO);
+			}
+			else
+				consultaLiquidacaofiltro.setDataInicio(calendar.getTime());
+		}
+		
+		if( consultaLiquidacaofiltro.getDataInicio() == null && consultaLiquidacaofiltro.getDataFim() != null )
+			consultaLiquidacaofiltro.setDataInicio(new Date());
+		
+		if( consultaLiquidacaofiltro.getDataFim() == null && consultaLiquidacaofiltro.getDataInicio() != null )
+			consultaLiquidacaofiltro.setDataFim(new Date());
+			
+		if( consultaLiquidacaofiltro.getDataInicio() != null )
+		{
+			if( consultaLiquidacaofiltro.getDataInicio().after(consultaLiquidacaofiltro.getDataFim()) )
+			{
+				adicionarMensagemErro(
+						MessagesPropertiesUtil
+								.getMessage("label.consulta.data.fim.maior.inicio"),
+						"");
+				
+				return false;
+			}
+			
+			if( consultaLiquidacaofiltro.getDataInicio().before(Constants.DATA_IMPLANTACAO) )
+			{
+				adicionarMensagemErro(String.format("Consulta anterior a data de implantação do sistema %s. Favor utilizar o sistema DCO08, opção 70 e 54.",
+													DateUtil.dateToString(Constants.DATA_IMPLANTACAO,"dd/MM/yyyy")),	"");
+				
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	
+	private void getValorTotalLiquidacoes()
+	{
+		Double total = 0.0;
+		
+		for( LiquidacaoVO liq : dadosLiquidacao )
+		{
+			total += liq.getValor();
+		}
+		
+		this.valorLiquidacoes = total;
+	}
+	
+	public String detalhar( LiquidacaoVO liq )
+	{
+		detail = true;
+		liquidacao = liq;
+		return null;
+	}
+	
+	
+	public String limpar()
+	{
+		this.consultaLiquidacaofiltro = new ConsultaLiquidacaoFiltroBean();
+		return null;
+	}	
+		
+	public String cancelar()
+	{
+		dados = new ParametroDataModel<LiquidacaoVO>(dadosLiquidacao);
+		setOperacao(OperacoesEnum.FILTRAGEM);			
+		detail = false;
+		return null;
+	}
+	
+	public String exportar()
+	{
+		
+		HashMap<String, Object> param = new HashMap<String, Object>();
+		String pathReport = "/pages/relatorio/ConsultaLiquidacaoPDF.jrxml";
+		List<String> contents = new ArrayList<String>();
+		
+		if(tipoRelatorio.equals(TipoArquivoEnum.CSV.valor))
+		{								
+			contents.add(preencheCabecalhoCSV());
+			contents.add(preencheContentCSV());
+			exportar.exportar(tipoRelatorio, param, pathReport, this.arquivoRepository, contents);	
+		}
+		else
+		{
+			param.put("quantidadeLiquidacoes", quantidadeLiquidacoes);
+			param.put("valorLiquidacoes", valorLiquidacoes);
+			JRBeanCollectionDataSource jrb = new JRBeanCollectionDataSource(dadosLiquidacao);
+			exportar.exportar(tipoRelatorio, param, pathReport, this.arquivoRepository, contents, jrb);				
+		}
+													
+		Messages.addInfo(null, MessagesPropertiesUtil.getMessage("label.exportado.sucesso"), "");
+		
+		tipoRelatorio = TipoArquivoEnum.PDF.valor;
+		
+		return null;
+	}
+	
+	public String preencheCabecalhoCSV()
+	{
+		StringBuilder cabecalho = new StringBuilder();
+		cabecalho.append("Total de Registros;");
+		cabecalho.append(this.quantidadeLiquidacoes);
+		cabecalho.append("\n");
+		cabecalho.append("Valor Acumulado;");
+		cabecalho.append(this.valorLiquidacoes);
+		cabecalho.append("\n");
+		cabecalho.append("Data do Arquivo;N° Único Liquidação;Status Liquidação;Data Liquidação;Adquirente;Bandeira;Função;Domínio;Valor;Nome E.C;CPF/CNPJ E.C;Conta E.C;Agência E.C;Código de Ocorrência - Banestes;Descrição Código Ocorrência - Banestes");
+		cabecalho.append("\n");
+		return cabecalho.toString();
+	}
+	
+	public String preencheContentCSV()
+	{
+		StringBuilder content = new StringBuilder();
+		for(LiquidacaoVO liq: this.dadosLiquidacao)
+		{						
+			
+			content.append(liq.getDataArquivoTexto());
+			content.append(";");
+			content.append(liq.getNumeroUnico());
+			content.append(";");
+			content.append(liq.getStatusLiquidacao());
+			content.append(";");
+			content.append(liq.getDataLiquidacaoTexto());
+			content.append(";");
+			content.append(liq.getNomeAdquirente());
+			content.append(";");
+			content.append(liq.getNomeBandeira());
+			content.append(";");
+			content.append(liq.getNomeFuncao());
+			content.append(";");
+			content.append(liq.getNomeDominio());
+			content.append(";");
+			content.append(liq.getValor());
+			content.append(";");
+			content.append(liq.getNomeEstabelecimento());
+			content.append(";");
+			content.append(liq.getCpfCnpjEstabelecimento());
+			content.append(";");
+			content.append(liq.getContaEstabelecimento());
+			content.append(";");
+			content.append(liq.getAgenciaEstabelecimento());
+			content.append(";");
+			content.append(liq.getCodigoOcorrencia());
+			content.append(";");
+			content.append(liq.getDescricaoOcorrencia());			
+			
+			content.append("\n");
+		}
+		
+		return content.toString();
+	}
+	
+	
+	private void preencheCombos()
+	{
+		this.listaAdquirentes = adquirenteRepository.getAll();
+		this.listaFuncoes = funcaoRepository.getAll();
+		this.listaDominio = dominioRepository.getAll();
+		this.listaBandeira = bandeiraRepository.getAll();
+		this.listaOcorrencia = ocorrenciaRepository.getAllOcorrenciaBanestes();
+	}
+
+	public ParametroDataModel<LiquidacaoVO> getDados() {
+		return dados;
+	}
+
+	public void setDados(ParametroDataModel<LiquidacaoVO> dados) {
+		this.dados = dados;
+	}
+
+	public String lpad(Integer valor)
+	{		
+		return valor.toString().length() < 2 ? String.format("%02d",valor) : valor.toString();	
+	}
+	
+	
+	public ConsultaLiquidacaoFiltroBean getConsultaLiquidacaofiltro() {
+		return consultaLiquidacaofiltro;
+	}
+
+	public void setConsultaLiquidacaofiltro(
+			ConsultaLiquidacaoFiltroBean consultaLiquidacaofiltro) {
+		this.consultaLiquidacaofiltro = consultaLiquidacaofiltro;
+	}
+
+	public List<AdquirenteEntity> getListaAdquirentes() {
+		return listaAdquirentes;
+	}
+
+	public void setListaAdquirentes(List<AdquirenteEntity> listaAdquirentes) {
+		this.listaAdquirentes = listaAdquirentes;
+	}
+
+	public List<FuncaoEntity> getListaFuncoes() {
+		return listaFuncoes;
+	}
+
+	public void setListaFuncoes(List<FuncaoEntity> listaFuncoes) {
+		this.listaFuncoes = listaFuncoes;
+	}
+
+
+	
+	public List<LiquidacaoVO> getDadosLiquidacao() {
+		return dadosLiquidacao;
+	}
+
+	public void setDadosLiquidacao(List<LiquidacaoVO> dadosLiquidacao) {
+		this.dadosLiquidacao = dadosLiquidacao;
+	}
+
+	public String getTipoRelatorio() {
+		return tipoRelatorio;
+	}
+
+	public void setTipoRelatorio(String tipoRelatorio) {
+		this.tipoRelatorio = tipoRelatorio;
+	}
+
+	public List<BandeiraEntity> getListaBandeira() {
+		return listaBandeira;
+	}
+
+	public void setListaBandeira(List<BandeiraEntity> listaBandeira) {
+		this.listaBandeira = listaBandeira;
+	}
+
+	public List<DominioEntity> getListaDominio() {
+		return listaDominio;
+	}
+
+	public void setListaDominio(List<DominioEntity> listaDominio) {
+		this.listaDominio = listaDominio;
+	}
+
+	public List<CodigoOcorrenciaBanestesEntity> getListaOcorrencia() {
+		return listaOcorrencia;
+	}
+
+	public void setListaOcorrencia(
+			List<CodigoOcorrenciaBanestesEntity> listaOcorrencia) {
+		this.listaOcorrencia = listaOcorrencia;
+	}
+
+	public LiquidacaoVO getLiquidacao() {
+		return liquidacao;
+	}
+
+	public void setLiquidacao(LiquidacaoVO liquidacao) {
+		this.liquidacao = liquidacao;
+	}
+
+	public boolean isDetail() {
+		return detail;
+	}
+
+	public void setDetail(boolean detail) {
+		this.detail = detail;
+	}
+
+	public int getQuantidadeLiquidacoes() {
+		return quantidadeLiquidacoes;
+	}
+
+	public void setQuantidadeLiquidacoes(int quantidadeLiquidacoes) {
+		this.quantidadeLiquidacoes = quantidadeLiquidacoes;
+	}
+
+	public Double getValorLiquidacoes() {
+		return valorLiquidacoes;
+	}
+
+	public void setValorLiquidacoes(Double valorLiquidacoes) {
+		this.valorLiquidacoes = valorLiquidacoes;
+	}
+	
+	
+}

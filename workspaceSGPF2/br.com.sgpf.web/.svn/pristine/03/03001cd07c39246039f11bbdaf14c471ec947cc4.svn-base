@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2016-09-09T20:38:31 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ConsultaResumoLiquidacaoPDF" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Error" uuid="c85b0886-65f3-4489-96e0-6cf2bdb582c4">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<subDataset name="Dataset1" uuid="787fbc59-460e-4a06-8034-1713a83d1c1e">
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+		<field name="teste" class="java.util.List">
+			<fieldDescription><![CDATA[teste]]></fieldDescription>
+		</field>
+	</subDataset>
+	<parameter name="contextPath" class="java.lang.String">
+		<parameterDescription><![CDATA[contextPath]]></parameterDescription>
+	</parameter>
+	<parameter name="adquirente" class="java.lang.String">
+		<parameterDescription><![CDATA[adquirente]]></parameterDescription>
+	</parameter>
+	<parameter name="data" class="java.lang.String">
+		<parameterDescription><![CDATA[data]]></parameterDescription>
+	</parameter>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="debito" class="java.util.List">
+		<fieldDescription><![CDATA[debito]]></fieldDescription>
+	</field>
+	<field name="credito" class="java.util.List">
+		<fieldDescription><![CDATA[credito]]></fieldDescription>
+	</field>
+	<field name="result" class="java.util.List">
+		<fieldDescription><![CDATA[result]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="26" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="802" height="25" forecolor="#878787" backcolor="#969696" uuid="1dfa3e9b-847c-4346-b101-3f18f7e5e15f"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="780" height="24" forecolor="#030000" uuid="7837e9a1-3dfb-403c-bd46-2a3f7c3da03d"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="14" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Resultado Consulta - Resumo Liquidações]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="352" splitType="Stretch">
+			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
+			<subreport>
+				<reportElement x="-21" y="77" width="802" height="60" uuid="f77d8be2-9ca9-4166-984b-b92676ddf914"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{debito})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{contextPath} + "/pages/relatorio/ConsultaResumoLiquidacaoDebitoPDF.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="-21" y="184" width="802" height="60" uuid="99182c77-1276-4947-b5ea-630ac2e93a46">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{credito})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{contextPath} + "/pages/relatorio/ConsultaResumoLiquidacaoCreditoPDF.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="-21" y="291" width="802" height="60" uuid="869d54ea-85b5-492a-b29c-898126fdbc5c">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{result})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{contextPath} + "/pages/relatorio/ConsultaResumoLiquidacaoResultPDF.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement x="1" y="22" width="58" height="15" uuid="2aa8afb8-8b20-48bc-af22-18db1d186fad">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Adquirente:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="40" width="54" height="15" uuid="4ce45152-f411-498b-9176-dd0dd36bc06b">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Período:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="61" y="22" width="100" height="15" uuid="a59cf994-edfc-4b14-8582-df5f6f2f0e29">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{adquirente}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="61" y="40" width="244" height="15" uuid="c7b52ea4-1da0-439e-b5fb-f9e69b270f33">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{data}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="41" splitType="Stretch">
+			<textField>
+				<reportElement x="702" y="10" width="100" height="30" uuid="a6feebfe-ba9b-4a87-8649-b0d2097c32a3"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA[String.format("Página %s",$V{PAGE_NUMBER})]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

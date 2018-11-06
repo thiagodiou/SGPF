@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<faces-config version="2.0" xmlns="http://java.sun.com/xml/ns/javaee"
+ xmlns:xi="http://www.w3.org/2001/XInclude"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd">
+ <navigation-rule>
+  <display-name>Todas as visões</display-name>
+  <from-view-id>*</from-view-id>
+  <navigation-case>
+   <from-outcome>home</from-outcome>
+   <to-view-id>/pages/home/home.xhtml</to-view-id>
+   <redirect/>
+  </navigation-case>
+  <navigation-case>
+   <from-outcome>error</from-outcome>
+   <to-view-id>/pages/error/500.xhtml</to-view-id>
+   <redirect/>
+  </navigation-case>
+ 
+   <navigation-case>
+   <from-outcome>analista</from-outcome>
+   <to-view-id>/pages/analista/analista.xhtml</to-view-id>
+   <redirect/>
+  </navigation-case>
+  
+  <navigation-case>
+   <from-outcome>empresa</from-outcome>
+   <to-view-id>/pages/empresa/empresa.xhtml</to-view-id>
+   <redirect/>
+  </navigation-case>
+  
+  <navigation-case>
+   <from-outcome>sistema</from-outcome>
+   <to-view-id>/pages/sistema/sistema.xhtml</to-view-id>
+   <redirect/>
+  </navigation-case>
+  
+  <navigation-case>
+   <from-outcome>projeto</from-outcome>
+   <to-view-id>/pages/projeto/projeto.xhtml</to-view-id>
+   <redirect/>
+  </navigation-case>
+  
+  <navigation-case>
+   <from-outcome>funcaoDados</from-outcome>
+   <to-view-id>/pages/funcaoDados/funcaoDados.xhtml</to-view-id>
+   <redirect/>
+  </navigation-case>
+  
+  <navigation-case>
+   <from-outcome>funcaoTransacao</from-outcome>
+   <to-view-id>/pages/funcaoTransacao/funcaoTransacao.xhtml</to-view-id>
+   <redirect/>
+  </navigation-case>
+  <navigation-case>
+   <from-outcome>fpa</from-outcome>
+   <to-view-id>/pages/relatorio/relatorio.xhtml</to-view-id>
+   <redirect/>
+  </navigation-case>
+  
+  <navigation-case>
+   <from-outcome>login</from-outcome>
+   <to-view-id>/pages/login/login.xhtml</to-view-id>
+   <redirect/>
+  </navigation-case>
+ </navigation-rule>
+ <application>
+  <locale-config>
+   <default-locale>pt_BR</default-locale>
+  </locale-config>
+  <resource-bundle>
+   <base-name>messages</base-name>
+   <var>messages</var>
+  </resource-bundle>
+  <message-bundle>messages</message-bundle>
+ </application>
+ <factory>
+  <exception-handler-factory>org.omnifaces.exceptionhandler.FullAjaxExceptionHandlerFactory</exception-handler-factory>
+ </factory>
+</faces-config>

@@ -1,0 +1,123 @@
+package br.com.banestes.car.bean;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Date;
+
+public class ConsultaOcorrenciaAgendaFiltroBean implements Serializable{
+	
+
+	private static final long serialVersionUID = -973788477044882191L;
+	
+	private Date dataArquivoInicial;
+	private Date dataArquivoFinal;
+	private String nomeArquivo;
+	private BigInteger idAdquirente;
+	private BigInteger idBandeira;
+	private BigDecimal valorInicial;
+	private BigDecimal valorFinal;
+	private String cnpjCpfCentralizadora;
+	private boolean isCnpjRadical;
+	private String contaCentralizadora;
+
+	
+	
+	public boolean isEmpty(){
+		
+		if(dataArquivoInicial == null && nomeArquivo.isEmpty() && idAdquirente.compareTo(BigInteger.ZERO) == 0 && 
+			idBandeira.compareTo(BigInteger.ZERO) == 0 && cnpjCpfCentralizadora.isEmpty() && 	
+			contaCentralizadora.isEmpty() && dataArquivoFinal == null && valorInicial.compareTo(BigDecimal.ZERO) == 0 &&
+			valorFinal.compareTo(BigDecimal.ZERO) == 0){
+			return true;
+		}
+		
+		return false;
+	}
+	
+	
+	
+	public Date getDataArquivoInicial() {
+		return dataArquivoInicial;
+	}
+
+	public Date getDataArquivoFinal() {
+		return dataArquivoFinal;
+	}
+
+	public void setDataArquivoInicial(Date dataArquivoInicial) {
+		this.dataArquivoInicial = dataArquivoInicial;
+	}
+
+	public void setDataArquivoFinal(Date dataArquivoFinal) {
+		this.dataArquivoFinal = dataArquivoFinal;
+	}
+	
+	
+	public BigInteger getIdAdquirente() {		
+		return idAdquirente == null || idAdquirente.compareTo(BigInteger.ZERO) == 0 ? null : idAdquirente ;
+	}
+
+	public void setIdAdquirente(BigInteger idAdquirente) {
+		this.idAdquirente = idAdquirente;
+	}
+
+	public BigInteger getIdBandeira() {		
+		return idBandeira == null || idBandeira.compareTo(BigInteger.ZERO) == 0 ? null : idBandeira ;
+	}
+
+	public void setIdBandeira(BigInteger idBandeira) {
+		this.idBandeira = idBandeira;
+	}
+
+	public String getNomeArquivo() {
+		return nomeArquivo;
+	}
+
+	public void setNomeArquivo(String nomeArquivo) {
+		this.nomeArquivo = nomeArquivo;
+	}
+
+	public BigDecimal getValorInicial() {
+		return valorInicial == null || valorInicial.compareTo(BigDecimal.ZERO) == 0 ? null : valorInicial;
+	}
+
+	public void setValorInicial(BigDecimal valorInicial) {
+		this.valorInicial = valorInicial;
+	}
+
+	public BigDecimal getValorFinal() {		
+		return valorFinal == null || valorFinal.compareTo(BigDecimal.ZERO) == 0 ? null : valorFinal;
+	}
+
+	public void setValorFinal(BigDecimal valorFinal) {
+		this.valorFinal = valorFinal;
+	}
+
+	public String getCnpjCpfCentralizadora() {
+		return cnpjCpfCentralizadora;
+	}
+
+	public String getContaCentralizadora() {
+		return contaCentralizadora;
+	}
+
+	public boolean isCnpjRadical() {
+		return isCnpjRadical;
+	}
+
+	public void setCnpjRadical(boolean isCnpjRadical) {
+		this.isCnpjRadical = isCnpjRadical;
+	}	
+	
+	
+	public void setCnpjCpfCentralizadora(String cnpjCpfCentralizadora) {
+		this.cnpjCpfCentralizadora = cnpjCpfCentralizadora;
+	}
+
+	public void setContaCentralizadora(String contaCentralizadora) {
+		this.contaCentralizadora = contaCentralizadora;
+	}
+
+
+}//end_class...

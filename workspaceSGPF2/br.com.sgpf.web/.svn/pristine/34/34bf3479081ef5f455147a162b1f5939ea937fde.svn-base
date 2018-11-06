@@ -1,0 +1,36 @@
+package br.com.banestes.car.core.util.autoComplete;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+public class AutoComplete {
+
+	private List<String> nomes;
+	
+	public AutoComplete(List<String> listaNomes)
+	{
+		this.nomes = listaNomes;
+	}
+	
+	
+	public List<String> execute(String prefix) {
+        ArrayList<String> result = new ArrayList<String>();
+        if ((prefix == null) || (prefix.length() == 0)) {
+            for (int i = 0; i < 10; i++) {
+                result.add(nomes.get(i));
+            }
+        } else {
+            Iterator<String> iterator = nomes.iterator();
+            while (iterator.hasNext()) {
+                String elem = ((String) iterator.next());
+                if ((elem != null && elem.toLowerCase().indexOf(prefix.toLowerCase()) == 0)
+                    || "".equals(prefix)) {
+                    result.add(elem);
+                }
+            }
+        }
+ 
+        return result;
+    }
+}

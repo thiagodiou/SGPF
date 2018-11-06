@@ -1,0 +1,102 @@
+package br.com.banestes.car.core.bean;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.List;
+
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
+
+import org.omnifaces.util.Faces;
+import org.omnifaces.util.Messages;
+
+import br.com.banestes.car.core.enumerators.*;
+import br.com.banestes.car.jpa.core.util.CustomFileWriter;
+import br.com.banestes.car.jpa.model.repository.aplicacao.ParametroRepository;
+
+public abstract class AbstractWebBean implements Serializable {
+	
+	
+	private OperacoesEnum operacao = OperacoesEnum.NENHUM;
+	
+	private static final long serialVersionUID = 1L;
+
+	protected String OUTCOME_DETAIL = "detail";
+
+	protected String OUTCOME_FORM = "form";
+
+	protected String OUTCOME_LISTA = "list";
+		
+
+	@Inject
+	private transient ParametroRepository parametroRepository;
+	
+	public Integer getLimitePeriodo()
+	{
+		return parametroRepository.getLimitePeriodo();
+	}
+	
+	public Integer getLimitePaginacao()
+	{
+		return parametroRepository.getLimitePaginacao();
+	}
+	
+	protected void adicionarMensagemInfo(String message, Object... params) {
+		Messages.addInfo(null, message, params);
+	}
+
+	protected void adicionarMensagemAviso(String message, Object... params) {
+		Messages.addWarn(null, message, params);
+	}
+
+	protected void adicionarMensagemErro(String message, Object... params) {
+		Messages.addError(null, message, params);
+	}
+
+	protected static HttpServletResponse getResponse() {
+		return Faces.getResponse();
+	}
+
+	protected FacesContext getFacesContext() {
+		return FacesContext.getCurrentInstance();
+	}
+
+	
+	protected void downloadReport(String name, byte[] file, TipoDocumentoEnum reportType) {
+
+		HttpServletResponse response = getResponse();
+
+		try {
+
+			if (reportType == null) {
+				reportType = TipoDocumentoEnum.NONE;
+			}
+
+			response.setContentType(reportType.getContentType());
+			response.addHeader("Content-Disposition",
+					String.format("attachment;filename=%s%s", name, reportType.getType()));
+			response.getOutputStream().write(file);
+			response.getOutputStream().flush();
+			getFacesContext().responseComplete();
+
+		} catch (Exception ex) {
+			// logger.error(ex.getMessage());
+		}
+	}
+		
+	
+	public OperacoesEnum getOperacao() {
+		return operacao;
+	}
+	
+	public void setOperacao(OperacoesEnum operacao) {
+		this.operacao = operacao;
+	}
+	
+	protected void preRender() {
+		
+	}
+
+}

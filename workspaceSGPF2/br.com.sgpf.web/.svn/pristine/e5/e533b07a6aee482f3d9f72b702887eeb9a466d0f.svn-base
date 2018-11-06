@@ -1,0 +1,378 @@
+package br.com.banestes.car.bean;	
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.enterprise.inject.Produces;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+
+import org.omnifaces.cdi.ViewScoped;
+import org.omnifaces.util.Messages;
+
+import br.com.banestes.car.core.bean.AbstractWebBean;
+import br.com.banestes.car.core.enumerators.OperacoesEnum;
+import br.com.banestes.car.core.enumerators.TipoArquivoEnum;
+import br.com.banestes.car.core.exportacao.ExportarDataModel;
+import br.com.banestes.car.core.paginacao.ParametroDataModel;
+import br.com.banestes.car.jpa.core.util.MessagesPropertiesUtil;
+import br.com.banestes.car.jpa.entity.AdquirenteEntity;
+import br.com.banestes.car.jpa.entity.ArquivoProcessamentoEntity;
+import br.com.banestes.car.jpa.entity.BandeiraEntity;
+import br.com.banestes.car.jpa.model.repository.aplicacao.AdquirenteRepository;
+import br.com.banestes.car.jpa.model.repository.aplicacao.ArquivoRepository;
+import br.com.banestes.car.jpa.model.repository.aplicacao.BandeiraRepository;
+import br.com.banestes.car.jpa.model.repository.aplicacao.HistoricoAgendaRepository;
+import br.com.banestes.car.jpa.vo.OcorrenciaAgendaVO;
+
+
+@Named
+@ViewScoped
+public class ConsultaOcorrenciaAgendaWebBean extends AbstractWebBean {
+
+	private static final long serialVersionUID = 5653645873997247062L;
+
+	private List<OcorrenciaAgendaVO> ocorrenciasAgenda;
+
+	private ConsultaOcorrenciaAgendaFiltroBean ocorrenciaAgendaFiltro;	
+	
+	private ExportarDataModel exportar;
+	
+	@Inject
+	private transient BandeiraRepository bandeiraRepository;
+	
+	@Inject
+	private transient AdquirenteRepository adquirenteRepository;
+	
+	@Inject
+	private transient HistoricoAgendaRepository historicoAgendaRepository;	
+	
+	@Inject
+	private transient ArquivoRepository arquivoRepository;
+	
+	private List<AdquirenteEntity> listaAdquirentes;
+	
+	private List<BandeiraEntity> listaBandeiras;		
+	
+	private List<ArquivoProcessamentoEntity> listaSituacoesArquivos;
+	
+	private String tipoRelatorio;	
+	
+	private Double valorTotal;
+	
+	private int quantidadeTotal;
+	
+	@Named("ocorrenciaAgendaDados")
+	@Produces
+	private ParametroDataModel<OcorrenciaAgendaVO> dados;
+	
+	
+	public void preRenderView() {
+		if (!FacesContext.getCurrentInstance().isPostback()) 
+		{								
+			ocorrenciaAgendaFiltro = new ConsultaOcorrenciaAgendaFiltroBean();			
+			
+			exportar = new ExportarDataModel();
+			this.setOperacao(OperacoesEnum.FILTRAGEM);
+			preencheCombos();
+		}
+	}
+
+	public String filtrar() 
+	{			
+		
+		tipoRelatorio = TipoArquivoEnum.PDF.valor;					
+		
+		if( !validarFiltro() )
+			return null;
+		
+		ocorrenciasAgenda = historicoAgendaRepository
+									.findOcorrenciaByParameters(ocorrenciaAgendaFiltro.getIdAdquirente(), ocorrenciaAgendaFiltro.getIdBandeira(),
+																ocorrenciaAgendaFiltro.getCnpjCpfEstabelecimento(), ocorrenciaAgendaFiltro.getContaEstabelcimento(),
+																ocorrenciaAgendaFiltro.getValorInicial(), ocorrenciaAgendaFiltro.getValorFinal(),
+																ocorrenciaAgendaFiltro.getDataInicial(), ocorrenciaAgendaFiltro.getDataFinal(),
+																ocorrenciaAgendaFiltro.getDataArquivo(), ocorrenciaAgendaFiltro.getNomeArquivo(),
+																ocorrenciaAgendaFiltro.getIdStatusProcessamento());
+														
+																																										 										
+		
+		if(ocorrenciasAgenda.size() == 0)
+		{
+			adicionarMensagemErro(
+					MessagesPropertiesUtil
+							.getMessage("label.consulta.vazia"),
+					"");
+			setOperacao(OperacoesEnum.FILTRAGEM);			
+			return null;
+		}
+		
+		valorTotal = somaValorTotal();
+		quantidadeTotal = somaQuantidadeTotal();
+		
+		dados = new ParametroDataModel<OcorrenciaAgendaVO>(ocorrenciasAgenda);
+		dados.redefinir();
+		dados.ativar();
+		dados.getLista();
+		dados.iniciarPesquisa();
+		setOperacao(OperacoesEnum.LISTAGEM);
+				
+		
+		return null;
+	}
+	
+	public Double somaValorTotal()
+	{
+		
+		Double valor = 0.0;
+		for( OcorrenciaAgendaVO ocr : ocorrenciasAgenda )
+		{
+			valor += ocr.getValorPrevisto();
+		}
+		
+		return valor;
+	}
+	
+	public int somaQuantidadeTotal()
+	{		
+		return ocorrenciasAgenda.size();
+	}
+
+	public boolean validarFiltro()
+	{
+		if( ocorrenciaAgendaFiltro.isEmpty() )
+		{
+			adicionarMensagemErro("Favor informar ao menos um filtro.","");
+			return false;
+		}
+		
+		
+		if( ocorrenciaAgendaFiltro.getDataInicial() == null && ocorrenciaAgendaFiltro.getDataFinal() != null )
+		{
+		
+			Calendar c = Calendar.getInstance();
+			c.setTime(ocorrenciaAgendaFiltro.getDataFinal());
+			c.add(Calendar.DAY_OF_WEEK, getLimitePeriodo()*(-1));			
+			ocorrenciaAgendaFiltro.setDataInicial(c.getTime()); 
+		
+		}	
+			
+		if( ocorrenciaAgendaFiltro.getDataFinal() == null && ocorrenciaAgendaFiltro.getDataInicial() != null )
+		{
+			Calendar c = Calendar.getInstance();
+			c.setTime(ocorrenciaAgendaFiltro.getDataInicial());
+			c.add(Calendar.DAY_OF_WEEK, getLimitePeriodo());			
+			ocorrenciaAgendaFiltro.setDataFinal(c.getTime()); 
+		}
+			
+		
+		if( ocorrenciaAgendaFiltro.getDataInicial() != null )
+		{
+			if( ocorrenciaAgendaFiltro.getDataInicial().after(ocorrenciaAgendaFiltro.getDataFinal()) )
+			{
+				adicionarMensagemErro(
+						MessagesPropertiesUtil
+								.getMessage("label.consulta.data.fim.maior.inicio"),
+						"");
+				
+				return false;
+			}
+			
+			Calendar dataInicial = Calendar.getInstance();
+			Calendar dataFinal = Calendar.getInstance();
+			
+			dataInicial.setTime(ocorrenciaAgendaFiltro.getDataInicial());
+			dataFinal.setTime(ocorrenciaAgendaFiltro.getDataFinal());
+			
+			if( dataFinal.get(Calendar.DAY_OF_YEAR) - dataInicial.get(Calendar.DAY_OF_YEAR) > getLimitePeriodo())
+			{
+				adicionarMensagemErro("Período entre datas maior do que o limite parametrizado.","");
+				return false;
+			}
+			
+		}
+		
+		if( ocorrenciaAgendaFiltro.getDataFinal() == null && ocorrenciaAgendaFiltro.getDataInicial() == null )
+		{
+			ocorrenciaAgendaFiltro.setDataInicial(new Date());
+			
+			Calendar c = Calendar.getInstance();
+			c.setTime(ocorrenciaAgendaFiltro.getDataInicial());
+			c.add(Calendar.DAY_OF_WEEK, getLimitePeriodo());			
+			ocorrenciaAgendaFiltro.setDataFinal(c.getTime()); 
+			
+		}
+		
+		return true;
+	}
+	
+	
+	public void preencheCombos()
+	{		
+		listaAdquirentes 	= adquirenteRepository.getAll();
+		listaBandeiras 		= bandeiraRepository.getAll(); 
+		this.listaSituacoesArquivos = arquivoRepository.getAllSituacoes();
+	}
+	
+	public List<ArquivoProcessamentoEntity> getListaSituacoesArquivos() {
+		return listaSituacoesArquivos;
+	}
+
+	public void setListaSituacoesArquivos(
+			List<ArquivoProcessamentoEntity> listaSituacoesArquivos) {
+		this.listaSituacoesArquivos = listaSituacoesArquivos;
+	}
+
+	public String exportar()
+	{				
+												
+
+		HashMap<String, Object> param = new HashMap<String, Object>();
+		param.put("quantidadeTotal", quantidadeTotal);
+		param.put("valorTotal", valorTotal);
+		String pathReport = "/pages/relatorio/ConsultaOcorrenciaAgendaPDF.jrxml";
+		List<String> contents = new ArrayList<String>();
+		
+		if(tipoRelatorio.equals(TipoArquivoEnum.CSV.valor))
+		{								
+			contents.add(preencheCabecalhoCSV());
+			contents.add(preencheContentCSV());
+			exportar.exportar(tipoRelatorio, param, pathReport, this.historicoAgendaRepository, contents);
+		}
+		else
+		{
+			JRBeanCollectionDataSource jrb = new JRBeanCollectionDataSource(ocorrenciasAgenda);
+			exportar.exportar(tipoRelatorio, param, pathReport, this.historicoAgendaRepository, contents, jrb);				
+		}
+												
+		
+		Messages.addInfo(null, MessagesPropertiesUtil.getMessage("label.exportado.sucesso"), "");
+		
+		tipoRelatorio = TipoArquivoEnum.PDF.valor;
+		
+		return null;
+	}
+	
+	public String preencheCabecalhoCSV()
+	{
+		StringBuilder cabecalho = new StringBuilder();
+		cabecalho.append("Total de Registros: " + getQuantidadeTotal());
+		cabecalho.append("\n");
+		cabecalho.append("Valor Acumulado: " + getValorTotal());
+		cabecalho.append("\n\n");
+		cabecalho.append("Data do Arquivo;Nome do Arquivo;Sequencial;Adquirente;Bandeira;Data Prevista;Valor Previsto;CPF/CNPJ E.C;Agência E.C;Conta Corrente E.C;Código de Ocorrência - Banestes;Descrição Código Ocorrência - Banestes");
+		cabecalho.append("\n");
+		return cabecalho.toString();
+	}
+	
+	public String preencheContentCSV()
+	{
+		StringBuilder content = new StringBuilder();
+		
+		for(OcorrenciaAgendaVO ocr : this.ocorrenciasAgenda)
+		{						
+			content.append(ocr.getDataArquivoTexto());
+			content.append(";");
+			content.append(ocr.getNomeArquivo());
+			content.append(";");
+			content.append(ocr.getSequencial());
+			content.append(";");
+			content.append(ocr.getNomeAdquirente());
+			content.append(";");
+			content.append(ocr.getNomeBandeira());
+			content.append(";");
+			content.append(ocr.getDataPrevistaTexto());
+			content.append(";");
+			content.append(ocr.getValorPrevisto());
+			content.append(";");
+			content.append(ocr.getCpfCnpjEstabelecimento());
+			content.append(";");
+			content.append(ocr.getAgenciaEstabelecimento());
+			content.append(";");
+			content.append(ocr.getContaEstabelecimento());
+			content.append(";");
+			content.append(ocr.getCodigoOcorrencia());
+			content.append(";");
+			content.append(ocr.getDescricaoOcorrencia());
+			content.append("\n");
+		}
+		
+		return content.toString();
+	}
+
+
+	public String limpar()
+	{
+		this.ocorrenciaAgendaFiltro = new ConsultaOcorrenciaAgendaFiltroBean();
+	
+		return null;
+	}	
+		
+	public String cancelar()
+	{
+		dados = new ParametroDataModel<OcorrenciaAgendaVO>(ocorrenciasAgenda);
+		setOperacao(OperacoesEnum.FILTRAGEM);							
+		
+		return null;
+	}
+			
+
+	public List<OcorrenciaAgendaVO> getOcorrenciasAgenda() {
+		return ocorrenciasAgenda;
+	}
+
+	public void setOcorrenciasAgenda(List<OcorrenciaAgendaVO> ocorrenciasAgenda) {
+		this.ocorrenciasAgenda = ocorrenciasAgenda;
+	}
+
+	public List<AdquirenteEntity> getListaAdquirentes() {
+		return listaAdquirentes;
+	}
+
+	public void setListaAdquirentes(List<AdquirenteEntity> listaAdquirentes) {
+		this.listaAdquirentes = listaAdquirentes;
+	}
+
+	public List<BandeiraEntity> getListaBandeiras() {
+		return listaBandeiras;
+	}
+
+	public void setListaBandeiras(List<BandeiraEntity> listaBandeiras) {
+		this.listaBandeiras = listaBandeiras;
+	}
+
+	public String getTipoRelatorio() {
+		return tipoRelatorio;
+	}
+
+	public void setTipoRelatorio(String tipoRelatorio) {
+		this.tipoRelatorio = tipoRelatorio;
+	}
+
+	public ConsultaOcorrenciaAgendaFiltroBean getOcorrenciaAgendaFiltro() {
+		return ocorrenciaAgendaFiltro;
+	}
+
+	public void setOcorrenciaAgendaFiltro(
+			ConsultaOcorrenciaAgendaFiltroBean ocorrenciaAgendaFiltro) {
+		this.ocorrenciaAgendaFiltro = ocorrenciaAgendaFiltro;
+	}
+
+	public Double getValorTotal() {
+		return valorTotal;
+	}
+
+	public int getQuantidadeTotal() {
+		return quantidadeTotal;
+	}
+
+	
+
+	
+	
+}

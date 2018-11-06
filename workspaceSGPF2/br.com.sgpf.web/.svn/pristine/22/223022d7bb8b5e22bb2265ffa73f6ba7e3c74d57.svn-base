@@ -1,0 +1,93 @@
+package br.com.banestes.car.bean;
+
+import java.io.Serializable;
+import java.math.BigInteger;
+import java.util.Date;
+
+
+
+
+public class ConsultaLiquidacaoRecusadaFiltroBean implements Serializable {
+
+	
+	private static final long serialVersionUID = 1545405683421547451L;
+
+	private String nomeArquivo;
+	private BigInteger idAdquirente;
+	private BigInteger codigoFuncao;
+	private String statusLiquidacao;
+	private Date dataArquivo;
+	private String numeroUnicoLiquidacao;
+	
+	
+	
+	
+	
+	public ConsultaLiquidacaoRecusadaFiltroBean(){
+		
+		this.nomeArquivo = "";
+		this.idAdquirente = null;
+		this.codigoFuncao = null;
+		this.statusLiquidacao = "";
+		this.dataArquivo = null;
+		this.numeroUnicoLiquidacao = "";
+	}
+	
+	
+		
+
+	public String getNomeArquivo() {
+		return nomeArquivo;
+	}
+
+	public BigInteger getIdAdquirente() {		
+		return idAdquirente == null || idAdquirente.compareTo(BigInteger.ZERO) == 0 ? null : idAdquirente ;
+	}
+
+	public BigInteger getCodigoFuncao() {		
+		return codigoFuncao == null || codigoFuncao.compareTo(BigInteger.ZERO) == 0 ? null : codigoFuncao ;
+	}	
+	
+	public String getStatusLiquidacao() {
+		return statusLiquidacao;
+	}
+
+	public Date getDataArquivo() {
+		return dataArquivo;
+	}
+
+	public String getNumeroUnicoLiquidacao() {
+		return numeroUnicoLiquidacao;
+	}
+
+	public void setNomeArquivo(String nomeArquivo) {
+		this.nomeArquivo = nomeArquivo;
+	}
+
+	public void setIdAdquirente(BigInteger idAdquirente) {
+		this.idAdquirente = idAdquirente;
+	}
+
+	public void setCodigoFuncao(BigInteger codigoFuncao) {
+		this.codigoFuncao = codigoFuncao;
+	}	
+	
+	public void setStatusLiquidacao(String statusLiquidacao) {
+		this.statusLiquidacao = statusLiquidacao;
+	}
+
+	public void setDataArquivo(Date dataArquivo) {
+		this.dataArquivo = dataArquivo;
+	}
+
+	public void setNumeroUnicoLiquidacao(String numeroUnicoLiquidacao) {
+		this.numeroUnicoLiquidacao = numeroUnicoLiquidacao;
+	}
+	
+	public boolean isEmpty()
+	{		
+	
+		return nomeArquivo.isEmpty() && getIdAdquirente() == null && getCodigoFuncao() == null && statusLiquidacao.isEmpty() && dataArquivo == null && numeroUnicoLiquidacao.isEmpty();
+	}
+	
+}//end_class...

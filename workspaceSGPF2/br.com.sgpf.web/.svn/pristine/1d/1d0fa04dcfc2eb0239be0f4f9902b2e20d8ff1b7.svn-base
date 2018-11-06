@@ -1,0 +1,138 @@
+package br.com.banestes.car.bean;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Date;
+
+public class ConsultaOcorrenciaAgendaFiltroBean implements Serializable
+{
+	
+
+	private static final long serialVersionUID = -973788477044882191L;
+
+	private Date dataArquivo;
+	
+	private String nomeArquivo;
+	
+	private BigInteger idAdquirente;
+	
+	private BigInteger idBandeira;	
+	
+	private Date dataInicial;
+	
+	private Date dataFinal;
+		
+	private BigDecimal valorInicial;
+	
+	private BigDecimal valorFinal;
+	
+	private String cnpjCpfEstabelecimento;	
+	
+	private String contaEstabelcimento;
+	
+	private BigInteger idStatusProcessamento;
+
+	public boolean isEmpty()
+	{
+		if(	dataArquivo == null && nomeArquivo.isEmpty() && idAdquirente.compareTo(BigInteger.ZERO) == 0 && 
+			idBandeira.compareTo(BigInteger.ZERO) == 0 && cnpjCpfEstabelecimento.isEmpty() && 	
+			contaEstabelcimento.isEmpty() && dataInicial == null && dataFinal == null && 
+			valorInicial.compareTo(BigDecimal.ZERO) == 0 &&	valorFinal.compareTo(BigDecimal.ZERO) == 0 &&
+			idStatusProcessamento.compareTo(BigInteger.ZERO) == 0 )
+		{
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public BigInteger getIdAdquirente() {		
+		return idAdquirente == null || idAdquirente.compareTo(BigInteger.ZERO) == 0 ? null : idAdquirente ;
+	}
+
+	public void setIdAdquirente(BigInteger idAdquirente) {
+		this.idAdquirente = idAdquirente;
+	}
+
+	public BigInteger getIdBandeira() {		
+		return idBandeira == null || idBandeira.compareTo(BigInteger.ZERO) == 0 ? null : idBandeira ;
+	}
+
+	public void setIdBandeira(BigInteger idBandeira) {
+		this.idBandeira = idBandeira;
+	}
+
+	public String getCnpjCpfEstabelecimento() {
+		return cnpjCpfEstabelecimento;
+	}
+
+	public void setCnpjCpfEstabelecimento(String cnpjCpfEstabelecimento) {
+		this.cnpjCpfEstabelecimento = cnpjCpfEstabelecimento;
+	}
+
+	public Date getDataArquivo() {
+		return dataArquivo;
+	}
+
+	public void setDataArquivo(Date dataArquivo) {
+		this.dataArquivo = dataArquivo;
+	}
+
+	public String getNomeArquivo() {
+		return nomeArquivo;
+	}
+
+	public void setNomeArquivo(String nomeArquivo) {
+		this.nomeArquivo = nomeArquivo;
+	}
+
+	public String getContaEstabelcimento() {
+		return contaEstabelcimento;
+	}
+
+	public void setContaEstabelcimento(String contaEstabelcimento) {
+		this.contaEstabelcimento = contaEstabelcimento;
+	}
+
+	public Date getDataInicial() {
+		return dataInicial;
+	}
+
+	public void setDataInicial(Date dataInicial) {
+		this.dataInicial = dataInicial;
+	}
+
+	public Date getDataFinal() {
+		return dataFinal;
+	}
+
+	public void setDataFinal(Date dataFinal) {
+		this.dataFinal = dataFinal;
+	}
+
+	public BigDecimal getValorInicial() {
+		return valorInicial == null || valorInicial.compareTo(BigDecimal.ZERO) == 0 ? null : valorInicial;
+	}
+
+	public void setValorInicial(BigDecimal valorInicial) {
+		this.valorInicial = valorInicial;
+	}
+
+	public BigDecimal getValorFinal() {		
+		return valorFinal == null || valorFinal.compareTo(BigDecimal.ZERO) == 0 ? null : valorFinal;
+	}
+
+	public void setValorFinal(BigDecimal valorFinal) {
+		this.valorFinal = valorFinal;
+	}
+
+	public BigInteger getIdStatusProcessamento() {		
+		return idStatusProcessamento == null || idStatusProcessamento.compareTo(BigInteger.ZERO) == 0 ? null : idStatusProcessamento;
+	}
+
+	public void setIdStatusProcessamento(BigInteger idStatusProcessamento) {
+		this.idStatusProcessamento = idStatusProcessamento;
+	}	
+
+}

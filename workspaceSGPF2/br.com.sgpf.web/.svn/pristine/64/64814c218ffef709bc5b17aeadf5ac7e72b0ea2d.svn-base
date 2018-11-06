@@ -1,0 +1,85 @@
+package br.com.banestes.car.bean;	
+
+import java.util.List;
+
+import javax.enterprise.inject.Produces;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.omnifaces.cdi.ViewScoped;
+
+import br.com.banestes.car.core.bean.AbstractWebBean;
+import br.com.banestes.car.core.enumerators.OperacoesEnum;
+import br.com.banestes.car.core.enumerators.TipoArquivoEnum;
+import br.com.banestes.car.core.exportacao.ExportarDataModel;
+import br.com.banestes.car.core.paginacao.ParametroDataModel;
+import br.com.banestes.car.jpa.core.util.MessagesPropertiesUtil;
+import br.com.banestes.car.jpa.entity.AdquirenteEntity;
+import br.com.banestes.car.jpa.entity.BandeiraEntity;
+import br.com.banestes.car.jpa.model.repository.aplicacao.ArquivoRepository;
+import br.com.banestes.car.jpa.vo.ArquivoVO;
+
+@Named
+@ViewScoped
+public class ConsultaArquivoWebBean extends AbstractWebBean {
+	
+	private ExportarDataModel exportar;
+
+	@Named("arquivoDados")
+	@Produces
+	private ParametroDataModel<ArquivoVO> dados;
+	
+	private ConsultaArquivoFiltroBean consultaArquivofiltro;
+	
+	@Inject
+	private transient ArquivoRepository arquivoRepository;
+	
+	
+	private List<ArquivoVO> dadosArquivos;
+	private String tipoRelatorio;
+	
+	
+	
+	public void preRenderView() {
+		if (!FacesContext.getCurrentInstance().isPostback()) 
+		{
+			/*autoComplete = new AutoComplete(bandeiraRepository.getAllNames());			
+			bandeiraFiltro = new BandeiraFiltroBean();		*/
+			exportar = new ExportarDataModel();
+			this.setOperacao(OperacoesEnum.FILTRAGEM);			
+		}
+	}
+		
+	public String filtrar() 
+	{
+		tipoRelatorio = TipoArquivoEnum.PDF.valor;
+	
+		dadosArquivos = arquivoRepository
+						.findByParameters( 	consultaArquivofiltro.getDataArquivo(), consultaArquivofiltro.getIdAdquirente(),
+											consultaArquivofiltro.getIdFuncao(), consultaArquivofiltro.getIdStatusProcessamento(),
+											consultaArquivofiltro.getNomeArquivo());
+		
+		if(dadosArquivos.size() == 0)
+		{
+			adicionarMensagemErro(
+					MessagesPropertiesUtil
+							.getMessage("label.consulta.vazia"),
+					"");
+			setOperacao(OperacoesEnum.FILTRAGEM);			
+			return null;
+		}
+		
+		dados = new ParametroDataModel<ArquivoVO>(dadosArquivos);
+		dados.redefinir();
+		dados.ativar();
+		dados.getLista();
+		dados.iniciarPesquisa();
+		setOperacao(OperacoesEnum.LISTAGEM);
+				
+		
+		return null;
+	}
+	
+	
+}

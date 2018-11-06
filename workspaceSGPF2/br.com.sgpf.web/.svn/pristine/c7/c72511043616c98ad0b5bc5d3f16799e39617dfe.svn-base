@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2016-08-06T14:03:14 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="HistoricoEstabelecimento" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c85b0886-65f3-4489-96e0-6cf2bdb582c4">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="CAR"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<parameter name="nome" class="java.lang.String"/>
+	<parameter name="codigo" class="java.lang.String"/>
+	<parameter name="situacao" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+TB_BNA.BNA_CD_BANDEIRA,
+TB_BNA.BNA_NM_BANDEIRA,
+DECODE (TB_BNA.BNA_FL_STATUS, 'A', 'Ativo', 'Inativo' ) AS SITUACAO_BANDEIRA
+FROM 
+TB_BNA_BANDEIRA TB_BNA
+WHERE
+(($P{codigo} IS NOT NULL AND TB_BNA.BNA_CD_BANDEIRA = $P{codigo}) OR ($P{codigo} IS NULL))
+AND
+(($P{nome} IS NOT NULL AND  LOWER(TB_BNA.BNA_NM_BANDEIRA) LIKE '$P!{nome}%') OR ($P{nome} IS NULL))
+AND
+(($P{situacao} IS NOT NULL AND  TB_BNA.BNA_FL_STATUS = $P{situacao}) OR ($P{situacao} IS NULL))
+ORDER BY TB_BNA.BNA_CD_BANDEIRA]]>
+	</queryString>
+	<field name="BNA_CD_BANDEIRA" class="java.lang.String"/>
+	<field name="BNA_NM_BANDEIRA" class="java.lang.String"/>
+	<field name="SITUACAO_BANDEIRA" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="45" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="25" width="278" height="20" forecolor="#878787" backcolor="#969696" uuid="b72f539b-6f10-4fcb-90af-a241381ff3f5"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="278" y="25" width="281" height="20" forecolor="#878787" backcolor="#969696" uuid="32221f55-7c84-4418-b028-042012b93326"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="559" y="25" width="242" height="20" forecolor="#878787" backcolor="#969696" uuid="88c175a0-aafb-44e2-a96b-0ddcc7caaec7"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="5" y="25" width="263" height="20" uuid="c07858a1-bdc7-46b2-be1e-f56521577bac"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Código]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="281" y="25" width="191" height="20" uuid="f79f7536-b6bc-479e-896b-da1e2043259b"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="564" y="25" width="215" height="20" uuid="c6f2c820-c6ef-4e3c-9e5e-0c23a60cd8cb"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Situação]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="0" y="0" width="801" height="25" forecolor="#878787" backcolor="#969696" uuid="777af9e3-3b2b-49b6-8ee2-29e1e0e603d8"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="780" height="24" forecolor="#030000" uuid="9908a800-f278-4c47-8a7c-feed28880268"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="14" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Resultado Consulta - Bandeira]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="278" height="20" uuid="f38e80e4-219a-4329-baad-ee21f99e47ee"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="278" y="0" width="281" height="20" uuid="eb44c7ba-8ef5-4db0-99fe-9848c6cc2a2b"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="559" y="0" width="242" height="20" uuid="5956d54c-fc7a-4e33-ad7a-8717ebff81d1"/>
+			</rectangle>
+			<textField>
+				<reportElement x="5" y="0" width="273" height="20" uuid="dc01900d-c0a1-41b0-8335-152e94d438f9"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{BNA_CD_BANDEIRA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="282" y="0" width="215" height="20" uuid="2490fac0-2c03-4686-a5c0-0c9344afd557"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{BNA_NM_BANDEIRA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="564" y="0" width="237" height="20" uuid="b05823b1-a852-4181-af61-bbc79daa3ee6"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{SITUACAO_BANDEIRA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="53" splitType="Stretch">
+			<textField>
+				<reportElement x="702" y="10" width="100" height="30" uuid="a6feebfe-ba9b-4a87-8649-b0d2097c32a3"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA[String.format("Página %s",$V{PAGE_NUMBER})]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

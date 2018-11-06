@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:pdvix="http://pdvix.com/facelets">
+
+
+<f:metadata>
+	<f:event listener="#{vinculoCodigoOcorrenciaWebBean.preRenderView}"
+		type="preRenderView" />
+</f:metadata>
+
+<ui:composition template="/pages/templates/template-principal.xhtml">
+
+	<!-- Migalha de pão -->
+	<ui:define name="breadcrumb">
+
+		<div id="breadcrumb">
+			<ul class="crumbs">
+				<li class="first"><a href="#" style="z-index: 3"><span></span>#{messages['label.home']}</a></li>
+
+				<li><a href="#" style="z-index: 2">#{messages['label.menu.vinculo.codigo.ocorrencia']}</a></li>
+
+				<a4j:outputPanel
+					rendered="#{vinculoCodigoOcorrenciaWebBean.operacao == 'LISTAGEM' or vinculoCodigoOcorrenciaWebBean.operacao == 'VISUALIZACAO'}">
+					<li><a href="#" style="z-index: 1">#{messages['label.consultar']}</a></li>
+				</a4j:outputPanel>
+
+				<a4j:outputPanel
+					rendered="#{vinculoCodigoOcorrenciaWebBean.operacao == 'INSERCAO'}">
+					<li><a href="#" style="z-index: 1">#{messages['label.incluir']}</a></li>
+				</a4j:outputPanel>
+
+				<a4j:outputPanel
+					rendered="#{vinculoCodigoOcorrenciaWebBean.operacao == 'ALTERACAO'}">
+					<li><a href="#" style="z-index: 1">#{messages['label.editar']}</a></li>
+				</a4j:outputPanel>
+			</ul>
+		</div>
+
+	</ui:define>
+
+	<!-- Conteúdo -->
+	<ui:define name="conteudo">
+
+		<!-- Inicio do Formulário -->
+		<table width="100%" cellpadding="0" cellspacing="0">
+			<tr>
+				<td align="left" colspan="2"><span style="display: none;"><input
+						type="text" /></span>
+
+					<div id="conteudo">
+
+						<a4j:outputPanel id="pnlPanels">
+
+							<a4j:outputPanel
+								rendered="#{vinculoCodigoOcorrenciaWebBean.operacao == 'FILTRAGEM' || vinculoCodigoOcorrenciaWebBean.operacao == 'LISTAGEM'}">
+								<ui:include src="filtroVinculoCodigoOcorrencia.xhtml" />
+							</a4j:outputPanel>
+
+							<a4j:outputPanel
+								rendered="#{vinculoCodigoOcorrenciaWebBean.operacao == 'INSERCAO' || vinculoCodigoOcorrenciaWebBean.operacao == 'ALTERACAO'}">
+								<ui:include src="formVinculoCodigoOcorrencia.xhtml" />
+							</a4j:outputPanel>
+
+						</a4j:outputPanel>
+
+						<table width="100%">
+							<tr>
+								<td align="center"><h:commandButton id="btnConsultar"
+										value="#{messages['label.pesquisar']}"
+										action="#{vinculoCodigoOcorrenciaWebBean.filtrar()}"
+										rendered="#{vinculoCodigoOcorrenciaWebBean.operacao == 'FILTRAGEM' or vinculoCodigoOcorrenciaWebBean.operacao == 'LISTAGEM'}" />
+
+									<h:commandButton id="btnIncluir"
+										value="#{messages['label.incluir']}"
+										action="#{vinculoCodigoOcorrenciaWebBean.incluir()}"
+										rendered="#{vinculoCodigoOcorrenciaWebBean.operacao == 'LISTAGEM' or vinculoCodigoOcorrenciaWebBean.operacao == 'FILTRAGEM'}" />
+
+									<h:commandButton id="btnSalvar"
+										value="#{messages['label.Salvar']}"
+										action="#{vinculoCodigoOcorrenciaWebBean.salvar()}"
+										rendered="#{vinculoCodigoOcorrenciaWebBean.operacao == 'INSERCAO' or vinculoCodigoOcorrenciaWebBean.operacao == 'ALTERACAO'}" 
+										onclick="if (!confirma('#{vinculoCodigoOcorrenciaWebBean.operacao == 'INSERCAO'  ? messages['mensagem.confirmacao.operacao.insercao'] : messages['mensagem.confirmacao.operacao.alteracao']}',this)) return false;"/>
+
+									<h:commandButton id="btnLimpar"
+										value="#{messages['label.limpar']}"
+										action="#{vinculoCodigoOcorrenciaWebBean.limpar()}"
+										rendered="#{vinculoCodigoOcorrenciaWebBean.operacao == 'FILTRAGEM' or vinculoCodigoOcorrenciaWebBean.operacao == 'LISTAGEM'}"
+										onclick="$('[id$=codigoOcorrenciaBanestesFiltro]').prop('value',''); return true;" />
+
+									<h:commandButton id="btnCancelar"
+										value="#{messages['label.cancelar']}"
+										action="#{vinculoCodigoOcorrenciaWebBean.cancelar()}" immediate="true"
+										rendered="#{vinculoCodigoOcorrenciaWebBean.operacao == 'LISTAGEM' or vinculoCodigoOcorrenciaWebBean.operacao == 'INSERCAO' or vinculoCodigoOcorrenciaWebBean.operacao == 'ALTERACAO'}" />
+																	
+									<a4j:commandButton id="btnExportar" value="#{messages['label.exportar']}" 										 
+										rendered="#{vinculoCodigoOcorrenciaWebBean.operacao == 'LISTAGEM'}" >										      
+										<rich:componentControl target="popup" operation="show"/> 																	
+									</a4j:commandButton>
+								</td>
+							</tr>
+						</table>
+					</div> 
+					<h:panelGroup
+						rendered="#{vinculoCodigoOcorrenciaWebBean.operacao == 'LISTAGEM'}">
+						<div id="conteudo" style="margin-top: 5px">							
+							<a4j:outputPanel id="consulta">
+								<a4j:outputPanel
+									rendered="#{vinculoCodigoOcorrenciaWebBean.operacao == 'LISTAGEM'}">																		
+									<ui:include src="gridVinculoCodigoOcorrencia.xhtml" />
+								</a4j:outputPanel>
+							</a4j:outputPanel>
+
+						</div>
+					</h:panelGroup>
+				</td>
+			</tr>
+		</table>
+		<!-- Fim do Formulario -->
+
+	</ui:define>
+
+	<!-- Script -->
+	<ui:define name="script">
+
+		<script type="text/javascript">
+			jQuery(function() {
+				jQuery("[id$=sbcSelecionado]").oneCheckBoxSelected();
+			});
+		</script>
+
+		<a4j:outputPanel
+			rendered="#{vinculoCodigoOcorrenciaWebBean.operacao == 'ALTERACAO' or vinculoCodigoOcorrenciaWebBean.operacao == 'INSERCAO'}">
+
+			<script type="text/javascript">
+				var exitPage = new ExitPageConfirmer(
+						"#{messages['msg.alerta.alteracoes']}");
+				//exitPage.needToConfirm = true;
+
+				aplicaMascara();
+			</script>
+
+		</a4j:outputPanel>
+
+	</ui:define>
+
+</ui:composition>
+</html>

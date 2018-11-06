@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	 xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:pdvix="http://pdvix.com/facelets">
+	
+	<div id="titulo" align="left">
+		<h1 class="tituloForm">#{adquirenteWebBean.operacao == 'INSERCAO' ? messages['label.menu.adquirente.inclusao'] : messages['label.menu.adquirente.alteracao'] }</h1>				
+		<h1 class="itemForm">
+			#{messages['label.adquirente.dados']}			
+		</h1>
+	</div>
+	
+	
+	<script type="text/javascript">
+			function aplicaMascara() {
+				mascaraFormulario('formulario', 'CNPJAdquirenteForm', 'CNPJ');						
+			}				
+	</script>
+	
+	
+	<a4j:outputPanel id="pnlJS2" ajaxRendered="true">
+		<script type="text/javascript">
+			aplicaMascara();
+		</script>
+	</a4j:outputPanel>
+	
+
+<!-- Formulário -->
+	<div id="cad" align="center">	
+		<table border="0" width="60%" align="left">
+		
+			<tr>
+				<td width="20%">
+					<pdvix:label value="#{messages['filtro.codigo']}" />					
+					<h:inputText id="codigoAdquirenteForm"  value="#{adquirenteWebBean.adquirente.idAdquirente}" size="10" disabled="true"/>																		
+				</td>
+				
+				
+				<td width="40%">	      
+					<a4j:outputPanel>   
+						<table>
+							<tr>
+								<td>
+									<h:selectBooleanCheckbox id="ccbanestesForm" value="#{adquirenteWebBean.adquirente.contaCorrenteBanestes}"/>															
+								</td>
+								<td>
+									<h:outputLabel value="#{messages['label.adquirente.ccbanestes']}" style="width: 200px" for="ccbanestesForm"/>	  
+									  			
+	    							<f:ajax event="click" render="agencia_req conta_req"/>	
+								</td>							
+							</tr>					
+						</table>      	    					    				
+    				</a4j:outputPanel>
+				</td>				
+			</tr>			
+			
+			<tr>			
+				<td width="20%">																			  					 	
+					<pdvix:label value="#{messages['filtro.nome']}" required="true"/>
+					<h:inputText 	id="nomeAdquirenteForm" required="true" 
+									label="#{messages['label.adquirente.nome']}" value="#{adquirenteWebBean.adquirente.nome}" size="30"/>																
+				</td>
+							
+				<td width="10%">
+					<a4j:outputPanel id="agencia_req">  	
+						<pdvix:label 	value="#{messages['filtro.agencia']}" required="#{adquirenteWebBean.adquirente.contaCorrenteBanestes}"/>										
+						<h:inputText 	id="agenciaAdquirenteForm" label="#{messages['label.adquirente.agencia']}" 
+										value="#{adquirenteWebBean.adquirente.agencia}" size="15" 
+										required="#{adquirenteWebBean.adquirente.contaCorrenteBanestes}"
+										disabled="#{!adquirenteWebBean.adquirente.contaCorrenteBanestes}"
+										validatorMessage="#{messages['label.campo.agencia.numerico.invalido']}" maxlength="10">
+										<f:validateRegex pattern="([0-9]*)" />	
+																			
+						</h:inputText>
+					</a4j:outputPanel>																		
+				</td>
+				
+			</tr>					
+						
+			<tr>
+				<td width="10%">
+						<pdvix:label value="#{messages['filtro.CNPJ']}" required="true"/>					
+						<h:inputText id="CNPJAdquirenteForm" validator="validatorCnpj"  label="#{messages['label.adquirente.CNPJ']}" disabled="#{adquirenteWebBean.operacao == 'ALTERACAO'}" converter="cnpjConverter"  value="#{adquirenteWebBean.adquirente.CNPJ}" size="20" required="true"/>													
+				</td>
+					
+				<td width="10%">
+					<a4j:outputPanel id="conta_req">
+						<pdvix:label value="#{messages['filtro.conta']}" required="#{adquirenteWebBean.adquirente.contaCorrenteBanestes}" />
+										
+						<h:inputText 	id="contaAdquirenteForm" label="#{messages['label.adquirente.conta']}" value="#{adquirenteWebBean.adquirente.conta}" 
+										size="15" required="#{adquirenteWebBean.adquirente.contaCorrenteBanestes}"
+										disabled="#{!adquirenteWebBean.adquirente.contaCorrenteBanestes}" 
+										validatorMessage="#{messages['label.campo.conta.numerico.invalido']}" maxlength="10">									
+										<f:validateRegex pattern="([0-9]*)" />
+						</h:inputText>	
+					</a4j:outputPanel>																	
+				</td>						
+				
+			</tr>
+			
+			<tr>
+				<td width="100%">
+					<pdvix:label value="#{messages['filtro.descricao']}" />					
+					<h:inputText id="descricaoAdquirente"  value="#{adquirenteWebBean.adquirente.descricao}" size="50"/>																		
+				</td>								
+			</tr>
+																		
+		</table>		
+	</div>	
+
+</ui:composition>

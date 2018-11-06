@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a4j="http://richfaces.org/a4j" xmlns:rich="http://richfaces.org/rich"
+	xmlns:pdvix="http://pdvix.com/facelets">
+
+	
+	
+	<!-- Sub título -->
+	<h1 class="itemForm">
+		Resultado
+	</h1>
+	
+	
+	<!-- Formulário -->
+	<div id="cad" align="left">
+		<a4j:outputPanel id="funcaoDados">
+			<div align="left">
+				<table>
+					<a4j:outputPanel rendered="#{relatorioBean.tipoRelatorio == 'POR_SISTEMA'}">
+						<tr>
+							<td>
+								<h:outputLabel value="Data:"></h:outputLabel>
+							</td>					
+							<td>
+								<h:outputText value="#{relatorioBean.relatorioVO.data}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</td>
+						</tr>	
+					</a4j:outputPanel>
+					<tr>
+						<td>
+							<h:outputLabel value="Empresa:"></h:outputLabel>
+						</td>					
+						<td>
+							<h:outputText value="#{relatorioBean.relatorioVO.nomeEmpresa}"></h:outputText>
+						</td>
+					</tr>				
+					<tr>
+						<td>
+							<h:outputLabel value="Sistema:"></h:outputLabel>
+						</td>
+						<td>
+							<h:outputText value="#{relatorioBean.relatorioVO.siglaSistema} - #{relatorioBean.relatorioVO.sistema}"></h:outputText>
+						</td>
+					</tr>
+					<a4j:outputPanel rendered="#{relatorioBean.tipoRelatorio == 'POR_PROJETO'}">
+						<tr>
+							<td>
+								<h:outputLabel value="Projeto:"></h:outputLabel>
+							</td>
+							<td>
+								<h:outputText value="#{relatorioBean.relatorioVO.identificadoProjeto} - #{relatorioBean.relatorioVO.tituloProjeto}"></h:outputText>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<h:outputLabel value="Analista:"></h:outputLabel>
+							</td>
+							<td>
+								<h:outputText value="#{relatorioBean.relatorioVO.analista}"></h:outputText>
+							</td>
+						</tr>
+					</a4j:outputPanel>
+				</table>
+			</div>
+			<div id="cad" align="center">
+			
+				
+				
+							
+				<rich:dataTable id="listagem" value="#{relatorioBean.relatorioVO.linhas}"
+								var="linha" style="width: 100%;"
+								rowClasses="even-row, odd-row, active-row">
+		
+		
+					<f:facet name="header">
+						<rich:columnGroup>														
+							<rich:column>Nome</rich:column>
+							<rich:column>Elemento Contagem</rich:column>
+							<rich:column>Quantidade AR/TR</rich:column>
+							<rich:column>Quantidade TD</rich:column>
+							<rich:column>Complexidade</rich:column>
+							<rich:column>Valor PF</rich:column>				
+						</rich:columnGroup>
+					</f:facet>				
+		
+
+					
+					<rich:column style="width: 20%; text-align: center;">
+						<h:outputText
+							value="#{linha.nome}">
+						</h:outputText>
+					</rich:column>
+					<rich:column style="width: 20%; text-align: center;">
+						<h:outputText
+							value="#{linha.elementoContagem}">
+						</h:outputText>
+					</rich:column>									
+					<rich:column style="width: 20%; text-align: center;">
+						<h:outputText
+							value="#{linha.quantidadeTR}">
+						</h:outputText>
+					</rich:column>
+
+					<rich:column style="width: 20%; text-align: center;">
+						<h:outputText
+							value="#{linha.quantidadeTD}">
+						</h:outputText>
+					</rich:column>					
+					<rich:column style="width: 20%; text-align: center;">
+						<h:outputText
+							value="#{linha.complexidade}">
+						</h:outputText>
+					</rich:column>
+					<rich:column style="width: 20%; text-align: center;">
+						<h:outputText
+							value="#{linha.valorPF}">
+						</h:outputText>
+					</rich:column>
+					
+					<f:facet name="footer">
+						<rich:columnGroup>	
+						<rich:column>Total</rich:column>
+						<rich:column></rich:column>
+						<rich:column></rich:column>
+						<rich:column></rich:column>
+						<rich:column></rich:column>
+						<rich:column>
+							<h:outputText value="#{relatorioBean.relatorioVO.valorPF}"/>						
+						</rich:column>
+						</rich:columnGroup>
+					</f:facet>
+					
+				</rich:dataTable>				
+			</div>
+		</a4j:outputPanel>		
+	</div>				
+	
+</ui:composition>

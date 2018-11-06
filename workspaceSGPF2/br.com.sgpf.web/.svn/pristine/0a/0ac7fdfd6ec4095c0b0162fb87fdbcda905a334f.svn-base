@@ -1,0 +1,50 @@
+package br.com.banestes.car.bean;
+
+import java.io.Serializable;
+import java.math.BigInteger;
+
+public class BandeiraFiltroBean implements Serializable
+{
+	
+	private static final long serialVersionUID = -2633465124697449408L;
+
+	
+	public BandeiraFiltroBean ()
+	{
+		nome = "";
+		codigo = "";
+		status = "";
+	}
+	
+	private String nome;
+	
+	private String codigo;
+	
+	private String status;
+	
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	public String getCodigo() {
+		return codigo;
+	}
+
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+		
+
+}

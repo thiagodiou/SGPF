@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2016-06-09T20:16:31 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="HistoricoEstabelecimento" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c85b0886-65f3-4489-96e0-6cf2bdb582c4">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="CAR"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<parameter name="nome" class="java.lang.String"/>
+	<parameter name="codigo" class="java.lang.String"/>
+	<parameter name="situacao" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+TB_EVN.EVC_AG_AGENCIA_LANCAMENTO,
+TB_EVN.EVC_CD_EVENTO_CONTABIL,
+TB_EVN.EVC_DC_EVENTO_CONTABIL,
+TB_EVN.EVC_NM_EVENTO_CONTABIL,
+TB_EVN.EVC_FL_STATUS,
+TB_ADQ.ADQ_NM_ADQUIRENTE,
+TB_FUN.FUN_DC_FUNCAO,
+DECODE (TB_EVN.EVC_FL_STATUS, 'A', 'Ativo', 'Inativo' ) AS SITUACAO_EVENTO
+FROM 
+TB_EVC_EVENTO_CONTABIL TB_EVN, TB_ADQ_ADQUIRENTE TB_ADQ, TB_FUN_FUNCAO TB_FUN
+WHERE
+(($P{codigo} IS NOT NULL AND  TB_EVN.EVC_CD_EVENTO_CONTABIL = $P{codigo}) OR ($P{codigo} IS NULL))
+AND
+(($P{nome} IS NOT NULL AND  LOWER(TB_EVN.EVC_NM_EVENTO_CONTABIL) LIKE '$P!{nome}%') OR ($P{nome} IS NULL))
+AND
+(($P{situacao} IS NOT NULL AND  TB_EVN.EVC_FL_STATUS = $P{situacao}) OR ($P{situacao} IS NULL))
+AND TB_EVN.ADQ_ID_ADQUIRENTE =  TB_ADQ.ADQ_ID_ADQUIRENTE
+AND TB_EVN.FUN_ID_FUNCAO = TB_FUN.FUN_ID_FUNCAO
+ORDER BY TO_NUMBER(TB_EVN.EVC_CD_EVENTO_CONTABIL)]]>
+	</queryString>
+	<field name="EVC_AG_AGENCIA_LANCAMENTO" class="java.lang.String"/>
+	<field name="EVC_CD_EVENTO_CONTABIL" class="java.math.BigDecimal"/>
+	<field name="EVC_DC_EVENTO_CONTABIL" class="java.lang.String"/>
+	<field name="EVC_NM_EVENTO_CONTABIL" class="java.lang.String"/>
+	<field name="EVC_FL_STATUS" class="java.lang.String"/>
+	<field name="ADQ_NM_ADQUIRENTE" class="java.lang.String"/>
+	<field name="FUN_DC_FUNCAO" class="java.lang.String"/>
+	<field name="SITUACAO_EVENTO" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="45" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="25" width="140" height="20" forecolor="#878787" backcolor="#969696" uuid="b72f539b-6f10-4fcb-90af-a241381ff3f5"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="140" y="25" width="121" height="20" forecolor="#878787" backcolor="#969696" uuid="32221f55-7c84-4418-b028-042012b93326"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="261" y="25" width="149" height="20" forecolor="#878787" backcolor="#969696" uuid="88c175a0-aafb-44e2-a96b-0ddcc7caaec7"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="5" y="25" width="125" height="20" uuid="c07858a1-bdc7-46b2-be1e-f56521577bac"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Código Evento	Contábil]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="143" y="25" width="31" height="20" uuid="f79f7536-b6bc-479e-896b-da1e2043259b"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="266" y="25" width="124" height="20" uuid="c6f2c820-c6ef-4e3c-9e5e-0c23a60cd8cb"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Descrição]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="602" y="25" width="129" height="20" forecolor="#878787" backcolor="#969696" uuid="f228a0f3-f41d-4e58-b6da-efb22af40974"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="607" y="25" width="124" height="20" uuid="fb4b21be-5a4c-4b71-9222-2291115f8312"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Agência do Lançamento]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="410" y="25" width="121" height="20" forecolor="#878787" backcolor="#969696" uuid="8add524d-645a-4bc4-925d-366e4812fc24"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="415" y="25" width="116" height="20" uuid="20cb33ee-27fd-4b4f-ad21-c7f6642b8b86"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Adquirente]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="531" y="25" width="71" height="20" forecolor="#878787" backcolor="#969696" uuid="652d97e2-15b9-4b6d-9a59-2f8d3155c554"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="536" y="25" width="66" height="20" uuid="03732914-6a10-41dc-97a4-10d9eeace1e7"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Função]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="731" y="25" width="71" height="20" forecolor="#878787" backcolor="#969696" uuid="892da987-5a27-43d1-8242-e6a23c0245a0"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="736" y="25" width="66" height="20" uuid="cbe1229b-d598-45a4-ab0b-03e8cd367dfa"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Status]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="0" y="0" width="802" height="25" forecolor="#878787" backcolor="#969696" uuid="4d88154b-264b-4d6e-aa03-b42b51e7ee2c"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="780" height="24" forecolor="#030000" uuid="e6f48588-26ac-47c7-93f2-492779222d79"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="14" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Resultado Consulta - Evento Contábil]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="140" height="20" uuid="f38e80e4-219a-4329-baad-ee21f99e47ee"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="140" y="0" width="121" height="20" uuid="eb44c7ba-8ef5-4db0-99fe-9848c6cc2a2b"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="261" y="0" width="149" height="20" uuid="5956d54c-fc7a-4e33-ad7a-8717ebff81d1"/>
+			</rectangle>
+			<textField>
+				<reportElement x="5" y="0" width="135" height="20" uuid="dc01900d-c0a1-41b0-8335-152e94d438f9"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{EVC_CD_EVENTO_CONTABIL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="144" y="0" width="116" height="20" uuid="2490fac0-2c03-4686-a5c0-0c9344afd557"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{EVC_NM_EVENTO_CONTABIL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="266" y="0" width="144" height="20" uuid="b05823b1-a852-4181-af61-bbc79daa3ee6"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{EVC_DC_EVENTO_CONTABIL} == null ? "" : $F{EVC_DC_EVENTO_CONTABIL}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="602" y="0" width="129" height="20" uuid="16c6cbf5-3134-4d36-a98d-90203326962c"/>
+			</rectangle>
+			<textField>
+				<reportElement x="607" y="0" width="124" height="20" uuid="f89b173b-b76d-4b33-850b-896e608b5450"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{EVC_AG_AGENCIA_LANCAMENTO} == null ? "" : $F{EVC_AG_AGENCIA_LANCAMENTO}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="410" y="0" width="121" height="20" uuid="9ddb82eb-54d4-43ab-b8cf-2b640a0fad49"/>
+			</rectangle>
+			<textField>
+				<reportElement x="415" y="0" width="116" height="20" uuid="bcabb864-7040-43dd-8975-788fafce6a53"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ADQ_NM_ADQUIRENTE}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="531" y="0" width="71" height="20" uuid="d73d0a62-16cb-443c-acbe-cfba0ad0a491"/>
+			</rectangle>
+			<textField>
+				<reportElement x="536" y="0" width="66" height="20" uuid="bb1c26e1-5b82-4be5-aeab-e92eacff359a"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{FUN_DC_FUNCAO}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="731" y="0" width="71" height="20" uuid="1a520513-6860-4ec7-9d38-9ca0973792f3"/>
+			</rectangle>
+			<textField>
+				<reportElement x="736" y="0" width="66" height="20" uuid="c9725640-8c2a-4433-a825-53ff4ba1e0c1"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{SITUACAO_EVENTO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="42" splitType="Stretch">
+			<textField>
+				<reportElement x="702" y="10" width="100" height="30" uuid="a6feebfe-ba9b-4a87-8649-b0d2097c32a3"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA[String.format("Página %s",$V{PAGE_NUMBER})]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

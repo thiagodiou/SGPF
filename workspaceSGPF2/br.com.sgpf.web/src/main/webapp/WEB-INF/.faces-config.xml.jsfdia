@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PROCESS model-entity="JSFProcess">
+ <PROCESS-ITEM NAME="rules:*" PATH="*" SHAPE="32,17,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:*:0" NAME="item" PATH="*" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT ID="home::#pages#home#home.xhtml" NAME="output"
+    PATH="/pages/home/home.xhtml" TARGET="rules:#pages#home#home.xhtml"
+    TITLE="home" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT ID="error::#pages#error#500.xhtml"
+    NAME="output1" PATH="/pages/error/500.xhtml"
+    TARGET="rules:#pages#error#500.xhtml" TITLE="error" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT ID="analista::#pages#analista#analista.xhtml"
+    NAME="output2" PATH="/pages/analista/analista.xhtml"
+    TARGET="rules:#pages#analista#analista.xhtml" TITLE="analista" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT ID="empresa::#pages#empresa#empresa.xhtml"
+    NAME="output3" PATH="/pages/empresa/empresa.xhtml"
+    TARGET="rules:#pages#empresa#empresa.xhtml" TITLE="empresa" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT ID="sistema::#pages#sistema#sistema.xhtml"
+    NAME="output4" PATH="/pages/sistema/sistema.xhtml"
+    TARGET="rules:#pages#sistema#sistema.xhtml" TITLE="sistema" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT ID="projeto::#pages#projeto#projeto.xhtml"
+    NAME="output5" PATH="/pages/projeto/projeto.xhtml"
+    TARGET="rules:#pages#projeto#projeto.xhtml" TITLE="projeto" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="funcaoDados::#pages#funcaoDados#funcaoDados.xhtml"
+    NAME="output6" PATH="/pages/funcaoDados/funcaoDados.xhtml"
+    TARGET="rules:#pages#funcaoDados#funcaoDados.xhtml"
+    TITLE="funcaoDados" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="funcaoTransacao::#pages#funcaoTransacao#funcaoTransacao.xhtml"
+    NAME="output7" PATH="/pages/funcaoTransacao/funcaoTransacao.xhtml"
+    TARGET="rules:#pages#funcaoTransacao#funcaoTransacao.xhtml"
+    TITLE="funcaoTransacao" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT ID="fpa::#pages#relatorio#relatorio.xhtml"
+    NAME="output8" PATH="/pages/relatorio/relatorio.xhtml"
+    TARGET="rules:#pages#relatorio#relatorio.xhtml" TITLE="fpa" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT ID="login::#pages#login#login.xhtml"
+    NAME="output16" PATH="/pages/login/login.xhtml"
+    TARGET="rules:#pages#login#login.xhtml" TITLE="login" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules:#pages#error#500.xhtml"
+  PATH="/pages/error/500.xhtml" SHAPE="304,465,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules:#pages#home#home.xhtml"
+  PATH="/pages/home/home.xhtml" SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules:#pages#login#login.xhtml"
+  PATH="/pages/login/login.xhtml" SHAPE="304,1473,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules:#pages#analista#analista.xhtml"
+  PATH="/pages/analista/analista.xhtml" SHAPE="288,241,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules:#pages#empresa#empresa.xhtml"
+  PATH="/pages/empresa/empresa.xhtml" SHAPE="304,305,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules:#pages#sistema#sistema.xhtml"
+  PATH="/pages/sistema/sistema.xhtml" SHAPE="304,529,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules:#pages#projeto#projeto.xhtml"
+  PATH="/pages/projeto/projeto.xhtml" SHAPE="304,337,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules:#pages#funcaoDados#funcaoDados.xhtml"
+  PATH="/pages/funcaoDados/funcaoDados.xhtml" SHAPE="304,369,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules:#pages#funcaoTransacao#funcaoTransacao.xhtml"
+  PATH="/pages/funcaoTransacao/funcaoTransacao.xhtml"
+  SHAPE="304,401,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules:#pages#relatorio#relatorio.xhtml"
+  PATH="/pages/relatorio/relatorio.xhtml" SHAPE="304,433,0,0" model-entity="JSFProcessGroup"/>
+</PROCESS>

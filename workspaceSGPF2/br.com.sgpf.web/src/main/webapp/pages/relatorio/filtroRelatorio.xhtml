@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:pdvix="http://pdvix.com/facelets">
+
+	<div id="titulo" align="left">
+		<h1 class="tituloForm">#{messages['label.menu.sistema']}</h1>				
+		<h1 class="itemForm">
+			#{messages['label.filtro']}			
+		</h1>
+	</div>
+	
+	<script type="text/javascript">
+			function aplicaMascara() {
+				mascaraFormulario('formulario', 'CNPJAdquirenteFiltro', 'CNPJ');						
+			}				
+	</script>
+	
+	<a4j:outputPanel id="pnlJS2" ajaxRendered="true">
+		<script type="text/javascript">
+			
+		</script>
+	</a4j:outputPanel>
+	
+
+<!-- Formulário -->
+	<div id="form" align="center">
+		<a4j:region>	
+		<table border="0" width="100%" align="left">
+		
+			<tr>
+				<td>
+					<h:outputLabel value="Tipo Relatório: " />
+				</td>
+				
+				<td width="90%">
+					<h:selectOneMenu id="idTipoRelatorio"  value="#{relatorioBean.tipoRelatorio}">
+					<f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+					<f:selectItems value="#{relatorioBean.tipoRelorios}" var="tp" itemValue="#{tp}" itemLabel="#{tp.descricao}"/>
+					<a4j:ajax event="valueChange"  oncomplete="atualizarCampos()"/>
+				
+				</h:selectOneMenu>
+            	</td>
+			</tr>
+		</table>
+		<table border="0" width="100%" align="left">
+			<a4j:outputPanel id="panelProjeto">
+			<tr id="projeto">
+				<td>
+					<h:outputLabel value="Projeto: " />
+				</td>
+				<td width="90%">					
+            	
+  
+					<h:selectOneMenu id="idComboProjetoFiltro"   converter="comboConverter" value="#{relatorioBean.projetoSelecionado}">
+						<f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+						<f:selectItems value="#{relatorioBean.projetos}" var="projeto" itemValue="#{projeto}" itemLabel="#{projeto.identificador}"/>
+					</h:selectOneMenu>				
+            	</td>            	            				
+			</tr>	
+		
+			</a4j:outputPanel>
+		</table>
+		<table border="0" width="65%" align="left">
+			<a4j:outputPanel id="panelSistema">						
+				<tr id="sistema">
+					 <td>
+	            	    <h:outputLabel value="Empresa: " />
+	            	       
+	            	 </td>
+	            	<td>         	    
+	            	    <h:selectOneMenu id="idComboEmpresaFiltro"  converter="comboConverter" value="#{relatorioBean.empresaSelecionada}">
+							<f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/> 
+							<f:selectItems value="#{relatorioBean.empresas}" var="empresa" itemValue="#{empresa}" itemLabel="#{empresa.nomeFantasia}"/>
+							<a4j:ajax event="valueChange" execute="idComboSistemaFiltro" render="idComboSistemaFiltro"/>
+						</h:selectOneMenu>
+	            	    
+	            	 </td>
+	        		
+	           		<td>
+	            	    <h:outputLabel value="Sistema: " />
+	  				</td>
+	  				<td>
+						  <h:selectOneMenu id="idComboSistemaFiltro"  converter="comboConverter" value="#{relatorioBean.sistemaSelecionado}">
+							<f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+							<f:selectItems value="#{relatorioBean.empresaSelecionada.sistemas}" var="sistema" itemValue="#{sistema}" itemLabel="#{sistema.sigla}"/>
+						</h:selectOneMenu>
+					</td>
+				</tr>			
+			</a4j:outputPanel>																																		
+		</table>		
+		</a4j:region>	
+	</div>		
+	<script>
+	$("[id$=sistema]").hide();
+	$("[id$=projeto]").hide();
+		function atualizarCampos(){
+			var tipoR = $("[id$=idTipoRelatorio]").val();
+			if(tipoR == 'POR_PROJETO'){
+				$("[id$=projeto]").show();
+				$("[id$=sistema]").hide();
+			}else{
+				$("[id$=projeto]").hide();
+				$("[id$=sistema]").show();
+			}
+		}
+	</script>
+</ui:composition>

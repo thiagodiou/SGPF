@@ -1,0 +1,76 @@
+package br.com.banestes.car.core.converter;
+
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.convert.FacesConverter;
+
+/**
+* 
+* @author
+* 
+*/
+@FacesConverter(value="bigDecimalConverter")   
+public class BigDecimalConverter implements javax.faces.convert.Converter {
+
+/*
+* (non-Javadoc)
+* 
+* @see
+* javax.faces.convert.Converter#getAsObject(javax.faces.context.FacesContext
+* , javax.faces.component.UIComponent, java.lang.String)
+*/
+@Override
+public Object getAsObject(FacesContext ctx, UIComponent comp, String value) {
+
+	if (value == null || "".equals(value))
+		
+	return null;
+	
+	value = value.replaceAll("\\.", "");
+	
+	value = value.replaceAll(",", "\\.");
+	
+	BigDecimal result = new BigDecimal(value);
+	
+	return result;
+
+}
+
+/*
+* (non-Javadoc)
+* 
+* @see
+* javax.faces.convert.Converter#getAsString(javax.faces.context.FacesContext
+* , javax.faces.component.UIComponent, java.lang.Object)
+*/
+@Override
+public String getAsString(FacesContext ctx, UIComponent comp, Object value) 
+{
+	
+	BigDecimal valor = (BigDecimal) value;
+	
+	int precision = ((valor.scale() % 2) == 0 ? valor.scale() : valor	.scale() + 1);
+	
+	precision = ((precision % 2) == 0 ? precision : precision + 1);
+	
+	String pattern = String.format("#,##0.%0Ed".replace("E", (precision > 0 ? String.valueOf(precision) : "2")), 0);
+	
+	final DecimalFormat df = (DecimalFormat) java.text.DecimalFormat.getNumberInstance(ctx.getViewRoot().getLocale());
+	
+	df.setParseBigDecimal(true);
+	
+	df.applyPattern(pattern);
+	
+	df.setMinimumFractionDigits(2);
+	
+	df.setMaximumFractionDigits(9);
+	
+	final String strValue = df.format(valor.doubleValue());
+	
+	return strValue;
+}
+
+}

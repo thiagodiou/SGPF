@@ -1,0 +1,352 @@
+versao=${project.version}
+label.agencia.dataAtualizacaoSenha=Data \u00DAltima Atualiza\u00E7\u00E3o Senha
+app.title=..\:\: Car - Atencipa\u00E7\u00E3o de Receb\u00EDveis \:\:..
+app.nome=CAR
+app.rodape=
+
+#Mensagens de erro
+javax.faces.component.UIInput.CONVERSION=Valor informado no campo {0} est\u00E1 incorreto.
+javax.faces.component.UIInput.REQUIRED={0} \u00E9 obrigat\u00F3rio.
+javax.faces.component.UISelectOne.INVALID=Valor incorreto para o campo {0}.
+javax.faces.converter.NumberConverter.NUMBER=O campo {2} n\u00E3o \ufda00E9 um valor num\u00E9rico v\u00E1lido.
+javax.faces.converter.DateTimeConverter.DATE=O Valor {0} \u00E9 uma data inv\u00E1lida.
+javax.faces.converter.DateTimeConverter.TIME=O Valor {0} \u00E9 uma Hora inv\u00E1lida.
+javax.faces.converter.IntegerConverter.INTEGER=O campo {2} deve ser um valor num\u00E9rico v\u00E1lido.
+javax.faces.converter.IntegerConverter.FLOAT=O campo {2} deve ser um valor num\u00E9rico v\u00E1lido.
+javax.faces.validator.DoubleRangeValidator.MAXIMUM=O campo {1} deve ser menor ou igual \u00E0 {0}.
+javax.faces.validator.DoubleRangeValidator.MINIMUM=O campo {1} deve ser maior ou igual \u00E0 {0}.
+javax.faces.validator.DoubleRangeValidator.NOT_IN_RANGE=O campo {2} deve estar entre {0} e {1}.
+javax.faces.validator.DoubleRangeValidator.TYPE=o valor n\u00E3o \u00E9 do tipo correto.
+javax.faces.validator.LengthValidator.MAXIMUM=O campo {1} deve possuir no m\u00E1ximo {0} caracteres.
+javax.faces.validator.LengthValidator.MINIMUM=O campo {1} deve possuir no m\u00EDnimo {0} caracteres.
+javax.faces.validator.LongRangeValidator.MAXIMUM=O campo {1} valor deve ser menor ou igual \u00E0 {0}.
+javax.faces.validator.LongRangeValidator.MINIMUM=O campo {1} deve ser maior ou igual \u00E0 {0}.
+javax.faces.validator.LongRangeValidator.NOT_IN_RANGE=O campo {2} deve estar entre {0} e {1}.
+
+
+
+#Mensagem de erro
+label.erro.apenas.numeros = O campo deve conter no máximo 3 dígitos. 
+label.historico.cc.combo.adquirente = O combo Adquirente deve ser selecionado.
+label.registro.inativo = O registro encontra-se inativo.
+label.consulta.vazia = Nenhum registro encontrado para os parâmetros fornecidos.
+label.exportar.campos.vazios = O tipo e nome do arquivo são obrigatórios. 
+label.campo.codigo.numerico.invalido = O campo Código deve ser um valor numérico válido.
+label.campo.codigo.processo.numerico.invalido = O campo Código Processo de Liquidação deve ser um valor numérico válido.
+label.campo.conta.numerico.invalido = O campo Conta deve ser um valor numérico válido.
+label.campo.agencia.numerico.invalido = O campo Agência deve ser um valor numérico válido.
+label.bandeira.processo.vazio = Favor selecionar ao menos uma bandeira.
+label.campo.agencia.lancamento.numerico.invalido = O campo Agência Lançamento deve ser um valor numérico válido
+
+
+#Mensagem de Confirmação
+mensagem.confirmacao.operacao = Confirmar operação?
+mensagem.confirmacao.operacao.insercao=Confirma a inclusão?
+mensagem.confirmacao.operacao.alteracao=Confirma a alteração?
+mensagem.confirmacao.operacao.delecao=Confirma a exclusão?
+mensage.sucesso.alteracao = Alteração realizada com sucesso.
+mensage.sucesso.exclusao = Exclusão realizada com sucesso.
+mensage.sucesso.insercao = Inclusão realizada com sucesso.
+mensagem.erro.bandeira.codigo.generico = Exclusão não permitida. Registro Genérico.
+
+#Arquivos
+label.exportado.sucesso = Arquivo exportado com suscesso para diretório padrão.
+label.exportado.erro = Erro ao exportar arquivo.
+label.tipo.arquivo.PDF = PDF
+label.tipo.arquivo.CSV = CSV
+label.nome.arquivo.selecione = Informe o nome do arquivo:
+label.tipo.arquivo.selecione = Selecione o Tipo do Aquivo
+label.arquivo.destino = O arquivo ser\u00E1 exportado para\: C\:\\Downloads
+#Labels
+
+label.sistema=CAR
+label.entrar=Login
+label.fechar=Fechar
+label.voltar=Voltar
+label.cadastro=Cadastros
+label.consultas=Consultas
+label.sair=Sair
+label.salvar=Salvar
+label.abandonar=Abandonar
+label.login=Login
+label.senha=Senha
+label.consultar=Consultar
+label.listar= Listar
+label.Salvar=Salvar
+label.exibir=Exibir
+label.inserir=Inserir
+label.inserir.novaLinha=Inserir Nova Linha
+label.incluir=Incluir
+label.editar=Editar
+label.pesquisar=Pesquisar
+label.filtro=Filtro
+filtro.tipo.ocorrencia = Tipo de Ocorrência
+filtro.tipo.ocorrencia.sucesso = Sucesso
+filtro.tipo.ocorrencia.erro = Erro
+label.cancelar=Cancelar
+label.exportar=Exportar
+label.gerar=Gerar
+label.home=Home
+label.selecione=Selecione
+label.selecione.opcao=[Selecione]
+label.campo=Campo
+label.limpar = Limpar
+label.app.name=CAR
+label.agencia=Ag\u00EAncia
+label.tabela=Tabela
+label.dadosServico=Dados do Serviço
+label.sim=Sim
+label.nao=Não
+label.ativo=Ativo
+label.inativo=Inativo
+label.alterar=Alterar
+label.novo=Novo
+
+label.Banestes=Banestes
+label.excluir=Excluir
+
+
+#tooltip
+tip.excluir = Excluir
+tip.alterar = Alterar
+tip.visualizar = Visualizar
+tip.detalhar = Detalhar
+
+msg.alerta.alteracoes=Aten\u00E7\u00E3o, qualquer altera\u00E7\u00E3o realizada ser\u00E1 perdida, Confirma?
+msg.erro.campo.invalido=\u00E9 inv\u00E1lido.
+msg.erro.usuario.acesso.negado=O usu\u00E1rio n\u00E3o possui acesso.
+msg.erro.conversor=Campo {0} \u00E9 inv\u00E1lido.
+msg.erro.generico=Erro inesperado, tente novamente.
+msg.erro.sessao.expirada=Sua sess\u00E3o expirou, tente novamente.
+msg.erro.lock.otimista=Outro usu\u00E1rio alterou o mesmo registro, tente novamente.
+msg.erro.registro.nao.encotrado=Registro n\u00E3o encontrado.
+msg.erro.registro.duplicado=Registro duplicado.
+msg.erro.registro.duplicado.campos=Registro duplicado. Existe(m) Código Evento Contábil já cadastrado(s).
+msg.erro.registro.duplicado.campos.adq.funcao=Registro duplicado. Adquirente e Função já cadastrados.
+label.menu.item.agencias=Ag\u00EAncias
+label.menu.item.tabelas=Tabelas
+label.disponivel=Dispon\u00EDvel
+label.indisponivel=Indispon\u00EDvel
+label.edu15.MSG001=Altera\u00E7\u00F5es realizadas com sucesso.
+label.retorno.alteracao.sucesso=Registro alterado com sucesso.
+
+#Menu
+label.menu.consulta.arquivo = Consultar Arquivos
+label.menu.consulta.liquidacao = Consultar Liquidação
+label.menu.consulta.liquidacao.resumo = Consultar Resumo de Liquidação
+label.menu.consulta.liquidacao.recusada = Consultar Liquidações Recusadas - CIP
+label.menu.bandeira = Bandeira
+label.menu.adquirente = Adquirente
+label.menu.historico.cc = Histórico de Conta Corrente
+label.menu.evento.contabil = Evento Contábil
+label.menu.evento.contabil.inclusao = Inclusão Evento Contábil
+label.menu.evento.contabil.alteracao =  Alteração Evento Contábil
+label.menu.parametro = Parâmetro Geral
+label.menu.bandeira.inclusao = Inclusão Bandeira
+label.menu.bandeira.alteracao = Alteração Bandeira
+label.menu.adquirente.inclusao = Inclusão Adquirente
+label.menu.adquirente.alteracao = Alteração Adquirente
+label.menu.historico.cc.inclusao = Inclusão Histórico de Conta Corrente
+label.menu.historico.cc.alteracao = Alteração Histórico de Conta Corrente
+label.menu.processo.liquidacao = Processo de Liquidação
+label.menu.ocorrencia = Código de Ocorrência - CIP
+label.menu.ocorrencia.inclusao = Inclusão Código de Ocorrência
+label.menu.ocorrencia.alteracao = Alteração Código de Ocorrência
+label.menu.processo.liquidacao.inclusao = Incluir Processo de Liquidação
+label.menu.processo.liquidacao.alteracao = Alterar Processo de Liquidação
+label.menu.processo.liquidacao.consulta = Processo de Liquidação
+label.menu.vinculo.codigo.ocorrencia = Vincular Código de Ocorrência
+label.menu.vinculo.consultar = Vínculo Código de Ocorrência - CIP x Banestes
+label.menu.vinculo.incluir =Incluir Vínculo Código de Ocorrência - CIP x Banestes
+label.menu.vinculo.alterar =Alterar Vínculo Código de Ocorrência - CIP x Banestes
+
+
+#SubMenu
+
+#Title
+label.title.listagem = Listagem
+label.title.resultado = Resultado da Consulta
+
+
+#Filtro
+filtro.nome = Nome
+filtro.codigo = Código
+filtro.codigo.ocorrencia = Código de Ocorrência
+filtro.status = Status
+filtro.status.ativo = Ativo
+filtro.status.inativo = Inativo
+filtro.CNPJ = CNPJ
+filtro.descricao = Descrição
+filtro.ccbanestes = Conta Corrente Banestes?
+filtro.agencia = Agência
+filtro.conta = Conta
+filtro.agencia.lancamento = Agência do Lançamento
+
+
+#Parametro
+label.aba.arquivos.cip=Parâmetros Arquivos CIP
+label.aba.contabilidade = Parâmetros Contabilidade
+label.aba.geral = Parâmetros Gerais
+label.parametro.limite.consulta =Limite de Campos do Tipo "Período" (dias)
+label.parametro.limite.paginacao = Limite de Registros por Página
+label.parametro.email = E-mail Alerta (separar e-mails por ';')
+label.parametro.expurgo = Expurgo - Intervalo de Tempo (dias)
+label.parametro.horario.ascg022 = Grade Horária Processamento (ASCG022)
+label.parametro.horario.inicio.ascg022 = Hora Início - horário início de recebimento de arquivos da CIP com liquidações de crédito
+label.parametro.horario.fim.ascg022 = Hora Fim - horário fim de recebimento de arquivos da CIP com liquidações de crédito
+label.parametro.horario.ascg023 = Grade Horária Processamento (ASCG023)
+label.parametro.horario.inicio.ascg023 = Hora Início - horário início de envio de arquivos pelo Banestes à CIP com liquidações de crédito
+label.parametro.horario.fim.ascg023 = Hora Fim - horário fim de envio de arquivos pelo Banestes à CIP com liquidações de crédito
+label.parametro.horario.ascg024 = Grade Horária Processamento (ASCG024)
+label.parametro.horario.inicio.ascg024 = Hora Início - horário início de recebimento de arquivos da CIP com liquidações de débito
+label.parametro.horario.fim.ascg024 = Hora Fim - horário fim de recebimento de arquivos da CIP com liquidações de débito
+label.parametro.horario.ascg025 = Grade Horária Processamento (ASCG025)
+label.parametro.horario.inicio.ascg025 = Hora Início - horário início de envio de arquivos pelo Banestes à CIP com liquidações de débito
+label.parametro.horario.fim.ascg025 = Hora Fim - horário fim de envio de arquivos pelo Banestes à CIP com liquidações de débito
+label.parametro.diretorio = Diretórios
+label.parametro.diretorio.ascg022 = Diretório arquivo (ASCG022)
+label.parametro.diretorio.ascg023 = Diretório arquivo (ASCG023)
+label.parametro.diretorio.ascg024 = Diretório arquivo (ASCG024)
+label.parametro.diretorio.ascg025 = Diretório arquivo (ASCG025)
+label.parametro.diretorio.contabilidade = Diretório Arquivo de Contabilidade
+label.parametro.remessa.ano = Ano da Remessa
+label.parametro.remessa.numero = Número da Remessa
+
+#Bandeira
+label.bandeira.codigo = Código
+label.bandeira.nome = Nome 
+label.bandeira.status = Status 
+label.bandeira.dados = Dados Bandeira
+
+#Adquirente
+label.adquirente.codigo = Código
+label.adquirente.adquirente = Adquirente
+label.adquirente.nome = Nome
+label.adquirente.nome.razao = Nome/Razão Social
+label.adquirente.CNPJ = CNPJ
+label.adquirente.descricao = Descrição
+label.adquirente.ccbanestes = Conta Corrente Banestes?
+label.adquirente.agencia = Agência
+label.adquirente.conta = Conta
+label.adquirente.dados = Dados Adquirente
+
+
+#Historico Conta Corrente
+label.historico.cc.codigo = Código (Histórico de Conta Corrente)
+label.historico.cc.descricao = Descrição
+label.historico.cc.finalidade = Finalidade (Adquirente ou Estabelecimento Comercial)
+label.historico.cc.finalidade.adquirente = Adquirente
+label.historico.cc.finalidade.estabelecimento = Estabelecimento Comercial
+label.historico.cc.finalidade.todos = Todos
+label.historico.cc.adquirente = Adquirente
+label.historico.cc.dados = Dados Histórico de Conta Corrente
+mensagem.erro.historico.nao.encontrado = Histórico de Conta Corrente não encontrado.
+
+#Evento Contabil
+label.evento.contabil.codigo = Código Evento Contábil
+label.evento.contabil.nome = Nome Evento Contábil
+label.evento.contabil.descricao = Descrição
+label.evento.contabil.agencia.lancamento = Agência do Lançamento
+label.evento.contabil.adquirente = Adquirente
+label.evento.contabil.funcao = Função
+label.evento.contabil.status = Status
+label.evento.contabil.dados = Dados Evento Contábil
+
+
+#Ocorrencia
+label.ocorrencia.codigo = Código de Ocorrência - CIP
+label.ocorrencia.descricao = Descrição
+label.ocorrencia.status = Status
+
+#Processo Liquidacao
+label.processo.liquidacao.dominio = Domínio
+label.processo.liquidacao.filtro.codigo = Código Processo de Liquidação
+label.processo.liquidacao.filtro.descricao = Descrição Processo  de Liquidação
+label.processo.liquidacao.grid.codigo = Código
+label.processo.liquidacao.grid.descricao = Descrição
+label.processo.liquidacao.grid.liquidacao.adquirente = Liquidação Adquirente
+label.processo.liquidacao.grid.historico.cc= Histórico CC
+label.processo.liquidacao.grid.credito.estabelecimento= Crédito Estabelecimento
+label.processo.liquidacao.form.descricao = Descrição Processo Liquidação
+label.processo.liquidacao.form.historico.estabelecimento.credito = Crédito Estabelecimento - Histórico Conta Corrente
+label.processo.liquidacao.form.liquidacao.adquirente = Liquidação Adquirente
+label.processo.liquidacao.form.str = STR
+label.processo.liquidacao.form.cc = Conta Corrente
+label.processo.liquidacao.form.eventoContail = Código Evento Contábil
+label.processo.liquidacao.form.historico.cc = Código Histórico Conta Corrente
+label.processo.liquidacao.title.dados =Dados do Processo de Liquidação
+
+#Vinculos codigos de ocorrencia
+label.vinculos.ocorrencia.sistema.banestes = Sistema - Banestes
+label.vinculos.ocorrencia.codigo.banestes = Código de Ocorrência - Banestes
+label.vinculos.ocorrencia.codigo.banestes.filtro = Código de Ocorrência - Banestes
+label.vinculos.ocorrencia.descricao.cip = Descrição de Ocorrência - CIP
+label.vinculos.ocorrencia.codigo.cip = Código de Ocorrência - CIP
+label.vinculos.ocorrencia.status = Status
+label.vinculos.dados = Dados do Código de Ocorrência
+label.ocorrencia.tipo = Tipo de Ocorrência 
+label.ocorrencia.dados = Dados Ocorrência
+
+#Consulta Arquivos
+label.consulta.data = Data
+label.consulta.arquivo.status.processamento = Status de Processamento
+label.consulta.arquivo.nome = Nome do Arquivo
+label.consulta.arquivo.data = Data do Arquivo
+label.consulta.arquivo.sequencial = Sequencial
+label.consulta.arquivo.origem = Origem
+label.consulta.arquivo.adquirente = Adquirente
+label.consulta.arquivo.funcao = Função
+label.consulta.arquivo.recusas = Rejeições/Recusas
+label.consulta.arquivo.erro.codigo = Código de Erro
+label.consulta.arquivo.erro.descricao = Descrição do Erro
+
+
+#Consulta Liquidacoes
+label.consulta.liquidacao.estabelecimento.nome = Nome Estabelecimento Comercial
+label.consulta.liquidacao.estabelecimento.conta = Conta Estabelecimento Comercial
+label.consulta.liquidacao.numero.unico = N° Único Liquidação
+label.consulta.liquidacao.periodo = Período (Início - Fim)
+label.consulta.liquidacao.valor = Valor
+label.consulta.liquidacao.cpf.cnpj= CPF/CNPJ
+label.consulta.liquidacao.status = Status Liquidação
+label.consulta.liquidacao.status.liquidado = Liquidado
+label.consulta.liquidacao.status.agendado = Agendado
+label.consulta.liquidacao.status.rejeitado = Rejeitado
+label.consulta.liquidacao.numero = N° Único Liquidação
+label.consulta.liquidacao.data = Data Liquidação
+label.consulta.liquidacao.ocorrencia.banestes.descricao = Descrição Código Ocorrência - Banestes
+label.consulta.liquidacao.estabelecimento.cpf.cnpj= CPF/CNPJ E.C
+label.consulta.liquidacao.estabelecimento.agencia = Agência E.C
+label.consulta.liquidacao.estabelecimento.conta = Conta E.C
+label.consulta.liquidacao.total.quantidade = Total de Registros
+label.consulta.liquidacao.total.valor = Valor Acumulado
+label.consulta.data.fim.maior.inicio = Data Fim deve ser maior que a Data Início
+label.consulta.data.incompleta = Favor informar "Data Início" e "Data Fim"
+label.consulta.liquidacoes.efetivadas = LIQUIDAÇÕES EFETIVADAS
+label.consulta.liquidacoes.rejeitadas = LIQUIDAÇÕES REJEITADAS
+label.consulta.liquidacoes.total= TOTAL
+label.consuta.liquidacoes.quantidade = Quantidade
+label.consuta.liquidacoes.total.m= Total
+
+
+#Consulta Liquidacoes Recusadas
+label.consulta.liq.recusada = Consultar Liquidações Recusadas - CIP
+label.consulta.liq.recusada.arquivo.nome = Nome do Arquivo
+label.consulta.liq.recusada.ocorrencia.descricao.banestes = Descrição da Ocorrência - Banestes
+
+
+#Consulta Agenda
+label.consulta.agenda = Consultar Agenda de Recebíveis
+label.consulta.agenda.valor.faixa = Faixa de Valor (Menor - Maior)
+label.consulta.agenda.centralizadora.cnpj = CNPJ/CPF - Centralizadora
+label.consulta.agenda.centralizadora.cnpj.radical = Radical CNPJ?
+label.consulta.agenda.centralizadora.agencia = Agência - Centralizadora
+label.consulta.agenda.centralizadora.cc = Conta Corrente - Centralizadora
+label.consulta.agenda.estabelecimento.nome.ec = Nome E.C
+label.consulta.agenda.estabelecimento.cnpj = CNPJ/CPF - E.C
+label.consulta.agenda.estabelecimento.cc = Conta Corrente E.C
+label.consulta.agenda.data.prevista = Data Prevista
+label.consulta.agenda.valor.previsto = Valor Previsto
+
+#Consulta Ocorrencia Agenda
+label.consulta.ocorrencia.agenda = Consultar Ocorrência de Arquivo de Agenda ASCG021

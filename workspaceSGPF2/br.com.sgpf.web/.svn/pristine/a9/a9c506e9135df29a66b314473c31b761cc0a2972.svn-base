@@ -1,0 +1,51 @@
+package br.com.banestes.car.core.converter;
+
+import java.math.BigInteger;
+import java.util.Date;
+
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.convert.FacesConverter;
+
+import br.com.banestes.car.jpa.core.util.DateUtil;
+
+/**
+* 
+* @author
+* 
+*/
+@FacesConverter(value="dataConverter")   
+public class DataConverter implements javax.faces.convert.Converter {
+
+
+	@Override
+	public String getAsString(FacesContext ctx, UIComponent comp, Object value) 
+	{
+		String dataString = null;
+		
+		if(value instanceof Date)
+		{
+			dataString = DateUtil.dateToString((Date)value, "dd/MM/yyyy");
+		}
+		else
+		{
+			BigInteger data = (BigInteger ) value;
+			
+			Date date = DateUtil.stringToDate(data.toString(),"yyyyMMdd");
+			
+			dataString = DateUtil.dateToString(date,"dd/MM/yyyy");
+		}
+		
+		
+		return dataString;
+		
+		
+	}
+
+	@Override
+	public Object getAsObject(FacesContext arg0, UIComponent arg1, String arg2) {
+	
+		return null;
+	}
+
+}

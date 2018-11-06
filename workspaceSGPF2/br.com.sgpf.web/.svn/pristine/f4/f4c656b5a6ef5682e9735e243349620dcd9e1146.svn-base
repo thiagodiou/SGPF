@@ -1,0 +1,33 @@
+/**
+ * @(#) CongigurationException.java.
+ *
+ * Copyright (c) 2008 PD CASE
+ * Belo Horizonte, MG - Brasil
+ * Todos os direitos reservados.
+ *
+ * Este software e confidencial e é propriedade da PD CASE, nao é permitida a
+ * distribuição/alteração da mesma sem prévia autorização.
+ */
+package br.com.banestes.car.core.exceptions;
+
+/**
+ * Exceção para tratamento de erros ao manipular arquivos de configuracao
+ * 
+ * @author <a href="mailto:flavio.abel@pdcase.com.br">Flávio Júnior</a>.
+ * @version $Revision: 1.1 $
+ */
+public class ConfigurationException extends Exception {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public ConfigurationException(String messageCode) {
+		super(messageCode);
+	}
+
+	public ConfigurationException(String messageCode, Throwable cause) {
+		super(messageCode, cause);
+	}
+}

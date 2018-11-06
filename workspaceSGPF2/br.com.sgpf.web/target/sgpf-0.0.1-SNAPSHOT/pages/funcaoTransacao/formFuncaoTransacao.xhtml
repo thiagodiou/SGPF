@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:pdvix="http://pdvix.com/facelets">
+
+	<div id="tituloProjeto" align="left">
+		<h1 class="tituloForm">#{messages['label.menu.funcaoTransacao']}</h1>				
+		<h1 class="itemForm">
+			Função de Transação:			
+		</h1>
+	</div>
+	
+<!-- Formulário -->
+	<div id="formFuncaoTransacao" align="center">	
+		<table border="0" width="50%" align="left">
+			
+			<tr>
+				<td width="10%">
+					<h:outputText value="Projeto:" />																	
+				</td>
+				<td>
+					<h:selectOneMenu id="idComboProjetoForm"  converter="comboConverter" value="#{funcaoTransacaoBean.funcaoTransacaoForm.projeto}" required="true">
+						<f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+						<f:selectItems value="#{funcaoTransacaoBean.projetos}" var="projeto" itemValue="#{projeto}" itemLabel="#{projeto.identificador} - #{projeto.titulo}"/>
+					</h:selectOneMenu>																	
+				</td>
+			</tr>
+			<tr>
+				<td width="10%">
+					<h:outputText value="Nome:" />																	
+				</td>
+				<td>
+					<h:inputText value="#{funcaoTransacaoBean.funcaoTransacaoForm.nome}" />															
+				</td>	
+				
+				<td width="10%">
+					<h:outputText value="Descrição:" />																	
+				</td>
+				<td>
+					<h:inputText value="#{funcaoTransacaoBean.funcaoTransacaoForm.descricao}" />															
+				</td>
+			</tr>
+			<tr>
+				<td width="20%">
+					<h:outputText value="Elemento de Contagem:" />																	
+				</td>
+				
+				<td>
+					<h:selectOneMenu id="idElementoContagemForm"   value="#{funcaoTransacaoBean.funcaoTransacaoForm.elementoContagem}" required="true">
+						<f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+						<f:selectItem itemLabel="ALI" itemValue="1"/>
+						<f:selectItem itemLabel="AIE" itemValue="2"/>
+					</h:selectOneMenu>																
+				</td>
+			</tr>
+			
+			<tr>	
+				<td width="10%">
+					<h:outputText value="Tipo de Manutenção:" />																	
+				</td>
+				<td>
+					<h:selectOneMenu id="idTipoManutencaoForm"   value="#{funcaoTransacaoBean.funcaoTransacaoForm.tipoManutencao}" required="true">
+						<f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+						<f:selectItem itemLabel="INCLUSÃO" itemValue="I"/>
+						<f:selectItem itemLabel="ALTERAÇÃO" itemValue="A"/>
+						<f:selectItem itemLabel="EXCLUSÃO" itemValue="E"/>
+					</h:selectOneMenu>																
+				</td>	
+				<td width="10%">
+					<h:outputText value="Descrição da Manutenção:" />																	
+				</td>
+				<td>
+					<h:inputText value="#{funcaoTransacaoBean.funcaoTransacaoForm.descricaoManutencao}" />															
+				</td>
+														
+			</tr>	
+			
+		</table>
+		
+		<table>
+			<tr>
+				<td>
+					<h:commandButton id="btnSalvar" value="#{messages['label.salvar']}" 
+										action="#{funcaoTransacaoBean.salvar()}"  />
+				</td>
+			</tr>
+		</table>			
+	</div>	
+	
+
+
+</ui:composition>

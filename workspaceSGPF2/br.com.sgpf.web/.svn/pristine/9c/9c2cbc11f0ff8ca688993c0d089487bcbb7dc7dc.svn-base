@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:pdvix="http://pdvix.com/facelets">
+
+
+
+	<!-- Sub título -->
+	<h1 class="itemForm">#{messages['label.title.resultado']}</h1>
+
+	<!-- Formulário -->
+	<div id="cad" align="left">
+		<a4j:outputPanel id="historicoContaCorrente">
+			<div id="cad" align="center">
+				<rich:dataTable id="listagem"
+					value="#{processoLiquidacaoWebBean.processosLiquidacao}"
+					var="prl" style="width: 100%;" 
+					rows="#{processoLiquidacaoWebBean.limitePaginacao}"
+					rowClasses="even-row, odd-row, active-row">
+
+
+					<f:facet name="header">
+						<rich:columnGroup>
+							<rich:column></rich:column>
+							<rich:column>#{messages['label.processo.liquidacao.grid.codigo']}</rich:column>
+							<rich:column>#{messages['label.processo.liquidacao.grid.descricao']}</rich:column>
+							<rich:column>#{messages['label.adquirente.adquirente']}</rich:column>
+							<rich:column>#{messages['label.evento.contabil.funcao']}</rich:column>
+							<rich:column>#{messages['label.processo.liquidacao.dominio']}</rich:column>
+							<rich:column>#{messages['label.processo.liquidacao.grid.liquidacao.adquirente']}</rich:column>
+							<rich:column>#{messages['label.menu.evento.contabil']}</rich:column>
+							<rich:column>#{messages['label.processo.liquidacao.grid.historico.cc']}</rich:column>
+							<rich:column>#{messages['label.processo.liquidacao.grid.credito.estabelecimento']}</rich:column>
+							<rich:column>#{messages['filtro.status']}</rich:column>
+						</rich:columnGroup>
+					</f:facet>
+
+					<rich:column style="width: 8%; text-align: center;">
+						<h:commandButton id="viewProcesso" action="#{processoLiquidacaoWebBean.consultar(prl)}" image="/resources/img/ico_view.png" >
+							<rich:tooltip for="viewProcesso">#{messages['tip.visualizar']}</rich:tooltip>
+						</h:commandButton>
+						<h:commandButton id="editProcesso" action="#{processoLiquidacaoWebBean.alterar(prl)}" image="/resources/img/ico_edit.png" style="margin-left: 10px">
+							<rich:tooltip for="editProcesso">#{messages['tip.alterar']}</rich:tooltip>
+						</h:commandButton>
+						<h:commandButton id="excluirProcesso" action="#{processoLiquidacaoWebBean.excluir(prl)}" reRender="historicoContaCorrente" status="indicator" image="/resources/img/ico_del.png" style="margin-left: 10px" onclick="if (!confirma('#{messages['mensagem.confirmacao.operacao.delecao']}',this)) return false;" >
+							<rich:tooltip for="excluirProcesso">#{messages['tip.excluir']}</rich:tooltip>
+						</h:commandButton>
+					</rich:column>
+
+
+					<rich:column style="width: 10%; text-align: center;">
+						<h:outputText value="#{prl.idProcessoLiquidacao}">
+						</h:outputText>
+					</rich:column>
+
+
+					<rich:column style="width: 10%; text-align: center;">
+						<h:outputText value="#{prl.descricao}">
+						</h:outputText>
+					</rich:column>
+
+					<rich:column style="width: 10%; text-align: center;">
+						<h:outputText value="#{prl.adquirente.nome}">
+						</h:outputText>
+					</rich:column>
+				
+					<rich:column style="width: 10%; text-align: center;">
+						<h:outputText value="#{prl.funcao.descricao}">
+						</h:outputText>
+					</rich:column>
+					
+					<rich:column style="width: 10%; text-align: center;">
+						<h:outputText value="#{prl.dominio.descricao}">
+						</h:outputText>
+					</rich:column>
+					
+					<rich:column style="width: 10%; text-align: center;">
+						<h:outputText value="#{prl.tipoLiquidacao == 'S' ? 'STR' : 'HIST. DE CC'}">
+						</h:outputText>
+					</rich:column>
+					
+					<rich:column style="width: 10%; text-align: center;">
+						<h:outputText value="#{prl.tipoLiquidacao == 'C' ? '-' : prl.tipoProcessoLiquidacao.eventoContabil.codigo}">
+						</h:outputText>
+					</rich:column>
+					
+					<rich:column style="width: 10%; text-align: center;">
+						<h:outputText value="#{prl.tipoLiquidacao == 'S' ? '-' : prl.tipoProcessoLiquidacao.historicoContaCorrente.codigo }">
+						</h:outputText>
+					</rich:column>
+					
+					<rich:column style="width: 10%; text-align: center;">
+						<h:outputText value="#{prl.tipoProcessoLiquidacao.creditoEstabelecimento.codigo}">
+						</h:outputText>
+					</rich:column>
+					
+					<rich:column style="width: 5%; text-align: center;">
+						<h:outputText value="#{prl.status == 'A' ? 'Ativo' : 'Inativo'}"/>						
+					</rich:column>
+					
+				</rich:dataTable>
+			</div>
+		</a4j:outputPanel>
+	</div>
+	<div class="paginacao">
+
+		<ui:include src="/pages/templates/paginacao.xhtml">
+			<ui:param name="id" value="listagem" />
+			<ui:param name="totalLinhas"
+				value="#{processoLiquidacaoDados.rowCount}" />
+			<ui:param name="pagina" value="#{processoLiquidacaoDados.pagina}" />
+			<ui:param name="rendered" value="true" />			
+		</ui:include>
+	</div>
+
+
+</ui:composition>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:pdvix="http://pdvix.com/facelets">
+
+
+<f:metadata>
+	<f:event listener="#{consultaArquivoWebBean.preRenderView}"
+		type="preRenderView" />
+</f:metadata>
+
+<ui:composition template="/pages/templates/template-principal.xhtml" >
+
+	<!-- Migalha de pão -->
+	<ui:define name="breadcrumb">
+
+		<div id="breadcrumb">
+			<ul class="crumbs">
+				<li class="first"><a href="#" style="z-index: 3"><span></span>#{messages['label.home']}</a></li>
+
+				<li><a href="#" style="z-index: 2">#{messages['label.consultas']}</a></li>
+
+				<a4j:outputPanel>								
+					<li><a href="#" style="z-index: 1">#{messages['label.menu.consulta.arquivo']}</a></li>
+				</a4j:outputPanel>
+			
+			</ul>
+		</div>
+
+	</ui:define>
+
+	<!-- Conteúdo -->
+	<ui:define name="conteudo">
+
+		<!-- Inicio do Formulário -->
+		<table width="100%" cellpadding="0" cellspacing="0">
+			<tr>
+				<td align="left" colspan="2"><span style="display: none;"><input
+						type="text" /></span>
+
+					<div id="conteudo">
+
+						<a4j:outputPanel id="pnlPanels">
+
+							<a4j:outputPanel
+								rendered="#{consultaArquivoWebBean.operacao == 'FILTRAGEM' || consultaArquivoWebBean.operacao == 'LISTAGEM'}">
+								<ui:include src="filtroConsultaArquivo.xhtml" />
+							</a4j:outputPanel>
+							
+						</a4j:outputPanel>
+
+						<table width="100%">
+							<tr>
+								<td align="center">
+								
+									<h:commandButton 	id="btnConsultar" value="#{messages['label.pesquisar']}"
+														action="#{consultaArquivoWebBean.filtrar()}"
+														rendered="#{consultaArquivoWebBean.operacao == 'FILTRAGEM' or consultaArquivoWebBean.operacao == 'LISTAGEM'}" />																																								
+									
+									
+									<h:commandButton id="btnLimpar" value="#{messages['label.limpar']}" 
+										action="#{consultaArquivoWebBean.limpar()}"/> 
+										 
+									<h:commandButton id="btnCancelar" value="#{messages['label.cancelar']}" 
+										action="#{consultaArquivoWebBean.cancelar()}" immediate="true" 										
+										rendered="#{consultaArquivoWebBean.operacao == 'LISTAGEM'}" />				
+									
+									<h:commandButton id="btnExportar" value="#{messages['label.exportar']}" 										 
+										rendered="#{consultaArquivoWebBean.operacao == 'LISTAGEM'}" action="#{consultaArquivoWebBean.exportar()}">
+										<rich:componentControl target="popup" operation="show"/>
+									</h:commandButton>
+											
+								</td>
+								
+							</tr>
+						</table>
+					</div> <h:panelGroup
+						rendered="#{consultaArquivoWebBean.operacao == 'LISTAGEM'}">
+						<div id="conteudo" style="margin-top: 5px">							
+							<a4j:outputPanel id="consulta">
+								<a4j:outputPanel
+									rendered="#{consultaArquivoWebBean.operacao == 'LISTAGEM'}">																		
+									<ui:include src="gridConsultaArquivo.xhtml" />
+								</a4j:outputPanel>
+							</a4j:outputPanel>
+
+						</div>
+					</h:panelGroup></td>
+			</tr>
+		</table>
+		<!-- Fim do Formulario -->
+
+	</ui:define>
+
+	<!-- Script -->
+	<ui:define name="script">
+
+		<script type="text/javascript">
+			jQuery(function() {
+				jQuery("[id$=sbcSelecionado]").oneCheckBoxSelected();
+		    });
+
+		</script>
+
+		<a4j:outputPanel
+			rendered="#{historicoContaCorrenteWebBean.operacao == 'ALTERACAO' or historicoContaCorrenteWebBean.operacao == 'INSERCAO'}">
+
+			<script type="text/javascript">
+				var exitPage = new ExitPageConfirmer("#{messages['msg.alerta.alteracoes']}");
+				//exitPage.needToConfirm = true;
+
+				aplicaMascara();
+				
+			</script>
+
+		</a4j:outputPanel>
+
+	</ui:define>
+
+</ui:composition>
+</html>

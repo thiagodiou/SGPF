@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2016-09-09T20:21:59 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="HistoricoEstabelecimento" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c85b0886-65f3-4489-96e0-6cf2bdb582c4">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="CAR_LIST"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<subDataset name="Dataset1" uuid="787fbc59-460e-4a06-8034-1713a83d1c1e">
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+		<field name="teste" class="java.util.List">
+			<fieldDescription><![CDATA[teste]]></fieldDescription>
+		</field>
+	</subDataset>
+	<parameter name="contextPath" class="java.lang.String">
+		<parameterDescription><![CDATA[contextPath]]></parameterDescription>
+	</parameter>
+	<parameter name="quantidadeLiquidacoes" class="java.lang.Integer">
+		<parameterDescription><![CDATA[quantidadeLiquidacoes]]></parameterDescription>
+	</parameter>
+	<parameter name="valorLiquidacoes" class="java.lang.Double">
+		<parameterDescription><![CDATA[valorLiquidacoes]]></parameterDescription>
+	</parameter>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="nomeBandeira" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeBandeira]]></fieldDescription>
+	</field>
+	<field name="quantidadeLiquidacoesEfetivadas" class="java.lang.Integer">
+		<fieldDescription><![CDATA[quantidadeLiquidacoesEfetivadas]]></fieldDescription>
+	</field>
+	<field name="valorLiquidacoesEfetivadas" class="java.lang.Double">
+		<fieldDescription><![CDATA[valorLiquidacoesEfetivadas]]></fieldDescription>
+	</field>
+	<field name="quantidadeLiquidacoesRejeitadas" class="java.lang.Integer">
+		<fieldDescription><![CDATA[quantidadeLiquidacoesRejeitadas]]></fieldDescription>
+	</field>
+	<field name="valorLiquidacoesRejeitadas" class="java.lang.Double">
+		<fieldDescription><![CDATA[valorLiquidacoesRejeitadas]]></fieldDescription>
+	</field>
+	<field name="quantidadeLiquidacoesTotal" class="java.lang.Integer">
+		<fieldDescription><![CDATA[quantidadeLiquidacoesTotal]]></fieldDescription>
+	</field>
+	<field name="valorLiquidacoesTotal" class="java.lang.Double">
+		<fieldDescription><![CDATA[valorLiquidacoesTotal]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="65" splitType="Stretch">
+			<rectangle>
+				<reportElement x="359" y="35" width="222" height="15" forecolor="#878787" backcolor="#969696" uuid="97c3b917-39e4-448c-972b-db0e56810e80"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="137" y="35" width="222" height="15" forecolor="#878787" backcolor="#969696" uuid="c1b69d14-bf00-483f-b5f4-29fa4333bdba"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="35" width="137" height="15" forecolor="#878787" backcolor="#969696" uuid="77eb622f-83f4-4721-8f56-a93da469f59d"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="581" y="35" width="222" height="15" forecolor="#878787" backcolor="#969696" uuid="dd28073d-b059-482c-b464-bd05d1912913"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="178" y="35" width="140" height="14" uuid="6917cd10-4238-4ede-b353-6214f89abb1c"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[LIQUIDAÇÕES EFETIVADAS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="400" y="36" width="140" height="14" uuid="861de129-c10b-4aaa-af7c-9d217b8c486e"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[LIQUIDAÇÕES REJEITADAS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="675" y="36" width="36" height="14" uuid="9184e7b6-f47f-4d23-96a3-8f21ab74c8d1"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="137" y="50" width="111" height="15" forecolor="#878787" backcolor="#969696" uuid="74594b47-ba11-461d-a4f8-feb60ca73bd7">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="248" y="50" width="111" height="15" forecolor="#878787" backcolor="#969696" uuid="8b95b615-461a-4c1c-82e2-5f023c4a6f5a">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="359" y="50" width="111" height="15" forecolor="#878787" backcolor="#969696" uuid="651b21ec-c9fe-48d7-8042-a93857017fc4">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="470" y="50" width="111" height="15" forecolor="#878787" backcolor="#969696" uuid="559ee4cb-059d-4c86-96dd-da0e867b5dac">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="581" y="50" width="111" height="15" forecolor="#878787" backcolor="#969696" uuid="df29b3a8-252a-429f-9259-dadae4951871">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="692" y="50" width="111" height="15" forecolor="#878787" backcolor="#969696" uuid="6d63654f-178b-4dd6-ac3b-1fb86ed8875f">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="50" width="137" height="15" forecolor="#878787" backcolor="#969696" uuid="790008cc-828b-4c73-b0ef-8392926cd229"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="139" y="51" width="109" height="14" uuid="b5be9a6b-e6ff-4b57-a4d6-a8c6027d0fc9"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Quantidade	]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="250" y="51" width="109" height="14" uuid="ef02973e-3df6-4be2-bd07-2de288aa05ab"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="472" y="51" width="109" height="14" uuid="bb65dcfd-3f2f-40c1-8ec7-a308b98be889"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="361" y="51" width="109" height="14" uuid="19eb26dc-ddba-48d8-bd4c-5d1439908d33"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Quantidade	]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="584" y="50" width="108" height="14" uuid="2bd4fd89-8dc6-4700-aab2-aa5deabe9bcb"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Quantidade	]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="695" y="50" width="108" height="14" uuid="0d4c0cf6-c100-48c9-9023-749abceb060b"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="6" width="100" height="14" uuid="8b7d3c23-5519-455b-b8ad-4e4b1e98177b"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Função: CRÉDITO]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="137" height="15" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="eaaa85f0-fb6d-4583-9dfc-d6467e73095d"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement x="2" y="0" width="135" height="15" uuid="4025c173-67b2-4051-8a6a-4ad462771cac"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{nomeBandeira}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="137" y="0" width="111" height="15" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="84f39102-411c-4e8f-b474-92aadee62389"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement x="139" y="0" width="109" height="15" uuid="1ca9b910-6cce-4e24-b14c-627529535652"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{quantidadeLiquidacoesEfetivadas}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="248" y="0" width="111" height="15" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="e2b3bd86-582f-432d-b85d-a596907309f8"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement x="250" y="0" width="109" height="15" uuid="37a18378-9f35-4838-80da-cc0e7068effa"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format($F{valorLiquidacoesEfetivadas})]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="359" y="0" width="111" height="15" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="1076cc1e-c124-4fb1-a866-59c437e5ff6f"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement x="361" y="0" width="109" height="15" uuid="81131710-3dcb-4938-b566-a6c4bb0822b8"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{quantidadeLiquidacoesRejeitadas}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="470" y="0" width="111" height="15" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="b5820e9a-1a89-4e16-9928-cac4a3f0623c"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement x="472" y="0" width="109" height="15" uuid="7db078ec-2b7f-48fc-99cb-49b6cdc2d494"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format($F{valorLiquidacoesRejeitadas})]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="581" y="0" width="111" height="15" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="85a4b952-1b81-4329-9c01-3479d4d4a890"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement x="583" y="0" width="109" height="15" uuid="bccdaf05-7a83-409b-9e56-bbfbcf4c9e92"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{quantidadeLiquidacoesTotal}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="692" y="0" width="111" height="15" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="c2c1f69b-1752-45d5-acfe-b3da118e188e"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement x="694" y="0" width="109" height="15" uuid="952d37fc-bd30-4f03-ab6b-65013605be5f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format($F{valorLiquidacoesTotal})]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

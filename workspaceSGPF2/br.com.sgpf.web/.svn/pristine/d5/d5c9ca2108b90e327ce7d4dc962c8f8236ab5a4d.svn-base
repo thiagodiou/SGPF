@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:pdvix="http://pdvix.com/facelets">
+
+
+
+	<!-- Sub título -->
+	<h1 class="itemForm">#{messages['label.title.resultado']}</h1>
+
+	<!-- Formulário -->
+	<div id="cad" align="left">
+		<table>
+			<tr>
+				<td>
+					<h:outputLabel value="#{messages['label.consulta.liquidacao.total.quantidade']}:" />								
+				</td>
+				<td>
+					<h:outputText id="quantidadeOcorrencias" label="#{messages['label.consulta.liquidacao.total.quantidade']}" 
+						value="#{consultaOcorrenciaAgendaWebBean.quantidadeTotal}" style="font-weight: bold">
+					</h:outputText>
+				</td>
+			
+			</tr>
+			<tr>
+				<td>
+					<h:outputLabel value="#{messages['label.consulta.liquidacao.total.valor']}:" />								
+				</td>
+				<td>
+					<h:outputText id="valorTotalOcorrencias" label="#{messages['label.consulta.liquidacao.total.valor']}" 
+						value="#{consultaOcorrenciaAgendaWebBean.valorTotal}" style="font-weight: bold">
+						<f:convertNumber groupingUsed="true" minFractionDigits="2" />
+					</h:outputText>
+				</td>			
+			</tr>	
+					
+			<tr>
+				<a4j:outputPanel id="consultaArquivos">
+					<div id="cad" align="center">
+						<rich:dataTable id="listagem"
+							value="#{consultaOcorrenciaAgendaWebBean.ocorrenciasAgenda}"
+							var="ocr" style="width: 100%;" 
+							rows="#{consultaOcorrenciaAgendaWebBean.limitePaginacao}"
+							rowClasses="even-row, odd-row, active-row">
+		
+		
+							<f:facet name="header">
+								<rich:columnGroup>							
+									<rich:column>#{messages['label.consulta.arquivo.data']}</rich:column>
+									<rich:column>#{messages['label.consulta.arquivo.nome']}</rich:column>							
+									<rich:column>#{messages['label.consulta.arquivo.sequencial']}</rich:column>
+									<rich:column>#{messages['label.adquirente.adquirente']}</rich:column>
+									<rich:column>#{messages['label.menu.bandeira']}</rich:column>
+									<rich:column>#{messages['label.consulta.agenda.data.prevista']}</rich:column>	
+									<rich:column>#{messages['label.consulta.agenda.valor.previsto']}</rich:column>													
+									<rich:column>#{messages['label.consulta.agenda.centralizadora.cnpj']}</rich:column>
+									<rich:column>#{messages['label.consulta.agenda.centralizadora.agencia']}</rich:column>
+									<rich:column>#{messages['label.consulta.agenda.centralizadora.cc']}</rich:column>
+									<rich:column>#{messages['label.consulta.agenda.estabelecimento.cnpj']}</rich:column>
+									<rich:column>#{messages['label.vinculos.ocorrencia.codigo.banestes.filtro']}</rich:column>
+									<rich:column>#{messages['label.consulta.liquidacao.ocorrencia.banestes.descricao']}</rich:column>
+								</rich:columnGroup>
+							</f:facet>
+						
+						
+							<rich:column style="width: 5%; text-align: center;">
+								<h:outputText value="#{ocr.dataArquivoTexto}"/>													
+							</rich:column>			
+		
+							<rich:column style="width: 10%; text-align: center;">
+								<h:outputText value="#{ocr.nomeArquivo}">
+								</h:outputText>
+							</rich:column>									
+							
+							<rich:column style="width: 5%; text-align: center;">
+								<h:outputText value="#{ocr.sequencial}">
+								</h:outputText>
+							</rich:column>
+													
+							<rich:column style="width: 5%; text-align: center;">
+								<h:outputText value="#{ocr.nomeAdquirente}">
+								</h:outputText>
+							</rich:column>
+							
+							<rich:column style="width: 10%; text-align: center;">										
+								<h:outputText value="#{ocr.nomeBandeira}"/>
+							</rich:column>
+							
+							<rich:column style="width: 5%; text-align: center;">
+								<h:outputText value="#{ocr.dataPrevistaTexto}"/>													
+							</rich:column>
+							
+							<rich:column style="width: 5%; text-align: center;">
+								<h:outputText value="#{ocr.valorPrevisto}">
+									<f:convertNumber groupingUsed="true" minFractionDigits="2" />
+								</h:outputText>
+							</rich:column>
+							
+							<rich:column style="width: 5%; text-align: center;">
+								<h:outputText value="#{ocr.cpfCnpjCentralizadora}"/>													
+							</rich:column>
+							
+							<rich:column style="width: 5%; text-align: center;">
+								<h:outputText value="#{ocr.agenciaCentralizadora}"/>													
+							</rich:column>
+							
+							<rich:column style="width: 5%; text-align: center;">
+								<h:outputText value="#{ocr.contaCentralizadora}"/>													
+							</rich:column>
+							
+							<rich:column style="width: 5%; text-align: center;">
+								<h:outputText value="#{ocr.cpfCnpjEstabelecimento}"/>													
+							</rich:column>
+							
+							<rich:column style="width: 5%; text-align: center;">
+								<h:outputText value="#{ocr.codigoOcorrencia}"/>													
+							</rich:column>
+							
+							<rich:column style="width: 5%; text-align: center;">
+								<h:outputText value="#{ocr.descricaoOcorrencia}"/>													
+							</rich:column>
+						</rich:dataTable>
+					</div>
+				</a4j:outputPanel>
+			</tr>
+			
+		</table>
+	</div>
+	<div class="paginacao">
+
+		<ui:include src="/pages/templates/paginacao.xhtml">
+			<ui:param name="id" value="listagem" />
+			<ui:param name="totalLinhas"
+				value="#{ocorrenciaAgendaDados.rowCount}" />
+			<ui:param name="pagina" value="#{ocorrenciaAgendaDados.pagina}" />
+			<ui:param name="rendered" value="true" />			
+		</ui:include>
+	</div>
+
+
+</ui:composition>

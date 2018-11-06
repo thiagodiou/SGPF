@@ -1,0 +1,90 @@
+package br.com.banestes.car.web.security;
+
+import java.io.Serializable;
+import java.util.Map;
+
+import javax.enterprise.context.SessionScoped;
+import javax.inject.Named;
+
+
+@Named("usuario")
+@SessionScoped
+public class Usuario implements Serializable{
+	
+	private static final long serialVersionUID = 1L;
+	
+	private String username;
+	
+	private Long cidLocalizacao;
+	
+	private Long cidLotacao;
+	
+	private boolean isGestor;
+	
+	private String nomeCompleto;	
+	
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	
+	public Long getCidLocalizacao() {
+		return cidLocalizacao;
+	}
+
+	public void setCidLocalizacao(Long cidLocalizacao) {
+		this.cidLocalizacao = cidLocalizacao;
+	}
+
+	public Long getCidLotacao() {
+		return cidLotacao;
+	}
+
+	public void setCidLotacao(Long cidLotacao) {
+		this.cidLotacao = cidLotacao;
+	}
+
+	public void preencheDadosLdap(Map<String, String> dados){
+		
+		cidLotacao = cidLocalizacao = 0L;
+		
+		String tmp = dados.get("bnsCIDLotacao");
+		if (tmp != null && tmp.trim().length() > 0)
+			cidLotacao = new Long(tmp);
+		
+		tmp = dados.get("bnsCIDLocalizacao");
+		if (tmp != null && tmp.trim().length() > 0)
+			cidLocalizacao = new Long(tmp);
+		
+		nomeCompleto = dados.get("fullName");
+		
+	}
+
+
+	public String getNomeCompleto() {
+		return nomeCompleto;
+	}
+
+	public void setNomeCompleto(String nomeCompleto) {
+		this.nomeCompleto = nomeCompleto;
+	}
+
+	
+	
+	public boolean isGestor() {
+		return isGestor;
+	}
+
+	public void setGestor(boolean isGestor) {
+		this.isGestor = isGestor;
+	}
+
+	@Override
+	public String toString() {
+		return "Usuario [username=" + username + ", cidLocalizacao=" + cidLocalizacao + ", cidLotacao=" + cidLotacao
+				+ "]";
+	}
+}

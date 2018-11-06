@@ -1,0 +1,39 @@
+package br.com.banestes.car.service;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+
+import br.com.banestes.car.jpa.entity.EventoContabilEntity;
+import br.com.banestes.car.jpa.model.repository.aplicacao.EventoContabilRepository;
+
+
+@Stateless
+@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+public class EventoContabilServiceBean {
+
+	@Inject
+	private EventoContabilRepository eventoContabilRepository;
+	
+	
+	
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	public EventoContabilEntity gravar(EventoContabilEntity eventoContabil)	{
+		
+		eventoContabil = eventoContabilRepository.merge(eventoContabil);
+		
+		return eventoContabil;
+		
+	}
+
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	public void deletar(EventoContabilEntity eventoContabil)
+	{
+		Object c= eventoContabilRepository.merge(eventoContabil);
+		
+		eventoContabilRepository.remove(c);			
+	}
+
+
+}//end_class....

@@ -1,0 +1,368 @@
+package br.com.banestes.car.bean;	
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.enterprise.inject.Produces;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.apache.log4j.Logger;
+import org.omnifaces.cdi.ViewScoped;
+import org.omnifaces.util.Messages;
+
+import br.com.banestes.car.core.bean.AbstractWebBean;
+import br.com.banestes.car.core.enumerators.OperacoesEnum;
+import br.com.banestes.car.core.enumerators.TipoArquivoEnum;
+import br.com.banestes.car.core.exportacao.ExportarDataModel;
+import br.com.banestes.car.core.paginacao.ParametroDataModel;
+import br.com.banestes.car.core.util.autoComplete.AutoComplete;
+import br.com.banestes.car.iaq.api.IAQServiceLocatorJNDI;
+import br.com.banestes.car.iaq.gcw.layout.gcw.Pessoa;
+import br.com.banestes.car.iaq.gcw.layout.gcw.PessoasLigadasContrato;
+import br.com.banestes.car.iaq.gcw.service.BuscaPessoasLigadasService;
+import br.com.banestes.car.iaq.gcw.service.ConsultaPessoasContaService;
+import br.com.banestes.car.jpa.core.util.MessagesPropertiesUtil;
+import br.com.banestes.car.jpa.entity.AdquirenteEntity;
+import br.com.banestes.car.jpa.model.repository.aplicacao.AdquirenteRepository;
+import br.com.banestes.car.service.AdquirenteServiceBean;
+
+@Named
+@ViewScoped
+public class AdquirenteWebBean extends AbstractWebBean {
+
+	
+	private static final long serialVersionUID = -1897838727537836192L;
+
+	private List<AdquirenteEntity> adquirentes;
+
+	//atributos de adquirente utlizados no filtro do filtroadquirente.xhtml...
+	private AdquirenteFiltroBean adquirenteFiltro;	
+	
+	@Inject
+	private transient AdquirenteRepository adquirenteRepository;
+	
+	@Inject
+	private transient AdquirenteServiceBean adquirenteService;	
+	
+	private String tipoRelatorio;
+
+	private AutoComplete autoComplete;	
+	
+	private AdquirenteEntity adquirente;
+	
+	private ExportarDataModel exportar;
+
+	//utilizado para gerar a paginação...
+	@Named("adquirenteDados")
+	@Produces
+	private ParametroDataModel<AdquirenteEntity> dados;
+	
+
+	public List<AdquirenteEntity> getAdquirentes() {
+		return adquirentes;
+	}
+
+	public void setAdquirentes(List<AdquirenteEntity> adquirentes) {
+		this.adquirentes = adquirentes;
+	}
+
+
+	public AdquirenteFiltroBean getAdquirenteFiltro() {
+		return adquirenteFiltro;
+	}
+
+	public void setAdquirenteFiltro(AdquirenteFiltroBean adquirenteFiltro) {
+		this.adquirenteFiltro = adquirenteFiltro;
+	}	
+	
+	public AutoComplete getAutoComplete() {
+		return autoComplete;
+	}
+
+	public void setAutoComplete(AutoComplete autoComplete) {
+		this.autoComplete = autoComplete;
+	}
+	
+	public AdquirenteEntity getAdquirente() {
+		return adquirente;
+	}
+
+	public void setAdquirente(AdquirenteEntity adquirente) {
+		this.adquirente = adquirente;
+	}
+
+	
+	
+
+	public String getTipoRelatorio() {
+		return tipoRelatorio;
+	}
+
+	public void setTipoRelatorio(String tipoRelatorio) {
+		this.tipoRelatorio = tipoRelatorio;
+	}
+
+
+	public void preRenderView() {
+		if (!FacesContext.getCurrentInstance().isPostback()) 
+		{
+			autoComplete = new AutoComplete(adquirenteRepository.getAllNames());
+			adquirenteFiltro = new AdquirenteFiltroBean();		
+			exportar = new ExportarDataModel();
+			this.setOperacao(OperacoesEnum.FILTRAGEM);					
+			
+		}
+	}
+
+	
+	
+	public String filtrar() {		
+		
+		tipoRelatorio = TipoArquivoEnum.PDF.valor;
+		
+		adquirentes = adquirenteRepository
+						.findByParameters(adquirenteFiltro.getNome(),
+										  adquirenteFiltro.getCNPJ());		
+		
+		
+		if(adquirentes.size() == 0)
+		{
+			adicionarMensagemErro(
+					MessagesPropertiesUtil
+							.getMessage("label.consulta.vazia"),
+					"");
+			setOperacao(OperacoesEnum.FILTRAGEM);
+			return null;
+		}
+		
+		dados = new ParametroDataModel<AdquirenteEntity>(adquirentes);
+		dados.redefinir();
+		dados.ativar();
+		dados.getLista();
+		dados.iniciarPesquisa();
+		setOperacao(OperacoesEnum.LISTAGEM);
+						
+		return null;
+	}
+	
+	
+	public String incluir()
+	{
+
+		adquirente = new AdquirenteEntity();
+		setOperacao(OperacoesEnum.INSERCAO);
+		return null;
+	}
+	
+	
+	
+	public String salvar()
+	{		
+		if(!validar())
+		{
+			adquirente = adquirenteService.gravar(adquirente);
+			if(this.getOperacao().equals(OperacoesEnum.ALTERACAO)) 
+				Messages.addInfo(null, MessagesPropertiesUtil.getMessage("mensage.sucesso.alteracao"), "");		
+			else
+				Messages.addInfo(null, MessagesPropertiesUtil.getMessage("mensage.sucesso.insercao"), "");	
+			
+			filtrar();
+			autoComplete = new AutoComplete(adquirenteRepository.getAllNames());
+			
+		}
+		
+			
+		
+		
+		return null;
+	}
+	
+	public String alterar(AdquirenteEntity adquirenteSelecionado)
+	{
+		this.adquirente = adquirenteSelecionado;
+		setOperacao(OperacoesEnum.ALTERACAO);
+		return null;
+	}
+	
+	public String excluir(AdquirenteEntity adquirenteSelecionado)
+	{
+		this.adquirente = adquirenteSelecionado;
+		if(!validarExclusao())
+		{
+			adquirenteService.deletar(adquirente);
+			Messages.addInfo(null, MessagesPropertiesUtil.getMessage("mensage.sucesso.exclusao"), "");
+			filtrar();
+			autoComplete = new AutoComplete(adquirenteRepository.getAllNames());
+		}
+		
+		return null;
+	}
+	
+	private boolean validarExclusao()
+	{
+		if(validaVinculo())
+			return true;
+		
+		return false;
+	}
+	
+	private boolean validaVinculo()
+	{
+		boolean retorno = false;
+					
+		boolean vinculoEventoContabil 		=  this.adquirenteRepository.findVinculoEventoContabil(this.adquirente.getIdAdquirente());
+		boolean vinculoProcessoLiquidacao 	=  this.adquirenteRepository.findVinculoProcessoLiquidacao(this.adquirente.getIdAdquirente());
+		boolean vinculoHistoricoCC 			=  this.adquirenteRepository.findVinculoHistoricoContaCorrente(this.adquirente.getIdAdquirente());
+		
+		if(vinculoEventoContabil || vinculoProcessoLiquidacao || vinculoHistoricoCC)
+		{
+			retorno = true;
+			Messages.addError(null,String.format("Exclusão não permitida. Existe(m) registro(s) associado(s) na(s) tabela(s): %s  %s  %s", 
+													vinculoEventoContabil ? "TB_EVC_EVENTO_CONTABIL" : "",
+													vinculoProcessoLiquidacao ? "TB_PRL_PROCESSO_LIQUIDACAO" : "",
+													vinculoHistoricoCC ? "TB_HST_CTA_CORRENTE" : ""		));
+			
+		}
+			
+			
+		return retorno;
+	}
+	
+	private boolean validar()
+	{
+		boolean dadosJaExistentes 	= false;
+		boolean validaCnpjConta 	= false;
+		
+		List<AdquirenteEntity> adquirentes;
+		
+		adquirentes = adquirenteRepository.findAlteracaoByParameters(adquirente.getCNPJ(), adquirente.getIdAdquirente());			
+		
+		dadosJaExistentes = adquirentes.size() > 0 ? true : false;		
+		
+		if(dadosJaExistentes)		
+		{
+			Messages.addError(null,String.format("Inclusão não permitida. CNPJ %s já cadastrado no adquirente %s - %s",
+													adquirente.getCNPJ(), adquirentes.get(0).getIdAdquirente().toString(), adquirentes.get(0).getNome().toString()));
+			return true;
+		}	
+		
+		if(validaVinculo())
+			return true;
+		
+		if(this.adquirente.isContaCorrenteBanestes())
+		{
+			try
+			{
+				validaCnpjConta = validaCnpjConta(new Long(adquirente.getConta()), adquirente.getCNPJ());
+			}
+			catch (Exception e)
+			{
+				Messages.addError(null,String.format("Erro ao consultar Conta Corrente"));
+				return true;
+			}
+			
+		}	
+		
+		if(!validaCnpjConta)
+		{
+			Messages.addError(null,String.format("CNPJ %s inválido. Favor informar um CNPJ válido.", adquirente.getCNPJ()));		
+			return true;
+		}	
+		
+		return false;				
+	}
+	
+	public boolean validaCnpjConta(Long conta, String cnpj) throws Exception
+	{
+		List<Pessoa> pessoas = null;		
+		ConsultaPessoasContaService serviceIaq = new ConsultaPessoasContaService();
+		
+		pessoas = serviceIaq.realizarConsultaGcw0816(ConsultaPessoasContaService.TIPO_CONTA_CORRENTE, conta.toString());
+										
+		for (Pessoa p : pessoas) {
+			if (p.getCpfCnpj().equals(cnpj)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	
+	public String limpar()
+	{
+		this.adquirenteFiltro = new AdquirenteFiltroBean();
+		return null;
+	}	
+	
+	
+	public String cancelar()
+	{
+		dados = new ParametroDataModel<AdquirenteEntity>(adquirentes);
+		setOperacao(OperacoesEnum.FILTRAGEM);
+		return filtrar();		
+	}	
+	
+	public String exportar()
+	{				
+					
+		HashMap<String, Object> param = new HashMap<String, Object>();
+		String pathReport = "/pages/relatorio/AdquirentePDF.jrxml";
+		List<String> contents = new ArrayList<String>();
+		
+		if(tipoRelatorio.equals(TipoArquivoEnum.CSV.valor))
+		{								
+			contents.add(preencheCabecalhoCSV());
+			contents.add(preencheContentCSV());		
+		}
+		else
+		{
+			param.put("nome", this.adquirenteFiltro.getNome().isEmpty() ? null : this.adquirenteFiltro.getNome().toLowerCase());
+			param.put("cnpj", this.adquirenteFiltro.getCNPJ().isEmpty() ? null : this.adquirenteFiltro.getCNPJ().toLowerCase());
+				
+			
+		}
+		exportar.exportar(tipoRelatorio, param, pathReport, this.adquirenteRepository, contents);										
+		
+		Messages.addInfo(null, MessagesPropertiesUtil.getMessage("label.exportado.sucesso"), "");
+		
+		tipoRelatorio = TipoArquivoEnum.PDF.valor;
+		
+		return null;
+	}
+	
+	
+	public String preencheCabecalhoCSV()
+	{
+		StringBuilder cabecalho = new StringBuilder();
+		cabecalho.append("Código;Nome;CNPJ;Descrição;Agência;Conta");
+		cabecalho.append("\n");
+		return cabecalho.toString();
+	}
+	
+	public String preencheContentCSV()
+	{
+		StringBuilder content = new StringBuilder();
+		for(AdquirenteEntity adq : this.adquirentes)
+		{
+			content.append(adq.getIdAdquirente());
+			content.append(";");
+			content.append(adq.getNome());
+			content.append(";");
+			content.append(adq.getCNPJ());
+			content.append(";");
+			content.append(adq.getDescricao() == null || adq.getDescricao().isEmpty() ? "" : adq.getDescricao());
+			content.append(";");
+			content.append(adq.getAgencia() == null || adq.getAgencia().isEmpty()  ? "" : adq.getAgencia());
+			content.append(";");
+			content.append(adq.getConta() == null || adq.getConta().isEmpty() ? "" : adq.getConta());
+			content.append("\n");
+		}
+		
+		return content.toString();
+	}
+	
+}//end_class...

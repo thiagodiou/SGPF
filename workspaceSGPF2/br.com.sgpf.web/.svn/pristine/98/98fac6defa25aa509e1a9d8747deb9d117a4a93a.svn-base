@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	 xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:pdvix="http://pdvix.com/facelets">
+	
+	
+	<div id="titulo" align="left">
+		<h1 class="tituloForm">#{ocorrenciaWebBean.operacao == 'INSERCAO' ? messages['label.menu.ocorrencia.inclusao'] : messages['label.menu.ocorrencia.alteracao'] }</h1>				
+		<h1 class="itemForm">
+			#{messages['label.ocorrencia.dados']}			
+		</h1>
+	</div>
+	
+	<a4j:outputPanel id="pnlJS2" ajaxRendered="true">
+		<script type="text/javascript">
+			aplicaMascara();
+		</script>
+	</a4j:outputPanel>
+	
+
+<!-- Formulário -->
+	<div id="cad" align="center">	
+		<table border="0" width="100%" align="left">
+		
+			<tr>
+				<td width="20%">
+					<pdvix:label value="#{messages['filtro.codigo.ocorrencia']}" required="true" />					
+					<h:inputText 	id="codigoOcorrenciaForm"  value="#{ocorrenciaWebBean.ocorrencia.codigo}" 
+									label="#{messages['filtro.codigo.ocorrencia']}" size="10" required="true"
+									disabled="#{ocorrenciaWebBean.ocorrencia.status == 'I'}" maxlength="2">															
+					</h:inputText>																		
+				</td>		
+				
+				<td width="30%">	
+					<pdvix:label value="#{messages['filtro.tipo.ocorrencia']}" required="true" for="tipoOcorrencia" />
+					<h:selectOneMenu 	id= "tipoOcorrencia" required="true"  
+										value="#{ocorrenciaWebBean.ocorrencia.tipoOcorrenciaCIP}" 
+										label="#{messages['filtro.tipo.ocorrencia']}"
+										disabled="#{ocorrenciaWebBean.ocorrencia.status == 'I'}">
+						<f:selectItem itemLabel="#{messages['label.selecione']}" />
+						<f:selectItem itemValue="S" itemLabel="#{messages['filtro.tipo.ocorrencia.sucesso']}" />
+						<f:selectItem itemValue="E" itemLabel="#{messages['filtro.tipo.ocorrencia.erro']}" />
+					</h:selectOneMenu>
+			     </td>		
+				
+				
+			</tr>							
+						
+			<tr>
+				<td width="50%">
+					<pdvix:label value="#{messages['filtro.descricao']}" required="true"/>					
+					<h:inputText 	id="descricaoOcorrenciaForm" label="#{messages['label.ocorrencia.descricao']}" 
+									value="#{ocorrenciaWebBean.ocorrencia.descricao}" size="50" required="true"
+									disabled="#{ocorrenciaWebBean.ocorrencia.status == 'I'}"/>																		
+				</td>				
+				
+				<td width="30%">	
+					<pdvix:label value="#{messages['filtro.status']}" required="true" for="situacaoOcorrencia" rendered="#{ocorrenciaWebBean.operacao == 'ALTERACAO'}" />
+					<h:selectOneMenu 	id= "situacaoOcorrencia" rendered="#{ocorrenciaWebBean.operacao == 'ALTERACAO'}"  required="true"
+										value="#{ocorrenciaWebBean.ocorrencia.status}" label="#{messages['filtro.status']}">
+									
+						<f:selectItem itemLabel="#{messages['label.selecione']}" />
+						<f:selectItem itemValue="A" itemLabel="#{messages['filtro.status.ativo']}" />
+						<f:selectItem itemValue="I" itemLabel="#{messages['filtro.status.inativo']}" />
+					</h:selectOneMenu>
+			     </td>
+				
+								
+			</tr>																		
+			
+		</table>		
+	</div>	
+
+</ui:composition>

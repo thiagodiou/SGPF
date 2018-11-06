@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a4j="http://richfaces.org/a4j" xmlns:rich="http://richfaces.org/rich"
+	xmlns:pdvix="http://pdvix.com/facelets">
+
+	
+	
+	<!-- Sub título -->
+	<h1 class="itemForm">
+		#{messages['label.title.resultado']} 
+	</h1>
+	
+	<!-- Formulário -->
+	<div id="cad" align="left">
+		<a4j:outputPanel id="ocorrencias">
+			<div id="cad" align="center">
+				<rich:dataTable id="listagem" 
+								value="#{ocorrenciaWebBean.ocorrencias}"
+								var="ocorrencia" 
+								style="width: 100%;" 
+								rows="#{ocorrenciaWebBean.limitePaginacao}"	
+								rowClasses="even-row, odd-row, active-row">
+		
+			
+		
+					<f:facet name="header">
+						<rich:columnGroup>
+							<rich:column></rich:column>
+							
+							<rich:column>#{messages['label.ocorrencia.codigo']}</rich:column>
+							<rich:column>#{messages['label.ocorrencia.descricao']}</rich:column>
+							<rich:column>#{messages['label.ocorrencia.tipo']}</rich:column>
+							<rich:column>#{messages['label.ocorrencia.status']}</rich:column>
+		
+						</rich:columnGroup>
+					</f:facet>				
+				
+		
+					<rich:column style="width: 5%; text-align: center;">
+						<h:commandButton id="editOcorrencia" action="#{ocorrenciaWebBean.alterar(ocorrencia)}" image="/resources/img/ico_edit.png">
+							<rich:tooltip for="editOcorrencia">#{messages['tip.alterar']}</rich:tooltip>	
+						</h:commandButton>										
+					</rich:column>
+				
+				
+					<rich:column style="width: 20%; text-align: center;">
+						<h:outputText value="#{ocorrencia.codigo}">
+							<f:convertNumber minIntegerDigits="2"/>
+						</h:outputText>
+					</rich:column>
+				
+									
+					<rich:column style="width: 30%; text-align: center;">
+						<h:outputText
+							value="#{ocorrencia.descricao}">
+						</h:outputText>
+					</rich:column>
+					
+					<rich:column style="width: 20%; text-align: center;">
+						<h:outputText
+							value="#{ocorrencia.tipoOcorrenciaCIP == 'S' ? 'Sucesso' : 'Erro'}">
+						</h:outputText>
+					</rich:column>
+
+						
+					<rich:column style="width: 25%; text-align: center;">
+						<h:outputText
+							value="#{ocorrencia.status == 'A' ? 'Ativo' : 'Inativo'}">
+						</h:outputText>
+					</rich:column>
+					
+				</rich:dataTable>
+			</div>
+		</a4j:outputPanel>		
+	</div>
+	
+	<div class="paginacao">
+	<br />
+	<br />
+	
+		<ui:include src="/pages/templates/paginacao.xhtml">
+			<ui:param name="id" value="listagem" />
+			<ui:param name="totalLinhas"
+				value="#{ocorrenciaDados.rowCount}" />
+			<ui:param name="pagina"
+				value="#{ocorrenciaDados.pagina}" />
+			<ui:param name="rendered" value="true" />			
+		</ui:include>
+	</div>			
+	
+	
+</ui:composition>

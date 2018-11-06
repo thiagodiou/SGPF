@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2016-08-06T12:08:33 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="HistoricoEstabelecimento" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c85b0886-65f3-4489-96e0-6cf2bdb582c4">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="CAR"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<parameter name="sistemaBanestes" class="java.lang.String"/>
+	<parameter name="codigoOcorrenciaBanestes" class="java.lang.String"/>
+	<parameter name="idCodigoOcorrenciaCIP" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+TB_SIS.SIS_NM_SISTEMA_BANESTES,
+TB_OCR_BAN.CDO_CD_CODIGO_OCORRENCIA AS CODIGO_OCORRENCIA_BAN,
+TB_OCR_CIP.CDO_CD_CODIGO_OCORRENCIA AS CODIGO_OCORRENCIA_CIP,
+TB_OCR_CIP.CDO_DS_DESCRICAO_OCORRENCIA,
+DECODE(TB_VIN.VIN_FL_STATUS,'A','Ativo','Inativo') AS SATUS
+FROM 
+TB_VIN_VINCULO_CD_CIP_BANESTES TB_VIN,  TB_OCR_OCORRENCIA_BANESTES TB_OCR_BAN, TB_OCR_OCORRENCIA_CIP TB_OCR_CIP,  TB_SIS_SISTEMA_BANESTES TB_SIS
+WHERE 
+(($P{codigoOcorrenciaBanestes} IS NOT NULL AND TO_NUMBER(TB_OCR_BAN.CDO_CD_CODIGO_OCORRENCIA) = TO_NUMBER($P{codigoOcorrenciaBanestes})) OR (TO_NUMBER($P{codigoOcorrenciaBanestes}) IS NULL))
+AND
+((TO_NUMBER($P{idCodigoOcorrenciaCIP}) IS NOT NULL AND  TO_NUMBER(TB_OCR_CIP.CDO_ID_CODIGO_OCORRENCIA) = TO_NUMBER($P{idCodigoOcorrenciaCIP})) OR (TO_NUMBER($P{idCodigoOcorrenciaCIP}) IS NULL))
+AND
+(($P{sistemaBanestes} IS NOT NULL AND  LOWER(TB_SIS.SIS_NM_SISTEMA_BANESTES) LIKE '$P!{sistemaBanestes}%') OR ($P{sistemaBanestes} IS NULL))
+AND
+TB_VIN.CDO_ID_CODIGO_BANESTES =  TB_OCR_BAN.CDO_ID_CODIGO_OCORRENCIA
+AND
+TB_VIN.CDO_ID_CODIGO_CIP = TB_OCR_CIP.CDO_ID_CODIGO_OCORRENCIA
+AND 
+TB_OCR_BAN.SIS_ID_SISTEMA_BANESTES = TB_SIS.SIS_ID_SISTEMA_BANESTES
+ORDER BY CODIGO_OCORRENCIA_BAN, CODIGO_OCORRENCIA_CIP]]>
+	</queryString>
+	<field name="SIS_NM_SISTEMA_BANESTES" class="java.lang.String"/>
+	<field name="CODIGO_OCORRENCIA_BAN" class="java.lang.String"/>
+	<field name="CODIGO_OCORRENCIA_CIP" class="java.lang.String"/>
+	<field name="CDO_DS_DESCRICAO_OCORRENCIA" class="java.lang.String"/>
+	<field name="SATUS" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="45" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="25" width="180" height="20" forecolor="#878787" backcolor="#969696" uuid="b72f539b-6f10-4fcb-90af-a241381ff3f5"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="180" y="25" width="161" height="20" forecolor="#878787" backcolor="#969696" uuid="32221f55-7c84-4418-b028-042012b93326"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="341" y="25" width="125" height="20" forecolor="#878787" backcolor="#969696" uuid="fcaf0966-4170-41c5-8059-d65ddacd47aa"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="466" y="24" width="188" height="21" forecolor="#878787" backcolor="#969696" uuid="3f1f6ad7-945c-4bde-a4a0-280a63bd6b96"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="5" y="25" width="165" height="20" uuid="c07858a1-bdc7-46b2-be1e-f56521577bac"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sistema - Banestes]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="183" y="25" width="159" height="19" uuid="f79f7536-b6bc-479e-896b-da1e2043259b"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Código Ocorrência - Banestes]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="345" y="25" width="121" height="20" uuid="caf977d7-0699-495f-9803-9f1876fa43a8"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Código Ocorrência - CIP]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="470" y="24" width="184" height="20" uuid="ebb211aa-21fa-4a67-bcdf-40fa3462fbb7"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Descrição CIP]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="0" y="0" width="802" height="25" forecolor="#878787" backcolor="#969696" uuid="59c4f392-427d-4d66-94b2-9413525f82e5"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="780" height="24" forecolor="#030000" uuid="c6366eca-bca8-4f49-9c59-440f9cda2adb"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="14" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Resultado Consulta - Vínculo Código de Ocorrência - CIP x Banestes]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="654" y="25" width="148" height="20" forecolor="#878787" backcolor="#969696" uuid="2dd6fc81-1f92-445a-9cc1-20aa64f08af6"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="658" y="25" width="144" height="19" uuid="611e9975-0112-4945-87db-3f9b6dd84ad1"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Status]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="180" height="20" uuid="f38e80e4-219a-4329-baad-ee21f99e47ee"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="180" y="0" width="161" height="20" uuid="eb44c7ba-8ef5-4db0-99fe-9848c6cc2a2b"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="341" y="0" width="125" height="20" uuid="8f7295cb-aa60-48c3-8cb0-dce064ca04e1"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="466" y="0" width="188" height="20" uuid="e0b3230b-2e72-4876-b70d-783201cae770"/>
+			</rectangle>
+			<textField>
+				<reportElement x="5" y="0" width="175" height="20" uuid="dc01900d-c0a1-41b0-8335-152e94d438f9"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{SIS_NM_SISTEMA_BANESTES}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="184" y="0" width="150" height="19" uuid="2490fac0-2c03-4686-a5c0-0c9344afd557"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{CODIGO_OCORRENCIA_BAN}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="345" y="0" width="120" height="20" uuid="263a5024-a86d-4681-acee-a20a2a00c69c"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{CODIGO_OCORRENCIA_CIP}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="470" y="-1" width="184" height="20" uuid="fbb1ddb4-56b4-4a16-b32d-4b9461b14c40"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{CDO_DS_DESCRICAO_OCORRENCIA}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="654" y="0" width="148" height="20" uuid="d6a291c9-7020-4cbb-a9ef-eb7b34ec428a"/>
+			</rectangle>
+			<textField>
+				<reportElement x="658" y="-1" width="144" height="20" uuid="26088de9-51de-430e-a7e9-f85960df95ad"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{SATUS}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="42" splitType="Stretch">
+			<textField>
+				<reportElement x="702" y="10" width="100" height="30" uuid="a6feebfe-ba9b-4a87-8649-b0d2097c32a3"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA[String.format("Página %s",$V{PAGE_NUMBER})]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

@@ -1,0 +1,64 @@
+package br.com.banestes.car.core.paginacao;
+
+import java.io.Serializable;
+import java.util.List;
+
+import br.com.banestes.car.bean.datamodel.BaseExtendedDataModel;
+import br.com.banestes.car.jpa.core.jpa.entity.EntityBase;
+
+public class ParametroDataModel<T extends EntityBase> extends BaseExtendedDataModel<T, String> implements Serializable 
+{
+	
+	public ParametroDataModel(List<T> result)
+	{
+		this.result = result;
+	}
+
+	private static final long serialVersionUID = 4214928797514235144L;
+
+	private List<T> result;		
+	
+	@Override
+	public int getTotalRegistros() {
+		return this.getDados().size();
+	
+	}
+	
+	@Override
+	protected String getId(T row) {
+		System.out.println("get id");
+		
+		return row.getId().toString();				
+				
+	}
+	
+
+	@Override
+	protected List<T> recuperarLista(Integer firstRow, Integer maxResults,
+			List<String[]> ordenacoes) {		
+		
+		return result;
+	}
+
+	public List<T> getLista() {
+		return this.getList(new Integer(1), new Integer(1));
+	}
+
+	public String excluirRegistros(Object rowid) {
+
+		return "";
+
+	}
+	
+	
+	public List<T> getResult() {
+		return result;
+	}
+
+	public void setResult(List<T> result) {
+		this.result = result;
+	}
+
+	
+
+}

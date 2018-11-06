@@ -1,0 +1,99 @@
+
+package br.com.banestes.car.core.log;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
+import org.apache.log4j.Level;
+
+/**
+ * Classe para realizar o Log no sistema
+ * 
+ */
+public class Logger {
+	private static final String ENTERING = "ENTERING";
+
+	private static final String EXITING = "EXITING";
+
+	private static final String WARNING = "WARNING";
+
+	private static final String SEVERE = "SEVERE";
+
+	private org.apache.log4j.Logger logger;
+
+	protected Logger(org.apache.log4j.Logger logger) {
+		this.logger = logger;
+	}
+
+	public String getName() {
+		return this.logger.getName();
+	}
+
+	public void setNivelTrace(NivelTrace nivelTrace) {
+		switch (nivelTrace) {
+		case INFO:
+			this.logger.setLevel(Level.INFO);
+			break;
+		case DEBUG:
+			this.logger.setLevel(Level.DEBUG);
+			break;
+		case WARN:
+			this.logger.setLevel(Level.WARN);
+			break;
+		case ERROR:
+			this.logger.setLevel(Level.ERROR);
+		}
+	}
+
+	public void entering(String className, String method, Object message) {
+		this.logger.debug(String.format("%s [%s] [%s] [%s]", ENTERING,
+				className, method, message));
+	}
+
+	public void entering(String className, String method) {
+		this.logger.debug(String.format("%s [%s] [%s]", ENTERING, className,
+				method));
+	}
+
+	public void exiting(String className, String method, Object message) {
+		this.logger.debug(String.format("%s [%s] [%s] [%s]", EXITING,
+				className, method, message));
+	}
+
+	public void exiting(String className, String method) {
+		this.logger.debug(String.format("%s [%s] [%s]", EXITING, className,
+				method));
+	}
+
+	public void warning(String className, String method, Object message) {
+		this.logger.warn(String.format("%s [%s] [%s] %s", WARNING, className,
+				method, message));
+	}
+	
+	public void infoing(String className, String method, Object message) {
+		this.logger.info(String.format("%s [%s] [%s] %s", WARNING, className,
+				method, message));
+	}
+
+	public void severe(String className, String method, String message) {
+		this.logger.debug(String.format("%s [%s] [%s] %s", SEVERE, className,
+				method, message));
+	}
+
+	public void severe(String className, String message, Throwable ex) {
+		this.logger.debug(String.format("%s [%s] %s", SEVERE, className,
+				message));
+	}
+
+	public static enum NivelTrace {
+		INFO, DEBUG, WARN, ERROR;
+	}
+
+	public static String getPrintStackTrace(Throwable ex) {
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		ex.printStackTrace(pw);
+		return sw.toString();
+	}
+
+}

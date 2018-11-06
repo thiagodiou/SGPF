@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	 xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:pdvix="http://pdvix.com/facelets">
+	
+	<div id="titulo" align="left">
+		<h1 class="tituloForm">#{eventoContabilWebBean.operacao == 'INSERCAO' ? messages['label.menu.evento.contabil.inclusao'] : messages['label.menu.evento.contabil.alteracao'] }</h1>				
+		<h1 class="itemForm">
+			#{messages['label.evento.contabil.dados']}			
+		</h1>
+	</div>
+	
+	<a4j:outputPanel id="pnlJS2" ajaxRendered="true">
+		<script type="text/javascript">
+			aplicaMascara();
+		</script>
+	</a4j:outputPanel>
+	
+
+<!-- Formulário -->
+	<div id="cad" align="center">	
+		<table border="0" width="60%" align="left">
+		
+			<tr>
+				<td width="20%">
+					<pdvix:label value="#{messages['label.evento.contabil.codigo']}" required="true" for="codigoEventoContabilForm"/>					
+					<h:inputText 	id="codigoEventoContabilForm" value="#{eventoContabilWebBean.eventoContabil.codigo}" 
+									size="10" required="true" label="#{messages['label.evento.contabil.codigo']}"
+									disabled="#{eventoContabilWebBean.operacao == 'ALTERACAO' || eventoContabilWebBean.eventoContabil.status == 'I'}"/>																		
+				</td>				
+				
+				<td width="30%" style="vertical-align: text-top">
+					<a4j:outputPanel id="adquirente">  							  
+					    	<pdvix:label required="true" value="#{messages['label.evento.contabil.adquirente']}" />	
+					    	
+					    	 <h:selectOneMenu 	required="true" label="#{messages['label.evento.contabil.adquirente']}"
+					    	 					converter="comboConverter" style="width:200px"						    	 										    	 										    	 									    	 	
+						    	 				value="#{eventoContabilWebBean.eventoContabil.adquirente}"
+						    	 				disabled="#{eventoContabilWebBean.eventoContabil.status == 'I'}">
+						    	 				
+					    		<c:if test="#{eventoContabilWebBean.eventoContabil.adquirente == null}">
+									<f:selectItem itemLabel="#{messages['label.selecione']}" />
+								</c:if>				    						    	 			
+				                <f:selectItems value="#{eventoContabilWebBean.listaAdquirente}" var="adq" itemLabel="#{adq.nome}" itemValue="#{adq}" />
+				    		</h:selectOneMenu>				       
+					</a4j:outputPanel>
+			 	</td>		
+			</tr>			
+			
+			<tr>			
+			
+				<td width="20%">																			  					 	
+					<pdvix:label value="#{messages['filtro.nome']}" required="true" for="nomeEventoContabilForm"/>
+					<h:inputText 	id="nomeEventoContabilForm" required="true" 
+									label="#{messages['filtro.nome']}" value="#{eventoContabilWebBean.eventoContabil.nome}" size="30"
+									disabled="#{eventoContabilWebBean.eventoContabil.status == 'I'}"/>																
+				</td>
+							
+				<td width="30%" style="vertical-align: text-top">
+					<a4j:outputPanel id="funcao">  							  
+					    	<pdvix:label required="true" value="#{messages['label.evento.contabil.funcao']}" />						   
+					    	  <h:selectOneMenu 	required="true" label="#{messages['label.evento.contabil.funcao']}"
+					    	  					converter="comboConverter" style="width:200px"						    	 									    	 										    	 									    	 										    	 				
+						    	 				value="#{eventoContabilWebBean.eventoContabil.funcao}"
+						    	 				disabled="#{eventoContabilWebBean.operacao == 'ALTERACAO' || eventoContabilWebBean.eventoContabil.status == 'I'}">
+					    						    
+						    	 <c:if test="#{eventoContabilWebBean.eventoContabil.funcao == null}">
+									<f:selectItem itemLabel="#{messages['label.selecione']}" />
+								</c:if>							
+				                <f:selectItems value="#{eventoContabilWebBean.listaFuncao}" var="fun" itemLabel="#{fun.descricao}" itemValue="#{fun}" />
+				            </h:selectOneMenu>							       
+					</a4j:outputPanel>
+			 	</td>
+			</tr>					
+						
+			<tr>
+				<td width="10%">
+						<pdvix:label value="#{messages['filtro.descricao']}" />					
+						<h:inputText id="descricaoAdquirenteForm" label="#{messages['label.evento.contabil.descricao']}"  
+									 value="#{eventoContabilWebBean.eventoContabil.descricao}"
+									 size="30" disabled="#{eventoContabilWebBean.eventoContabil.status == 'I'}"/>																		
+				</td>
+				
+				<td width="10%">
+						<pdvix:label value="#{messages['filtro.agencia.lancamento']}"/>					
+						<h:inputText id="agenciaLancamentoEventoContabilForm" label="#{messages['label.evento.contabil.agencia.lancamento']}"  
+									 value="#{eventoContabilWebBean.eventoContabil.agenciaLancamento}" 
+									 size="16" disabled="#{eventoContabilWebBean.eventoContabil.status == 'I'}"
+									 validatorMessage="#{messages['label.campo.agencia.lancamento.numerico.invalido']}" maxlength="14">								
+							<f:validateRegex pattern="([0-9]*)" />	
+						</h:inputText>																		
+				</td>	
+				<td width="20%">	
+					<pdvix:label id="statusEventoContabilForm" value="#{messages['filtro.status']}" required="true" for="statusEventoContabil" rendered="#{eventoContabilWebBean.operacao == 'ALTERACAO'}" />
+					<h:selectOneMenu 	id= "statusEventoContabilForm" rendered="#{eventoContabilWebBean.operacao == 'ALTERACAO'}"  required="true"
+										value="#{eventoContabilWebBean.eventoContabil.status}" label="#{messages['label.evento.contabil.status']}"
+										disabled="#{eventoContabilWebBean.eventoContabilFiltro.status == 'I'}">
+						<f:selectItem itemLabel="#{messages['label.selecione']}" />
+						<f:selectItem itemValue="A" itemLabel="#{messages['filtro.status.ativo']}" />
+						<f:selectItem itemValue="I" itemLabel="#{messages['filtro.status.inativo']}" />
+					</h:selectOneMenu>
+			     </td>			
+			</tr>
+	
+																		
+		</table>		
+	</div>	
+
+</ui:composition>

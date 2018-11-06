@@ -1,0 +1,13 @@
+package br.com.banestes.car.core.enumerators;
+
+public enum SituacaoEnum {
+
+	ATIVO("A"), INATIVO("I");
+	
+	public String valor;
+	SituacaoEnum(String valor){
+		this.valor = valor;
+	}
+	
+	
+}

@@ -1,0 +1,13 @@
+package br.com.banestes.car.core.enumerators;
+
+public enum PermissaoEnum 
+{
+
+	SIM("S"), NAO("N");
+	
+	public String valor;
+	PermissaoEnum(String valor){
+		this.valor = valor;
+	}
+	
+}

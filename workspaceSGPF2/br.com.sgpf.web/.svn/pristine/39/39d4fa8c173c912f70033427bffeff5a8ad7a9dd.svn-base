@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:pdvix="http://pdvix.com/facelets"
+    xmlns:p="http://java.sun.com/jsf/core">
+	
+	<div id="titulo" align="left">
+		<h1 class="tituloForm">#{messages['label.menu.processo.liquidacao.consulta']}</h1>				
+		<h1 class="itemForm">
+			#{messages['label.processo.liquidacao.title.dados']}			
+		</h1>
+	</div>	
+
+
+<!-- Formulário -->
+	<div id="cad" align="center">	
+		<a4j:outputPanel>   
+		<table border="0" width="100%" align="left">
+			<tr>
+				<td width="25%">
+					<pdvix:label value="#{messages['label.processo.liquidacao.filtro.codigo']}" />	
+					<h:inputText	id="codigoProcessoLiquidacaoDetail"  disabled="true"
+									value="#{processoLiquidacaoWebBean.processoLiquidacao.idProcessoLiquidacao}"
+									size="15" label="#{messages['filtro.codigo']}">
+					</h:inputText>	
+				</td>
+				<td width="25%">			 													    
+			    	<pdvix:label value="#{messages['label.menu.adquirente']}" required = "true" for="adquirenteDetail"/>						   						
+			    	<h:selectOneMenu 	id="adquirenteDetail" required="true" 			    					
+			    	 					converter="comboConverter" disabled="true" style="width:200px"
+			    	 					value="#{processoLiquidacaoWebBean.processoLiquidacao.adquirente}">	
+			    	 	<c:if test="#{processoLiquidacaoWebBean.processoLiquidacao.adquirente == null}">	
+			    	 		<f:selectItem 	itemLabel="#{messages['label.selecione']}" />	
+			    	 	</c:if>		
+		                <f:selectItems value="#{processoLiquidacaoWebBean.listaAdquirente}" var="adq"  itemLabel="#{adq.nome}" itemValue="#{adq}"/>					                
+		            </h:selectOneMenu>				       						    
+				</td>						
+			
+				<td width="25%">			 													    
+			    	<pdvix:label value="#{messages['label.evento.contabil.funcao']}" required = "true" for="funcaoDetail"/>						   						
+			    	<h:selectOneMenu 	id="funcaoDetail" required="true"	style="width:200px"		    						
+			    	 					converter="comboConverter"		disabled="true"		    	 					
+			    	 					value="#{processoLiquidacaoWebBean.processoLiquidacao.funcao}">
+		    	 		<c:if test="#{processoLiquidacaoWebBean.processoLiquidacao.funcao == null}">	
+		    	 			<f:selectItem 	itemLabel="#{messages['label.selecione']}" />	
+		    	 		</c:if>					
+		                <f:selectItems value="#{processoLiquidacaoWebBean.listaFuncao}" var="fun"  itemLabel="#{fun.descricao}" itemValue="#{fun}" />					                
+		          </h:selectOneMenu>					       						    
+				</td>
+							
+				<td width="25%">			 													    
+			    	<pdvix:label value="#{messages['label.processo.liquidacao.dominio']}" required = "true" for="dominioDetail"/>						   						
+			    	<h:selectOneMenu 	id="dominioDetail" required="true" style="width:200px"			    					
+			    	 					converter="comboConverter"	 disabled="true"
+			    	 					value="#{processoLiquidacaoWebBean.processoLiquidacao.dominio}">	
+			    	 					
+			    	 	<c:if test="#{processoLiquidacaoWebBean.processoLiquidacao.dominio == null}">	
+			    	 		<f:selectItem 	itemLabel="#{messages['label.selecione']}" />	
+			    	 	</c:if>		
+		                <f:selectItems value="#{processoLiquidacaoWebBean.listaDominio}" var="dom"  itemLabel="#{dom.descricao}" itemValue="#{dom}"/>					                
+		            </h:selectOneMenu>				       						    
+				</td>
+			</tr>
+			
+			<tr>
+				<td width="25%">
+					<pdvix:label value="#{messages['label.processo.liquidacao.form.descricao']}" required = "true" for="descricaoDetail"/>						   						
+			    	<h:inputText 	id="descricaoDetail" required="true" size="40" disabled="true"		    								    	 				
+			    	 				value="#{processoLiquidacaoWebBean.processoLiquidacao.descricao}">						    	 										    	 								    	 										    	 									    	 										    	 	
+			    	 						                					               
+		           	</h:inputText>
+	           	</td>	
+	           	
+	           	<td width="25%">
+						<pdvix:label value="#{messages['filtro.status']}" required="true" for="situacaoProcessoDetail" />
+						<h:selectOneMenu 	id= "situacaoProcessoDetail" disabled="true"
+											value="#{processoLiquidacaoWebBean.processoLiquidacao.status}" label="#{messages['filtro.situacao']}">
+							<f:selectItem itemLabel="#{messages['label.selecione']}" />
+							<f:selectItem itemValue="A" itemLabel="#{messages['filtro.status.ativo']}" />
+							<f:selectItem itemValue="I" itemLabel="#{messages['filtro.status.inativo']}" />
+						</h:selectOneMenu>
+					</td>							
+			</tr>	
+			<tr>
+				<td width="25%">	
+					<br/>
+					<br/>				
+					<h:form id="form2">
+				        <h:panelGrid columns="1" columnClasses="top , top">
+				            <rich:extendedDataTable sortMode="single" 
+				                value="#{processoLiquidacaoWebBean.processoLiquidacao.bandeiras}" var="bna" id="checkListDetail"
+				                 style="border:0px;margin-left:10px;height:#{processoLiquidacaoWebBean.pixels}px" selectionMode="none" >
+				                					                					               
+				                <rich:column style="align:center" sortable="false" label="Flag" id="col_1" width="45px">
+					                    <f:facet name="header">
+					                        
+					                    </f:facet>
+					                    <div align="center">    
+											
+										</div>
+										<f:facet name="footer">
+					                        <h:outputText value="-"/>
+					                    </f:facet> 
+					                </rich:column>	
+				                				                
+				                <rich:column sortable="false" width="150px">                 					                
+				                    <f:facet name="header">
+				                        <h:outputText value="#{messages['label.menu.bandeira']}"/>
+				                    </f:facet>   
+									<h:outputText value="#{bna.nome}"/>
+									 <f:facet name="footer">
+				                        <h:outputText value="-"/>
+				                    </f:facet>  
+				                </rich:column>
+							</rich:extendedDataTable>
+				        </h:panelGrid>
+				    </h:form>					
+				</td>
+			</tr>		
+			
+			<tr>
+				
+				<td>
+					<a4j:outputPanel>
+						<pdvix:label required="true" value="#{messages['label.processo.liquidacao.form.liquidacao.adquirente']}" />	
+						<h:selectOneRadio 	id="liquidacaoAdquirenteDetail" required="true" layout="pageDirection" 
+											label="#{messages['label.historico.cc.finalidade']}" disabled="true"
+											value="#{processoLiquidacaoWebBean.processoLiquidacao.tipoLiquidacao}">											
+							<f:ajax event="click" render="eventoContabil_historico_panel_detail"/>							
+							<f:selectItem 	itemValue="S" 
+							 				itemLabel="#{messages['label.processo.liquidacao.form.str']}" />						 					
+							 			
+							<f:selectItem 	itemValue="C" 
+							 				itemLabel="#{messages['label.processo.liquidacao.form.cc']}"/>							 											 				   					
+						</h:selectOneRadio>
+					</a4j:outputPanel>
+				</td>					
+				<td>	
+					<a4j:outputPanel 	id="eventoContabil_historico_panel_detail" >
+						<a4j:outputPanel 	rendered="#{processoLiquidacaoWebBean.processoLiquidacao.tipoLiquidacao == 'S'}">
+							<pdvix:label 	value="#{messages['label.processo.liquidacao.form.eventoContail']}" disabled="true"
+											required = "#{processoLiquidacaoWebBean.processoLiquidacao.tipoLiquidacao == 'S'}" 
+											for="eventoContabilComboDetail"/>
+																	   						
+					    	<h:selectOneMenu	id="eventoContabilComboDetail" required="#{processoLiquidacaoWebBean.processoLiquidacao.tipoLiquidacao == 'S'}"
+					    						converter="comboConverter"	disabled="true"	style="width:200px"				    	 					  
+					    	 					value="#{processoLiquidacaoWebBean.processoLiquidacao.tipoProcessoLiquidacao.eventoContabil}">						    	 										    	 								    	 										    	 									    	 										    	 	
+					    	 	<c:if test="#{processoLiquidacaoWebBean.processoLiquidacao.tipoProcessoLiquidacao.eventoContabil == null}">	
+				    	 			<f:selectItem 	itemLabel="#{messages['label.selecione']}" />	
+				    	 		</c:if>									                
+				                <f:selectItems 	value="#{processoLiquidacaoWebBean.listaEvento}" var="evn" itemLabel="#{evn.codigo}" itemValue="#{evn}"/>				                
+				            </h:selectOneMenu>		
+			            </a4j:outputPanel>	
+			            
+			            <a4j:outputPanel 	rendered="#{processoLiquidacaoWebBean.processoLiquidacao.tipoLiquidacao == 'C'}">
+							<pdvix:label 	value="#{messages['label.processo.liquidacao.form.historico.cc']}" 
+											required = "#{processoLiquidacaoWebBean.processoLiquidacao.tipoLiquidacao == 'C'}"
+											for="historicoContaCorenteDetail"/>	
+																   						
+					    	<h:selectOneMenu 	id="historicoContaCorenteDetail" required="#{processoLiquidacaoWebBean.processoLiquidacao.tipoLiquidacao == 'C'}"					    					
+					    	 					converter="comboConverter"	disabled="true"	style="width:200px"				    	 			
+					    	 					value="#{processoLiquidacaoWebBean.processoLiquidacao.tipoProcessoLiquidacao.historicoContaCorrente}">							    	 									    	 										    	 								    	 										    	 									    	 										    	 
+					    	 	<c:if test="#{processoLiquidacaoWebBean.processoLiquidacao.tipoProcessoLiquidacao.historicoContaCorrente == null}">	
+				    	 			<f:selectItem 	itemLabel="#{messages['label.selecione']}" />	
+				    	 		</c:if>		
+				                <f:selectItems 	value="#{processoLiquidacaoWebBean.listaHistoricoContaCorrente}" var="hst" itemLabel="#{hst.codigo}" itemValue="#{hst}"/>					                
+				            </h:selectOneMenu>	
+			           	</a4j:outputPanel>																		
+					</a4j:outputPanel>				
+				</td>					
+			</tr>	
+			<tr>
+				<td width="35%">					
+					<pdvix:label 	value="#{messages['label.processo.liquidacao.form.historico.estabelecimento.credito']}" required = "true" for="historicoContaCorenteCreditoDetail"/>
+					<h:form>						   						
+			    	<h:selectOneMenu  	id="historicoContaCorenteCreditoDetail" required="true"				    									    	 				 	
+				    	 				converter="comboConverter"	disabled="true"	 	style="width:200px"		    	 					    	 						    
+				    	 				value="#{processoLiquidacaoWebBean.processoLiquidacao.tipoProcessoLiquidacao.creditoEstabelecimento}">					    	 			
+				    	<c:if test="#{processoLiquidacaoWebBean.processoLiquidacao.tipoProcessoLiquidacao.creditoEstabelecimento == null}">	
+		    	 			<f:selectItem 	itemLabel="#{messages['label.selecione']}" />	
+		    	 		</c:if>				    				    	 								    	 										    	 								    	 										    	 									    	 										    	 						
+		                <f:selectItems value="#{processoLiquidacaoWebBean.listaHistoricoContaCorrente}" var="prl" itemLabel="#{prl.codigo}" itemValue="#{prl}"/>								                
+		           	</h:selectOneMenu>		
+		           	</h:form>	            		          
+		            			       						    
+				</td>						
+			</tr>	
+												
+		</table>	
+		</a4j:outputPanel>	
+	</div>
+
+
+</ui:composition>

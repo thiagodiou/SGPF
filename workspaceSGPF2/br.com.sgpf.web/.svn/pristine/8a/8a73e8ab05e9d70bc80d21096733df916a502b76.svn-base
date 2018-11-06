@@ -1,0 +1,75 @@
+package br.com.banestes.car.bean;	
+
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.omnifaces.cdi.ViewScoped;
+import org.omnifaces.util.Messages;
+
+import br.com.banestes.car.core.bean.AbstractWebBean;
+import br.com.banestes.car.core.enumerators.OperacoesEnum;
+import br.com.banestes.car.jpa.core.util.MessagesPropertiesUtil;
+import br.com.banestes.car.jpa.entity.ParametroEntity;
+import br.com.banestes.car.jpa.model.repository.aplicacao.ParametroRepository;
+import br.com.banestes.car.service.ParametroServiceBean;
+
+@Named
+@ViewScoped
+public class ParametroWebBean extends AbstractWebBean {
+
+	private static final long serialVersionUID = 5653645873997247062L;
+
+	private ParametroEntity parametro;
+	
+	@Inject
+	private transient ParametroRepository parametroRepository;
+	
+	@Inject
+	private transient ParametroServiceBean parametroService;	
+	
+	
+	
+	
+	public ParametroEntity getParametro() {
+		return parametro;
+	}
+
+	public void setParametro(ParametroEntity parametro) {
+		this.parametro = parametro;
+	}
+	
+	
+	
+	public void preRenderView() {
+		if (!FacesContext.getCurrentInstance().isPostback()) 
+		{						
+			filtrar();
+			this.setOperacao(OperacoesEnum.FILTRAGEM);			
+		}
+	}
+
+	public String filtrar() 
+	{		
+		
+		parametro = parametroRepository.getAll();					
+		setOperacao(OperacoesEnum.ALTERACAO);						
+		return null;
+	}
+	
+		
+	public String salvar()
+	{		
+		
+		parametro = parametroService.gravar(parametro);
+		if(parametro.getIdParametro() == null)		
+			Messages.addInfo(null, MessagesPropertiesUtil.getMessage("mensage.sucesso.insercao"), "");
+		else
+			Messages.addInfo(null, MessagesPropertiesUtil.getMessage("mensage.sucesso.alteracao"), "");
+		filtrar();
+		
+		return null;
+	}
+
+	
+}

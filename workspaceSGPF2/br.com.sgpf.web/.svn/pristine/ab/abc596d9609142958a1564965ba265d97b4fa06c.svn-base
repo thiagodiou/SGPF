@@ -1,0 +1,138 @@
+package br.com.banestes.car.bean;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Date;
+
+public class ConsultaAgendaFiltroBean implements Serializable{
+	
+
+	private static final long serialVersionUID = -973788477044882191L;
+	private BigInteger idAdquirente;
+	private BigInteger idBandeira;	
+	private String cnpjCpfCentralizadora;
+	private boolean isCnpjRadical;
+	private String agenciaCentralizadora;
+	private String contaCentralizadora;
+	private Date dataInicial;
+	private Date dataFinal;
+	private BigDecimal valorInicial;
+	private BigDecimal valorFinal;
+
+	
+	
+	
+	public BigInteger getIdAdquirente() {		
+		return idAdquirente == null || idAdquirente.compareTo(BigInteger.ZERO) == 0 ? null : idAdquirente ;
+	}
+
+	public void setIdAdquirente(BigInteger idAdquirente) {
+		this.idAdquirente = idAdquirente;
+	}
+
+	public BigInteger getIdBandeira() {		
+		return idBandeira == null || idBandeira.compareTo(BigInteger.ZERO) == 0 ? null : idBandeira ;
+	}
+
+	public void setIdBandeira(BigInteger idBandeira) {
+		this.idBandeira = idBandeira;
+	}
+
+	
+	
+	public String getCnpjCpfCentralizadora() {
+		
+		/*
+		if(isCnpjRadical){
+			return cnpjCpfCentralizadora == null ? null : cnpjCpfCentralizadora.toString().substring(0, 8); 
+		}
+		else{
+			return cnpjCpfCentralizadora == null ? null : cnpjCpfCentralizadora; 
+		}
+		
+		
+		aux = cnpjCpfCentralizadora.toString().substring(0, 8);
+		*/
+		return cnpjCpfCentralizadora;
+	}
+	
+	
+
+	public void setCnpjCpfCentralizadora(String cnpjCpfCentralizadora) {
+		this.cnpjCpfCentralizadora = cnpjCpfCentralizadora;
+	}
+	
+	public boolean isCnpjRadical() {
+		return isCnpjRadical;
+	}
+
+	public void setCnpjRadical(boolean isCnpjRadical) {
+		this.isCnpjRadical = isCnpjRadical;
+	}
+
+	public String getAgenciaCentralizadora() {
+		return agenciaCentralizadora;
+	}
+
+	public void setAgenciaCentralizadora(String agenciaCentralizadora) {
+		this.agenciaCentralizadora = agenciaCentralizadora;
+	}
+
+	public String getContaCentralizadora() {
+		return contaCentralizadora;
+	}
+
+	public void setContaCentralizadora(String contaCentralizadora) {
+		this.contaCentralizadora = contaCentralizadora;
+	}
+
+	public Date getDataInicial() {
+		return dataInicial;
+	}
+
+	public void setDataInicial(Date dataInicial) {
+		this.dataInicial = dataInicial;
+	}
+
+	public Date getDataFinal() {
+		return dataFinal;
+	}
+
+	public void setDataFinal(Date dataFinal) {
+		this.dataFinal = dataFinal;
+	}
+
+	public BigDecimal getValorInicial() {
+		return valorInicial == null || valorInicial.compareTo(BigDecimal.ZERO) == 0 ? null : valorInicial;
+	}
+
+	public void setValorInicial(BigDecimal valorInicial) {
+		this.valorInicial = valorInicial;
+	}
+
+	public BigDecimal getValorFinal() {		
+		return valorFinal == null || valorFinal.compareTo(BigDecimal.ZERO) == 0 ? null : valorFinal;
+	}
+
+	public void setValorFinal(BigDecimal valorFinal) {
+		this.valorFinal = valorFinal;
+	}	
+
+	
+	
+	
+
+	
+	public boolean isEmpty(){
+		
+		if( idAdquirente.compareTo(BigInteger.ZERO) == 0 && idBandeira.compareTo(BigInteger.ZERO) == 0 && cnpjCpfCentralizadora.isEmpty() &&
+				agenciaCentralizadora.isEmpty() && contaCentralizadora.isEmpty() &&	dataInicial == null && dataFinal == null && 
+			valorInicial.compareTo(BigDecimal.ZERO) == 0 &&	valorFinal.compareTo(BigDecimal.ZERO) == 0){
+			return true;
+		}
+		
+		return false;
+	}
+	
+}

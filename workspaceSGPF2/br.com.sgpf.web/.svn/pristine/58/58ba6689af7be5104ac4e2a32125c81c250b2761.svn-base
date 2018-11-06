@@ -1,0 +1,75 @@
+package br.com.banestes.car.bean;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Date;
+
+
+public class ConsultaResumoLiquidacaoFiltroBean implements Serializable
+{	
+		
+	public ConsultaResumoLiquidacaoFiltroBean()
+	{
+		tipoData = "D";
+	}
+	
+	private static final long serialVersionUID = 6382060599643572210L;
+
+	private BigInteger idAdquirente;
+	
+	private String tipoData;
+	
+	private Date data;
+	
+	private Date dataInicial;
+	
+	private Date dataFim;
+
+
+
+	public BigInteger getIdAdquirente() {
+		return idAdquirente;
+	}
+
+	public void setIdAdquirente(BigInteger idAdquirente) {
+		this.idAdquirente = idAdquirente;
+	}
+
+	public Date getData() {
+		return data;
+	}
+
+	public void setData(Date data) {
+		this.data = data;
+	}
+
+	public Date getDataInicial() {
+		return dataInicial;
+	}
+
+	public void setDataInicial(Date dataInicial) {
+		this.dataInicial = dataInicial;
+	}
+
+	public Date getDataFim() {
+		return dataFim;
+	}
+
+	public void setDataFim(Date dataFim) {
+		this.dataFim = dataFim;
+	}
+
+	public String getTipoData() {
+		return tipoData;
+	}
+
+	public void setTipoData(String tipoData) {
+		this.tipoData = tipoData;
+	}
+	
+	
+	
+	
+	
+}

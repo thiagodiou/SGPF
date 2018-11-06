@@ -1,0 +1,346 @@
+package br.com.banestes.car.bean;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.enterprise.inject.Produces;
+import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.omnifaces.cdi.ViewScoped;
+import org.omnifaces.util.Messages;
+
+import br.com.banestes.car.core.bean.AbstractWebBean;
+import br.com.banestes.car.core.enumerators.OperacoesEnum;
+import br.com.banestes.car.core.enumerators.SituacaoEnum;
+import br.com.banestes.car.core.enumerators.TipoArquivoEnum;
+import br.com.banestes.car.core.exportacao.ExportarDataModel;
+import br.com.banestes.car.core.paginacao.ParametroDataModel;
+import br.com.banestes.car.core.util.autoComplete.AutoComplete;
+import br.com.banestes.car.jpa.core.util.DateUtil;
+import br.com.banestes.car.jpa.core.util.MessagesPropertiesUtil;
+import br.com.banestes.car.jpa.entity.CodigoOcorrenciaCIPEntity;
+import br.com.banestes.car.jpa.entity.CodigoOcorrenciaEntity;
+import br.com.banestes.car.jpa.model.repository.aplicacao.OcorrenciaRepository;
+import br.com.banestes.car.jpa.model.repository.aplicacao.VinculoCodigoOcorrenciaRepository;
+import br.com.banestes.car.service.OcorrenciaServiceBean;
+
+
+
+@Named
+@ViewScoped
+public class OcorrenciaWebBean extends AbstractWebBean{
+
+
+	private static final long serialVersionUID = 5653645873997247062L;
+
+	//private List<CodigoOcorrenciaEntity> ocorrencias;
+	private List<CodigoOcorrenciaEntity> ocorrencias;
+
+	private OcorrenciaFiltroBean ocorrenciaFiltroBean;	
+	
+	@Inject
+	private transient OcorrenciaRepository ocorrenciaRepository;
+	
+	@Inject
+	private transient VinculoCodigoOcorrenciaRepository vinculoRepository;
+	
+	@Inject
+	private transient OcorrenciaServiceBean ocorrenciaService;
+	
+	private AutoComplete autoComplete;	
+	
+	private CodigoOcorrenciaEntity ocorrencia;
+
+	@Named("ocorrenciaDados")
+	@Produces
+	private ParametroDataModel<CodigoOcorrenciaEntity> dados;
+	
+	private String tipoRelatorio;
+	
+	private ExportarDataModel exportar;	
+	
+	
+
+//	public List<CodigoOcorrenciaCIPEntity> getOcorrencias() {
+//		return ocorrencias;
+//	}
+//
+//	public void setOcorrencias(List<CodigoOcorrenciaCIPEntity> ocorrencias) {
+//		this.ocorrencias = ocorrencias;
+//	}
+	
+	public List<CodigoOcorrenciaEntity> getOcorrencias() {
+		return ocorrencias;
+	}
+
+	public void setOcorrencias(List<CodigoOcorrenciaEntity> ocorrencias) {
+		this.ocorrencias = ocorrencias;
+	}
+	
+	
+
+	public OcorrenciaRepository getOcorrenciaRepository() {
+		return ocorrenciaRepository;
+	}
+
+	public void setOcorrenciaRepository(OcorrenciaRepository ocorrenciaRepository) {
+		this.ocorrenciaRepository = ocorrenciaRepository;
+	}
+
+	public OcorrenciaServiceBean getOcorrenciaService() {
+		return ocorrenciaService;
+	}
+
+	public void setOcorrenciaService(OcorrenciaServiceBean ocorrenciaService) {
+		this.ocorrenciaService = ocorrenciaService;
+	}
+
+	public AutoComplete getAutoComplete() {
+		return autoComplete;
+	}
+
+	public void setAutoComplete(AutoComplete autoComplete) {
+		this.autoComplete = autoComplete;
+	}
+
+	public CodigoOcorrenciaEntity getOcorrencia() {
+		return ocorrencia;
+	}
+	
+	public void setOcorrencia(CodigoOcorrenciaEntity ocorrencia) {
+		this.ocorrencia = ocorrencia;
+	}
+	
+	public ParametroDataModel<CodigoOcorrenciaEntity> getDados() {
+		return dados;
+	}
+
+	public void setDados(ParametroDataModel<CodigoOcorrenciaEntity> dados) {
+		this.dados = dados;
+	}
+
+
+	public OcorrenciaFiltroBean getOcorrenciaFiltroBean() {
+		return ocorrenciaFiltroBean;
+	}
+
+
+	public void setOcorrenciaFiltroBean(OcorrenciaFiltroBean ocorrenciaFiltroBean) {
+		this.ocorrenciaFiltroBean = ocorrenciaFiltroBean;
+	}
+	
+	
+		
+	
+	
+	
+	public String getTipoRelatorio() {
+		return tipoRelatorio;
+	}
+
+	public void setTipoRelatorio(String tipoRelatorio) {
+		this.tipoRelatorio = tipoRelatorio;
+	}
+
+	public void preRenderView() {
+		if (!FacesContext.getCurrentInstance().isPostback()) 
+		{
+			autoComplete = new AutoComplete(ocorrenciaRepository.getAllNames());			
+			ocorrenciaFiltroBean = new OcorrenciaFiltroBean();		
+			exportar = new ExportarDataModel();
+			this.setOperacao(OperacoesEnum.FILTRAGEM);			
+		}
+	}
+
+	
+	public String filtrar() 
+	{
+		tipoRelatorio = TipoArquivoEnum.PDF.valor;
+		
+		ocorrencias = ocorrenciaRepository
+						.findByParameters(	ocorrenciaFiltroBean.getCodigo(),
+											ocorrenciaFiltroBean.getDescricao(),
+											ocorrenciaFiltroBean.getStatus()
+										);
+		
+		if(ocorrencias.size() == 0)
+		{
+			adicionarMensagemErro(
+					MessagesPropertiesUtil
+							.getMessage("label.consulta.vazia"),
+					"");
+			setOperacao(OperacoesEnum.FILTRAGEM);		
+			return null;
+		}
+		
+		dados = new ParametroDataModel<CodigoOcorrenciaEntity>(ocorrencias);
+		dados.redefinir();
+		dados.ativar();
+		dados.getLista();
+		dados.iniciarPesquisa();
+		setOperacao(OperacoesEnum.LISTAGEM);			
+		
+		return null;
+	}
+	
+	public String incluir()
+	{
+		ocorrencia = new CodigoOcorrenciaCIPEntity();
+		setOperacao(OperacoesEnum.INSERCAO);
+		
+		return null;
+	}
+	
+	public String salvar()
+	{		
+		if(!validar())
+		{
+			ocorrencia = ocorrenciaService.gravar(ocorrencia);	
+			if(this.getOperacao().equals(OperacoesEnum.ALTERACAO)) 
+				Messages.addInfo(null, MessagesPropertiesUtil.getMessage("mensage.sucesso.alteracao"), "");		
+			else
+				Messages.addInfo(null, MessagesPropertiesUtil.getMessage("mensage.sucesso.insercao"), "");	
+			filtrar();
+			autoComplete = new AutoComplete(ocorrenciaRepository.getAllNames());
+			
+		}				
+		
+		return null;
+	}	
+	
+	
+	public String alterar(CodigoOcorrenciaEntity ocorrenciaSelecionada)
+	{
+		this.ocorrencia = ocorrenciaSelecionada;
+		setOperacao(OperacoesEnum.ALTERACAO);
+		return null;
+	}		
+	
+	
+	private boolean validar()
+	{
+		boolean dadosJaExistentes = false;
+		boolean vinculoOcorrencia  = false;
+		
+		vinculoOcorrencia = validaVinculo();
+		if(vinculoOcorrencia)						
+			return true;
+		
+		List<CodigoOcorrenciaEntity> ocorrencias = ocorrenciaRepository.findAlteracaoByParameters(	ocorrencia.getCodigo(),																									
+																									ocorrencia.getIdCodigoOcorrencia());
+		
+		dadosJaExistentes = ocorrencias.size() > 0 ? true : false;				
+		if(dadosJaExistentes)
+		{
+			Messages.addError(null, MessagesPropertiesUtil.getMessage("msg.erro.registro.duplicado"), "");
+			return true;
+		}	
+		return false;				
+	}
+	
+	public boolean validaVinculo()
+	{
+		
+		boolean vinculoOcorrencia = ocorrenciaRepository.findVinculoOcorrencia(ocorrencia.getIdCodigoOcorrencia());
+		if(vinculoOcorrencia)
+		{			
+			Messages.addError(null,String.format("%s não permitida. Existe(m) registro(s) associado(s) na(s) tabela(s): %s ", 
+					getOperacao().equals(OperacoesEnum.ALTERACAO) ? "Alteração" : "Exlcusão",
+							vinculoOcorrencia ? "TB_VIN_VINCULO_CD_CIP_BANESTES" : ""));
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public String limpar()
+	{
+		this.ocorrenciaFiltroBean = new OcorrenciaFiltroBean();
+		return null;
+	}	
+		
+	public String cancelar()
+	{
+		dados = new ParametroDataModel<CodigoOcorrenciaEntity>(ocorrencias);
+		if( getOperacao().equals(OperacoesEnum.LISTAGEM) )
+		{
+			setOperacao(OperacoesEnum.FILTRAGEM);
+			return null;
+		}
+		
+		else
+		{
+			setOperacao(OperacoesEnum.FILTRAGEM);
+			return filtrar();
+		}
+		
+	}
+		
+
+	public String exportar()
+	{				
+	
+		HashMap<String, Object> param = new HashMap<String, Object>();
+		String pathReport = "/pages/relatorio/CodigoOcorrenciaPDF.jrxml";
+		List<String> contents = new ArrayList<String>();
+		
+		if(tipoRelatorio.equals(TipoArquivoEnum.CSV.valor))
+		{								
+			contents.add(preencheCabecalhoCSV());
+			contents.add(preencheContentCSV());		
+		}
+		else
+		{
+			param.put("descricao", this.ocorrenciaFiltroBean.getDescricao().isEmpty() ? null : this.ocorrenciaFiltroBean.getDescricao().toLowerCase());
+			param.put("codigo", this.ocorrenciaFiltroBean.getCodigo() == null ? null : this.ocorrenciaFiltroBean.getCodigo().toString());
+			param.put("situacao", this.ocorrenciaFiltroBean.getStatus().isEmpty() ? null : this.ocorrenciaFiltroBean.getStatus().toString());	
+				
+			
+		}
+		
+		String nomeArquivo = "Ocorrencia" + DateUtil.dateToString(new Date(), "yyyyMMdd");
+		
+		exportar.exportar(tipoRelatorio, param, nomeArquivo,pathReport, this.ocorrenciaRepository, contents);										
+		
+		Messages.addInfo(null, MessagesPropertiesUtil.getMessage("label.exportado.sucesso"), "");
+		
+		tipoRelatorio = TipoArquivoEnum.PDF.valor;
+		
+		return null;
+	}
+	
+	
+	public String preencheCabecalhoCSV()
+	{
+		StringBuilder cabecalho = new StringBuilder();
+		cabecalho.append("Código de Ocorrência - CIP;Descrição;Tipo de Ocorrência; Status");
+		cabecalho.append("\n");
+		return cabecalho.toString();
+	}
+	
+	public String preencheContentCSV()
+	{
+		StringBuilder content = new StringBuilder();
+		for(CodigoOcorrenciaEntity cdo : this.ocorrencias)
+		{						
+			content.append(cdo.getCodigo().toString().length() < 2 ? String.format("%02d",cdo.getCodigo()) : cdo.getCodigo().toString() );			
+			content.append(";");
+			content.append(cdo.getDescricao());
+			content.append(";");
+			content.append(cdo.getTipoOcorrenciaCIP().equals("E") ? "Erro" : "Sucesso");
+			content.append(";");
+			content.append(cdo.getStatus().equals(SituacaoEnum.ATIVO.valor) ? "Ativo" : "Inativo");
+			content.append("\n");
+		}
+		
+		return content.toString();
+	}
+	
+	
+}//end_class...

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:pdvix="http://pdvix.com/facelets">
+
+	<div id="tituloAnalista" align="left">
+		<h1 class="tituloForm">#{messages['label.menu.analista']}</h1>				
+		<h1 class="itemForm">
+			Dados de Analista			
+		</h1>
+	</div>
+	
+
+	
+
+<!-- Formulário -->
+	<div id="formAnalista" align="center">	
+		<table border="0" width="50%" align="left">
+		
+			<tr>
+				<td width="10%">
+					<h:outputText value="Nome:" />																	
+				</td>
+				<td>
+					<h:inputText value="#{analistaBean.analistaForm.nome}" />																	
+				</td>				
+			</tr>										
+				
+			<tr>
+				<td width="10%">
+					<h:outputText value="E-mail:" />																	
+				</td>
+				<td>
+					<h:inputText value="#{analistaBean.analistaForm.email}" />																	
+				</td>				
+			</tr>	
+			
+			<tr>
+				<td width="10%">
+					<h:outputText value="Telefone:" />																	
+				</td>
+				<td>
+					<h:inputText value="#{analistaBean.analistaForm.telefone}" />																	
+			</td>				
+			</tr>
+																															
+		</table>
+		
+		<table>
+			<tr>
+				<td>
+					<h:commandButton id="btnSalvar" value="#{messages['label.salvar']}" 
+										action="#{analistaBean.salvar()}"  />
+				</td>
+			</tr>
+		</table>			
+	</div>	
+	
+
+
+</ui:composition>

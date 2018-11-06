@@ -1,0 +1,138 @@
+/** rich:dataTable **/
+.rf-dt {
+	margin-top: 20px !important;
+	margin-bottom: 8px !important;
+}
+
+.rich-table-header {
+	background-color: #D2D2D2 !important;
+	background-image: none !important;
+	border: 1px solid #CDCDCD !important;
+	border-collapse: collapse !important;
+	color: #444444 !important;
+}
+
+.rich-table-headercell {
+	color: #444444 !important;
+	text-align: center !important;
+}
+
+.rich-extdt {
+	margin-top: 20px !important;
+	margin-bottom: 8px !important;
+}
+
+.rich-extdt-subheader,.rich-table-subheader {
+	background-color: #D2D2D2 !important;
+	background-image: none !important;
+	border: 1px solid #CDCDCD !important;
+	border-collapse: collapse !important;
+	color: #444444 !important;
+}
+
+.rich-extdt-subheadercell {
+	color: #444444 !important;
+	text-align: center !important;
+}
+
+.extdt-menu-div-on {
+	background-color: #D2D2D2 !important;
+}
+
+.row-odd {
+	background-color: #FFFFFF;
+}
+
+.row-even {
+	background-color: #EEEEEE;
+}
+/** rich:dataTable **/
+
+/* rich:tabPanel */
+.rich-tab-active {
+	background-color: #FFFFFF !important;
+	background-image: none !important;
+	color: #000000 !important;
+}
+
+.rich-tab-header {
+	font-family: verdana, tahoma !important;
+	font-size: 11px;
+	height: 25px;
+}
+
+.rich-tab-inactive {
+	/* IE 6 */
+	_background-image: none !important;
+	/* IE7 */
+	*background-image: none !important;
+	/* IE8 */
+	background-image: /*\**/ none !important;
+	background-image: -moz-linear-gradient(center top, #FFFFFF, #DEDEDE) !important;
+	background: -webkit-gradient(linear, center top, center bottom, from(#FFFFFF), to(#DEDEDE)) !important;
+	background-color: #DEDEDE !important;
+	border-color: #FFFFFF;
+	border-style: solid;
+	border-width: 1px 1px 0;
+	cursor: default;
+}
+
+.rich-tab-disabled {
+	border-color: #FFFFFF !important;
+	color: #747474 !important;
+	background-color: #CCCCCC !important;
+	background-image: none !important;
+}
+
+.rich-tabpanel-content {
+	background-color: #FFFFFF !important;
+	border-bottom-color: #C0C0C0 !important;
+	border-left-color: #C0C0C0 !important;
+	border-right-color: #C0C0C0 !important;
+	color: #000000 !important;
+	font-family: Verdana, tahome !important;
+	font-size: 11px !important;
+}
+
+.rich-tabpanel-content-position {
+	box-shadow: 0 8px 9px rgba(0, 0, 0, 0.14), 0 0 0 0 rgba(0, 0, 0, 0.07) !important;
+	border-radius: 0px 0px 5px 5px !important;
+}
+
+.rich-calendar-button {
+	margin-right: 20px;
+}
+
+/** rich:tabPanel  **/
+.rf-tb-itm {
+	padding: 2px 10px;
+}
+
+.rf-ddm-itm {
+	padding: 2px 5px;
+	cursor: pointer;
+}
+
+.rf-ddm-itm-sel {
+	background-color: #ffffff;
+	color: #000000;
+	border: 1px solid #c0c0c0;
+}
+
+.rf-ddm-itm-unsel {
+	border: 0 solid rgba(0, 0, 0, 0);
+	padding: 3px 6px;
+}
+
+.rf-au-lst-cord .rf-au-shdw .rf-au-lst-dcrtn .rf-au-lst-scrl {    
+    width: 190px; /* This is enough to make all the autocomplete lists look nice */
+}
+
+.rf-sel-cntr{
+	border-style: none;
+	
+}
+
+*.rf-edt-ftr, *.rf-edt-tbl-ftr {
+	background-image: url(/car/rfRes/colHdrGrad.png.jsf?v=4.3.7.Final&db=eAFjZJBjZDBiZBBh!H!!zlXG!1fOH2dgAgA4fAdk&ln=org.richfaces.images);	
+}

@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2016-09-05T19:15:30 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="HistoricoEstabelecimento" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c85b0886-65f3-4489-96e0-6cf2bdb582c4">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="nomeArquivo" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeArquivo]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="61" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="25" width="40" height="25" forecolor="#878787" backcolor="#969696" uuid="88c175a0-aafb-44e2-a96b-0ddcc7caaec7"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="23" width="40" height="26" uuid="c6f2c820-c6ef-4e3c-9e5e-0c23a60cd8cb"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data do Arquivo ]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="40" y="25" width="146" height="25" forecolor="#878787" backcolor="#969696" uuid="5ab4fb02-8914-48fb-928e-787d7217537a"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="40" y="24" width="146" height="26" uuid="c35460ad-659a-4c53-905c-6bb201cac26c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome do Arquivo]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="0" y="0" width="802" height="25" forecolor="#878787" backcolor="#969696" uuid="1dfa3e9b-847c-4346-b101-3f18f7e5e15f"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="780" height="24" forecolor="#030000" uuid="7837e9a1-3dfb-403c-bd46-2a3f7c3da03d"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="14" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Resultado Consulta - Arquivos]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="186" y="25" width="50" height="25" forecolor="#878787" backcolor="#969696" uuid="472d28b7-28b5-484d-a5f1-729954ae2515"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="186" y="24" width="50" height="26" uuid="e924bb05-8daf-4812-a846-51fbdfecb322"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sequencial]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="236" y="25" width="40" height="25" forecolor="#878787" backcolor="#969696" uuid="8daf101e-aeeb-4232-9f3a-45cd5f94d8ad"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="236" y="24" width="40" height="26" uuid="d58d12ec-79b5-4b35-9ffe-85034f9e8786"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Origem]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="276" y="25" width="107" height="25" forecolor="#878787" backcolor="#969696" uuid="bdd03011-0ed5-42da-a6b5-4f2d8c233559"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="276" y="24" width="107" height="26" uuid="c1197f63-1b54-4593-9b2c-b84078f37ba5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Adquirente]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="383" y="25" width="40" height="25" forecolor="#878787" backcolor="#969696" uuid="65c40d94-fa14-42e0-b40f-63f28a899c84"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="383" y="24" width="40" height="26" uuid="d67b20ca-1e7a-43ce-a2aa-c5cde3e145b4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Função]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="423" y="25" width="40" height="25" forecolor="#878787" backcolor="#969696" uuid="96c66f7a-e457-4552-9777-3b284c5e36ca"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="463" y="25" width="145" height="25" forecolor="#878787" backcolor="#969696" uuid="046f6306-9e3b-4724-8f32-bfa85d345159"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="463" y="24" width="145" height="26" uuid="4ee612ac-b65c-4cde-ab8d-12d7fba7048b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Status de Processamento]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="608" y="25" width="41" height="25" forecolor="#878787" backcolor="#969696" uuid="e7b0e38e-f54a-4054-bd79-910f6dbdef35"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="607" y="24" width="42" height="26" uuid="3df777a0-f81f-415c-bc29-428dbeb059be"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Rejeições/Recusas]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="649" y="25" width="41" height="25" forecolor="#878787" backcolor="#969696" uuid="e98563f1-f1fe-4fae-8669-f2b2e9a95ebb"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="650" y="24" width="40" height="26" uuid="8c25e665-e9bc-4b16-a4f5-4c411bd7b5c5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Código de Erro]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="690" y="25" width="112" height="25" forecolor="#878787" backcolor="#969696" uuid="c4a1050c-8ab2-4ffd-94e4-4698bbaeea89"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="691" y="24" width="111" height="26" uuid="170fcbb2-ba7d-4c5a-b246-e35d799c9c14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Descrição do Erro]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="40" height="20" uuid="5956d54c-fc7a-4e33-ad7a-8717ebff81d1"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="40" y="0" width="111" height="20" uuid="0e27b466-9032-489e-9233-966bb7fa3019"/>
+			</rectangle>
+			<textField>
+				<reportElement x="40" y="0" width="110" height="20" uuid="c10cebd5-2b66-40f6-9331-898fc9aa8de7"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{nomeArquivo}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="150" y="0" width="120" height="20" uuid="d97e3bac-ebd7-4008-9ac5-cd5305c6171f"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="270" y="0" width="70" height="20" uuid="89841ef5-ed49-45f7-a95f-1812661e0aba"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="340" y="0" width="70" height="20" uuid="4292c544-8de0-4247-bcb7-86fc18bbccda"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="410" y="0" width="80" height="20" uuid="3f1fbffb-2d19-4be4-b4e9-edb8d4b3f30a"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="490" y="0" width="80" height="20" uuid="9f3dd622-0a14-46fa-9c92-11a59c448492"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="570" y="0" width="80" height="20" uuid="f245b917-c496-4342-b1b7-f6f800fa4d09"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="650" y="0" width="80" height="20" uuid="7015875c-cd9b-4017-9e7d-0dc453462b4d"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="730" y="0" width="72" height="20" uuid="eece506d-6eb3-48b6-8973-bec4cf41dd50"/>
+			</rectangle>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="42" splitType="Stretch">
+			<textField>
+				<reportElement x="702" y="10" width="100" height="30" uuid="a6feebfe-ba9b-4a87-8649-b0d2097c32a3"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA[String.format("Página %s",$V{PAGE_NUMBER})]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

@@ -1,0 +1,425 @@
+package br.com.banestes.car.bean;	
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+
+import org.omnifaces.cdi.ViewScoped;
+import org.omnifaces.util.Messages;
+
+import br.com.banestes.car.core.bean.AbstractWebBean;
+import br.com.banestes.car.core.enumerators.OperacoesEnum;
+import br.com.banestes.car.core.enumerators.TipoArquivoEnum;
+import br.com.banestes.car.core.exportacao.ExportarDataModel;
+import br.com.banestes.car.jpa.core.util.Constants;
+import br.com.banestes.car.jpa.core.util.DateUtil;
+import br.com.banestes.car.jpa.core.util.MessagesPropertiesUtil;
+import br.com.banestes.car.jpa.entity.AdquirenteEntity;
+import br.com.banestes.car.jpa.model.repository.aplicacao.AdquirenteRepository;
+import br.com.banestes.car.jpa.model.repository.aplicacao.ArquivoRepository;
+import br.com.banestes.car.jpa.model.repository.aplicacao.HistoricoLiquidacaoRepository;
+import br.com.banestes.car.jpa.vo.LiquidacaoVO;
+import br.com.banestes.car.jpa.vo.ResumoLiquidacaoReportVO;
+import br.com.banestes.car.jpa.vo.ResumoLiquidacaoVO;
+
+@Named
+@ViewScoped
+public class ConsultaResumoLiquidacaoWebBean extends AbstractWebBean {
+	
+	private ExportarDataModel exportar;
+		
+	private ConsultaResumoLiquidacaoFiltroBean consultaResumoLiquidacaofiltro;
+	private List<AdquirenteEntity> listaAdquirentes;
+		
+	@Inject
+	private transient AdquirenteRepository adquirenteRepository;	
+	
+	@Inject
+	private transient HistoricoLiquidacaoRepository historicoLiquidacaoRepository;	
+	
+	private List<ResumoLiquidacaoVO> dadosResumoLiquidacaoDebito;
+	private List<ResumoLiquidacaoVO> dadosResumoLiquidacaoCredito;
+	private List<ResumoLiquidacaoVO> dadosResumoLiquidacaoResult;
+	
+	private String tipoRelatorio;	
+
+	public void preRenderView() {
+		if (!FacesContext.getCurrentInstance().isPostback()) 
+		{												
+			consultaResumoLiquidacaofiltro = new ConsultaResumoLiquidacaoFiltroBean();
+			this.setOperacao(OperacoesEnum.FILTRAGEM);							
+			exportar = new ExportarDataModel();
+			preencheCombos();				
+		}
+	}
+		
+	
+	
+	public String filtrar() 
+	{	
+		tipoRelatorio = TipoArquivoEnum.PDF.valor;		
+		
+		if(!validarPeriodo())			
+			return null;
+		
+		dadosResumoLiquidacaoDebito = historicoLiquidacaoRepository.findSummaryDebitoByParameters( 	consultaResumoLiquidacaofiltro.getIdAdquirente(), consultaResumoLiquidacaofiltro.getData(),
+																									consultaResumoLiquidacaofiltro.getDataInicial(), consultaResumoLiquidacaofiltro.getDataFim());
+		
+		
+		
+		dadosResumoLiquidacaoCredito = historicoLiquidacaoRepository.findSummaryCreditoByParameters( consultaResumoLiquidacaofiltro.getIdAdquirente(), consultaResumoLiquidacaofiltro.getData(),
+																									consultaResumoLiquidacaofiltro.getDataInicial(), consultaResumoLiquidacaofiltro.getDataFim());			
+		
+		if(dadosResumoLiquidacaoDebito.size() == 0 &&  dadosResumoLiquidacaoCredito.size() == 0)
+		{
+			adicionarMensagemErro(
+					MessagesPropertiesUtil
+							.getMessage("label.consulta.vazia"),
+					"");
+			setOperacao(OperacoesEnum.FILTRAGEM);			
+			return null;
+		}
+		
+		
+		geraSumarioTotal();
+		dadosResumoLiquidacaoDebito = geraSumario( dadosResumoLiquidacaoDebito );
+		dadosResumoLiquidacaoCredito = geraSumario( dadosResumoLiquidacaoCredito );
+
+		setOperacao(OperacoesEnum.LISTAGEM);
+				
+		
+		return null;
+	}
+		
+	public List<ResumoLiquidacaoVO> geraSumario(List<ResumoLiquidacaoVO> dadosResumoLiquidacao )
+	{
+		int quantidadeTotalEfetivadas = 0;
+		int quantidadeTotalRejeitadas = 0;
+		int quantidadeTotal = 0;
+		Double valorTotalEfetivadas = 0.0;
+		Double valorTotalRejeitadas = 0.0;
+		Double valorTotal = 0.0;
+		
+		for( ResumoLiquidacaoVO liq : dadosResumoLiquidacao )
+		{
+			quantidadeTotalEfetivadas += liq.getQuantidadeLiquidacoesEfetivadas();
+			quantidadeTotalRejeitadas += liq.getQuantidadeLiquidacoesRejeitadas();
+			quantidadeTotal += liq.getQuantidadeLiquidacoesTotal();
+			valorTotalEfetivadas += liq.getValorLiquidacoesEfetivadas();
+			valorTotalRejeitadas += liq.getValorLiquidacoesRejeitadas();
+			valorTotal += liq.getValorLiquidacoesTotal();			
+		}
+		
+		ResumoLiquidacaoVO totalizador = new ResumoLiquidacaoVO();
+		totalizador.setNomeBandeira("TOTAL");
+		totalizador.setQuantidadeLiquidacoesEfetivadas(quantidadeTotalEfetivadas);
+		totalizador.setQuantidadeLiquidacoesRejeitadas(quantidadeTotalRejeitadas);
+		totalizador.setQuantidadeLiquidacoesTotal(quantidadeTotal);
+		totalizador.setValorLiquidacoesEfetivadas(valorTotalEfetivadas);
+		totalizador.setValorLiquidacoesRejeitadas(valorTotalRejeitadas);
+		totalizador.setValorLiquidacoesTotal(valorTotal);
+		
+		dadosResumoLiquidacao.add(0, totalizador);
+		
+		return dadosResumoLiquidacao;
+	}
+	
+	public void geraSumarioTotal()
+	{
+		List<ResumoLiquidacaoVO> result = new ArrayList<ResumoLiquidacaoVO>();
+		result.addAll(dadosResumoLiquidacaoCredito);
+		
+		for( ResumoLiquidacaoVO liqDeb : dadosResumoLiquidacaoDebito )
+		{
+			boolean encontrado = false;
+			int index = 0;
+			for( ResumoLiquidacaoVO liqCre : result )
+			{
+				if( liqDeb.getNomeBandeira().equals(liqCre.getNomeBandeira()) )
+				{
+					encontrado = true;
+					
+					liqCre.setQuantidadeLiquidacoesEfetivadas(liqDeb.getQuantidadeLiquidacoesEfetivadas() + liqCre.getQuantidadeLiquidacoesEfetivadas());
+					liqCre.setValorLiquidacoesEfetivadas(liqDeb.getValorLiquidacoesEfetivadas() + liqCre.getValorLiquidacoesEfetivadas());
+					liqCre.setQuantidadeLiquidacoesRejeitadas(liqDeb.getQuantidadeLiquidacoesRejeitadas() + liqCre.getQuantidadeLiquidacoesRejeitadas());
+					liqCre.setValorLiquidacoesRejeitadas(liqDeb.getValorLiquidacoesRejeitadas() + liqCre.getValorLiquidacoesRejeitadas());
+					result.set(index, liqCre );
+					break;
+				}
+				index ++;
+			}
+			if(!encontrado)
+			{
+				result.add( liqDeb );
+			}
+			
+		}
+		
+		this.dadosResumoLiquidacaoResult = result;
+		
+		this.dadosResumoLiquidacaoResult = geraSumario( dadosResumoLiquidacaoResult );
+		
+	}
+		
+	private boolean validarPeriodo()
+	{
+		
+		if( consultaResumoLiquidacaofiltro.getTipoData().equals("D"))
+		{
+			consultaResumoLiquidacaofiltro.setDataFim(null);
+			consultaResumoLiquidacaofiltro.setDataInicial(null);			
+		}
+		else
+			consultaResumoLiquidacaofiltro.setData(null);
+		
+		if( consultaResumoLiquidacaofiltro.getTipoData().equals("D") && consultaResumoLiquidacaofiltro.getData() == null )
+			consultaResumoLiquidacaofiltro.setData(new Date());				
+		
+		if( consultaResumoLiquidacaofiltro.getData() != null)
+		{
+			if(consultaResumoLiquidacaofiltro.getData().before(Constants.DATA_IMPLANTACAO))
+			{
+				adicionarMensagemErro(String.format("Consulta anterior a data de implantação do sistema %s.",
+						DateUtil.dateToString(Constants.DATA_IMPLANTACAO,"dd/MM/yyyy")),	"");
+
+				return false;
+			}
+		}
+				
+		
+		if( consultaResumoLiquidacaofiltro.getTipoData().equals("P") && (consultaResumoLiquidacaofiltro.getDataInicial() == null || consultaResumoLiquidacaofiltro.getDataFim() == null) )
+		{
+			adicionarMensagemErro(MessagesPropertiesUtil
+					.getMessage("label.consulta.data.incompleta") ,	"");
+			return false;
+		}
+		
+		
+			
+		if( consultaResumoLiquidacaofiltro.getDataInicial() != null )
+		{
+			if( consultaResumoLiquidacaofiltro.getDataInicial().after(consultaResumoLiquidacaofiltro.getDataFim()) )
+			{
+				adicionarMensagemErro(
+						MessagesPropertiesUtil
+								.getMessage("label.consulta.data.fim.maior.inicio"),
+						"");
+				
+				return false;
+			}
+			
+			if( consultaResumoLiquidacaofiltro.getDataInicial().before(Constants.DATA_IMPLANTACAO) )
+			{
+				adicionarMensagemErro(String.format("Consulta anterior a data de implantação do sistema %s. ",
+													DateUtil.dateToString(Constants.DATA_IMPLANTACAO,"dd/MM/yyyy")),	"");
+				
+				return false;
+			}
+		}
+		
+		return true;
+	}
+			
+	public String limpar()
+	{
+		this.consultaResumoLiquidacaofiltro = new ConsultaResumoLiquidacaoFiltroBean();
+		return null;
+	}	
+		
+	public String cancelar()
+	{		
+		setOperacao(OperacoesEnum.FILTRAGEM);					
+		return null;
+	}
+	
+	public String exportar()
+	{
+		
+		HashMap<String, Object> param = new HashMap<String, Object>();
+		String pathReport = "/pages/relatorio/ConsultaResumoLiquidacaoPDF.jrxml";
+		List<String> contents = new ArrayList<String>();
+		
+		
+		ResumoLiquidacaoReportVO dadosReport = new ResumoLiquidacaoReportVO(dadosResumoLiquidacaoDebito, dadosResumoLiquidacaoCredito, dadosResumoLiquidacaoResult);
+		
+		ArrayList<ResumoLiquidacaoReportVO> listaReport = new ArrayList<ResumoLiquidacaoReportVO>();
+		listaReport.add(dadosReport);
+		 
+		if(tipoRelatorio.equals(TipoArquivoEnum.CSV.valor))
+		{								
+			contents.add(preencheCabecalhoCSV());
+			contents.add(preencheContentCSV());
+			exportar.exportar(tipoRelatorio, param, pathReport, this.historicoLiquidacaoRepository, contents);	
+		}
+		else
+		{		
+			param.put("adquirente",adquirenteRepository.findById( consultaResumoLiquidacaofiltro.getIdAdquirente() ).getNome());								
+			param.put("data", consultaResumoLiquidacaofiltro.getTipoData().equals("D") ? 
+									String.format("%s", DateUtil.dateToString(consultaResumoLiquidacaofiltro.getData(),"dd/MM/yyyy")) :
+									String.format("%s à %s",DateUtil.dateToString(consultaResumoLiquidacaofiltro.getDataInicial(),"dd/MM/yyyy"),DateUtil.dateToString(consultaResumoLiquidacaofiltro.getDataFim(),"dd/MM/yyyy")));
+									
+			JRBeanCollectionDataSource jrb = new JRBeanCollectionDataSource(listaReport);
+			exportar.exportar(tipoRelatorio, param, pathReport, this.historicoLiquidacaoRepository, contents, jrb);				
+		}
+													
+		Messages.addInfo(null, MessagesPropertiesUtil.getMessage("label.exportado.sucesso"), "");
+		
+		tipoRelatorio = TipoArquivoEnum.PDF.valor;
+		
+		return null;
+	}
+	
+	public String preencheCabecalhoCSV()
+	{
+		StringBuilder cabecalho = new StringBuilder();	
+		cabecalho.append("Adquirente:");		
+		cabecalho.append(adquirenteRepository.findById( consultaResumoLiquidacaofiltro.getIdAdquirente() ).getNome());
+		cabecalho.append("\n");
+		if(consultaResumoLiquidacaofiltro.getTipoData().equals("D"))
+		{
+			cabecalho.append("Data:");
+			cabecalho.append(DateUtil.dateToString(consultaResumoLiquidacaofiltro.getData(),"dd/MM/yyyy"));
+		}
+		else
+		{
+			cabecalho.append("Período:");
+			cabecalho.append(DateUtil.dateToString(consultaResumoLiquidacaofiltro.getDataInicial(),"dd/MM/yyyy"));
+			cabecalho.append(" à ");
+			cabecalho.append(DateUtil.dateToString(consultaResumoLiquidacaofiltro.getDataFim(),"dd/MM/yyyy"));
+			cabecalho.append("\n\n\n");
+		}
+				
+		return cabecalho.toString();
+	}
+	
+	public String preencheCabecalhoDetalhe(String funcao)
+	{
+		
+		StringBuilder cabecalhoDetalhe = new StringBuilder();
+		cabecalhoDetalhe.append("\n");
+		cabecalhoDetalhe.append("Função: ");
+		cabecalhoDetalhe.append(funcao);
+		cabecalhoDetalhe.append("\n");
+		cabecalhoDetalhe.append(";LIQUIDAÇÕES EFETIVADAS;;LIQUIDAÇÕES REJEITADAS;;TOTAL");
+		cabecalhoDetalhe.append("\n");
+		cabecalhoDetalhe.append(";Quantidade;Total;Quantidade;Total;Quantidade;Total;");
+		cabecalhoDetalhe.append("\n");
+		
+		return cabecalhoDetalhe.toString();
+	}
+	
+	public String preencheContentCSV()
+	{
+		StringBuilder content = new StringBuilder();
+		
+		content.append(preencheCabecalhoDetalhe("DÉBITO"));
+		content.append(preencheDetalhe(this.dadosResumoLiquidacaoDebito));
+		content.append(preencheCabecalhoDetalhe("CRÉDITO"));
+		content.append(preencheDetalhe(this.dadosResumoLiquidacaoCredito));
+		content.append(preencheCabecalhoDetalhe("DÉBITO + CRÉDITO"));
+		content.append(preencheDetalhe(this.dadosResumoLiquidacaoResult));
+		
+		return content.toString();
+	}
+	
+	public String preencheDetalhe(List<ResumoLiquidacaoVO> dados)
+	{
+		StringBuilder content = new StringBuilder();
+		
+		for(ResumoLiquidacaoVO liq: dados)
+		{						
+			
+			content.append(liq.getNomeBandeira());
+			content.append(";");
+			content.append(liq.getQuantidadeLiquidacoesEfetivadas());
+			content.append(";");
+			content.append(liq.getValorLiquidacoesEfetivadas());
+			content.append(";");
+			content.append(liq.getQuantidadeLiquidacoesRejeitadas());
+			content.append(";");
+			content.append(liq.getValorLiquidacoesRejeitadas());
+			content.append(";");
+			content.append(liq.getQuantidadeLiquidacoesTotal());
+			content.append(";");
+			content.append(liq.getValorLiquidacoesTotal());
+			
+			content.append("\n");
+		}
+		return content.toString();
+		
+	}
+	
+	private void preencheCombos()
+	{
+		this.listaAdquirentes = adquirenteRepository.getAll();	
+	}
+
+	public String lpad(Integer valor)
+	{		
+		return valor.toString().length() < 2 ? String.format("%02d",valor) : valor.toString();	
+	}
+	
+	
+	public List<AdquirenteEntity> getListaAdquirentes() {
+		return listaAdquirentes;
+	}
+
+	public void setListaAdquirentes(List<AdquirenteEntity> listaAdquirentes) {
+		this.listaAdquirentes = listaAdquirentes;
+	}
+		
+	public String getTipoRelatorio() {
+		return tipoRelatorio;
+	}
+
+	public void setTipoRelatorio(String tipoRelatorio) {
+		this.tipoRelatorio = tipoRelatorio;
+	}
+
+
+	public ConsultaResumoLiquidacaoFiltroBean getConsultaResumoLiquidacaofiltro() {
+		return consultaResumoLiquidacaofiltro;
+	}
+
+
+
+	public void setConsultaResumoLiquidacaofiltro(
+			ConsultaResumoLiquidacaoFiltroBean consultaResumoLiquidacaofiltro) {
+		this.consultaResumoLiquidacaofiltro = consultaResumoLiquidacaofiltro;
+	}
+
+	public List<ResumoLiquidacaoVO> getDadosResumoLiquidacaoDebito() {
+		return dadosResumoLiquidacaoDebito;
+	}
+
+	public void setDadosResumoLiquidacaoDebito(
+			List<ResumoLiquidacaoVO> dadosResumoLiquidacaoDebito) {
+		this.dadosResumoLiquidacaoDebito = dadosResumoLiquidacaoDebito;
+	}
+
+	public List<ResumoLiquidacaoVO> getDadosResumoLiquidacaoCredito() {
+		return dadosResumoLiquidacaoCredito;
+	}
+
+	public void setDadosResumoLiquidacaoCredito(
+			List<ResumoLiquidacaoVO> dadosResumoLiquidacaoCredito) {
+		this.dadosResumoLiquidacaoCredito = dadosResumoLiquidacaoCredito;
+	}
+
+	public List<ResumoLiquidacaoVO> getDadosResumoLiquidacaoResult() {
+		return dadosResumoLiquidacaoResult;
+	}
+
+	public void setDadosResumoLiquidacaoResult(
+			List<ResumoLiquidacaoVO> dadosResumoLiquidacaoResult) {
+		this.dadosResumoLiquidacaoResult = dadosResumoLiquidacaoResult;
+	}
+
+}

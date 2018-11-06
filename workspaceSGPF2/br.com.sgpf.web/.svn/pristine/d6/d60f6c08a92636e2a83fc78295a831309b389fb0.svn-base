@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:pdvix="http://pdvix.com/facelets">
+
+
+
+	<!-- Sub título -->
+	<h1 class="itemForm">#{messages['label.title.resultado']}</h1>
+	
+	<h:outputLabel value="Função: Débito" />
+	
+	<!-- Formulário -->	
+		<div id="cad" align="center">
+			<rich:dataTable id="listagem"
+				value="#{consultaResumoLiquidacaoWebBean.dadosResumoLiquidacaoDebito}"
+				var="liqd" style="width: 100%;" 				
+				rowClasses="even-row, odd-row, active-row">
+
+
+				<f:facet name="header">
+					<rich:columnGroup>
+						
+						<rich:column></rich:column>
+						<rich:column colspan="2">#{messages['label.consulta.liquidacoes.efetivadas']}</rich:column>
+						<rich:column colspan="2">#{messages['label.consulta.liquidacoes.rejeitadas']}</rich:column>
+						<rich:column colspan="2">#{messages['label.consulta.liquidacoes.total']}</rich:column>
+						<rich:column breakRowBefore="true"></rich:column>											
+						<rich:column>#{messages['label.consuta.liquidacoes.quantidade']}</rich:column>							
+						<rich:column>#{messages['label.consuta.liquidacoes.total.m']}</rich:column>
+						<rich:column>#{messages['label.consuta.liquidacoes.quantidade']}</rich:column>							
+						<rich:column>#{messages['label.consuta.liquidacoes.total.m']}</rich:column>
+						<rich:column>#{messages['label.consuta.liquidacoes.quantidade']}</rich:column>							
+						<rich:column>#{messages['label.consuta.liquidacoes.total.m']}</rich:column>
+						<rich:column breakRowBefore="true">							
+							<h:outputText value="#{consultaResumoLiquidacaoWebBean.totalizadorLiquidacaoDebito.nomeBandeira}"/>															
+						</rich:column>	
+						<rich:column>							
+							<h:outputText value="#{consultaResumoLiquidacaoWebBean.totalizadorLiquidacaoDebito.quantidadeLiquidacoesEfetivadas}"/>							
+						</rich:column>		
+						<rich:column>							
+							<h:outputText value="#{consultaResumoLiquidacaoWebBean.totalizadorLiquidacaoDebito.valorLiquidacoesEfetivadas}">
+								<f:convertNumber groupingUsed="true" minFractionDigits="2" />
+							</h:outputText>							
+						</rich:column>
+						<rich:column>							
+							<h:outputText value="#{consultaResumoLiquidacaoWebBean.totalizadorLiquidacaoDebito.quantidadeLiquidacoesRejeitadas}"/>							
+						</rich:column>	
+						<rich:column>							
+							<h:outputText value="#{consultaResumoLiquidacaoWebBean.totalizadorLiquidacaoDebito.valorLiquidacoesRejeitadas}">
+								<f:convertNumber groupingUsed="true" minFractionDigits="2" />
+							</h:outputText>							
+						</rich:column>						
+						<rich:column>							
+							<h:outputText value="#{consultaResumoLiquidacaoWebBean.totalizadorLiquidacaoDebito.quantidadeLiquidacoesTotal}"/>							
+						</rich:column>	
+						<rich:column>							
+							<h:outputText value="#{consultaResumoLiquidacaoWebBean.totalizadorLiquidacaoDebito.valorLiquidacoesTotal}">
+								<f:convertNumber groupingUsed="true" minFractionDigits="2" />
+							</h:outputText>							
+						</rich:column>
+					</rich:columnGroup>
+				</f:facet>
+			
+				<rich:column style="width: 10%; text-align: center;">
+					<h:outputText value="#{liqd.nomeBandeira}">							
+					</h:outputText>
+				</rich:column>			
+
+				<rich:column style="width: 5%; text-align: center;">
+					<h:outputText value="#{liqd.quantidadeLiquidacoesEfetivadas}">
+					</h:outputText>
+				</rich:column>
+			
+				<rich:column style="width: 5%; text-align: center;">
+					<h:outputText value="#{liqd.valorLiquidacoesEfetivadas}">
+						<f:convertNumber groupingUsed="true" minFractionDigits="2" />
+					</h:outputText>
+				</rich:column>
+				
+				<rich:column style="width: 5%; text-align: center;">
+					<h:outputText value="#{liqd.quantidadeLiquidacoesRejeitadas}">
+					</h:outputText>
+				</rich:column>
+				
+				<rich:column style="width: 5%; text-align: center;">
+					<h:outputText value="#{liqd.valorLiquidacoesRejeitadas}">
+						<f:convertNumber groupingUsed="true" minFractionDigits="2" />
+					</h:outputText>
+				</rich:column>
+				
+				<rich:column style="width: 5%; text-align: center;">				
+					<h:outputText value="#{liqd.quantidadeLiquidacoesTotal}" />
+				</rich:column>
+				
+				<rich:column style="width: 5%; text-align: center;">
+					<h:outputText value="#{liqd.valorLiquidacoesTotal}">
+						<f:convertNumber groupingUsed="true" minFractionDigits="2" />
+					</h:outputText>
+				</rich:column>
+									
+			</rich:dataTable>
+		</div>		
+		<br/><br/>
+		<h:outputLabel value="Função: Crédito" />
+	
+	<!-- Formulário -->	
+		<div id="cad" align="center">
+			<rich:dataTable id="listagem2"
+				value="#{consultaResumoLiquidacaoWebBean.dadosResumoLiquidacaoCredito}"
+				var="liqc" style="width: 100%;" 				
+				rowClasses="even-row, odd-row, active-row">
+
+
+				<f:facet name="header">
+					<rich:columnGroup>
+						
+						<rich:column></rich:column>
+						<rich:column colspan="2">#{messages['label.consulta.liquidacoes.efetivadas']}</rich:column>
+						<rich:column colspan="2">#{messages['label.consulta.liquidacoes.rejeitadas']}</rich:column>
+						<rich:column colspan="2">#{messages['label.consulta.liquidacoes.total']}</rich:column>
+						<rich:column breakRowBefore="true"></rich:column>											
+						<rich:column>#{messages['label.consuta.liquidacoes.quantidade']}</rich:column>							
+						<rich:column>#{messages['label.consuta.liquidacoes.total.m']}</rich:column>
+						<rich:column>#{messages['label.consuta.liquidacoes.quantidade']}</rich:column>							
+						<rich:column>#{messages['label.consuta.liquidacoes.total.m']}</rich:column>
+						<rich:column>#{messages['label.consuta.liquidacoes.quantidade']}</rich:column>							
+						<rich:column>#{messages['label.consuta.liquidacoes.total.m']}</rich:column>
+						<rich:column breakRowBefore="true">							
+							<h:outputText value="#{consultaResumoLiquidacaoWebBean.totalizadorLiquidacaoCredito.nomeBandeira}"/>															
+						</rich:column>	
+						<rich:column>							
+							<h:outputText value="#{consultaResumoLiquidacaoWebBean.totalizadorLiquidacaoCredito.quantidadeLiquidacoesEfetivadas}"/>							
+						</rich:column>		
+						<rich:column>							
+							<h:outputText value="#{consultaResumoLiquidacaoWebBean.totalizadorLiquidacaoCredito.valorLiquidacoesEfetivadas}">
+								<f:convertNumber groupingUsed="true" minFractionDigits="2" />
+							</h:outputText>							
+						</rich:column>
+						<rich:column>							
+							<h:outputText value="#{consultaResumoLiquidacaoWebBean.totalizadorLiquidacaoCredito.quantidadeLiquidacoesRejeitadas}"/>							
+						</rich:column>	
+						<rich:column>							
+							<h:outputText value="#{consultaResumoLiquidacaoWebBean.totalizadorLiquidacaoCredito.valorLiquidacoesRejeitadas}">
+								<f:convertNumber groupingUsed="true" minFractionDigits="2" />
+							</h:outputText>							
+						</rich:column>						
+						<rich:column>							
+							<h:outputText value="#{consultaResumoLiquidacaoWebBean.totalizadorLiquidacaoCredito.quantidadeLiquidacoesTotal}"/>							
+						</rich:column>	
+						<rich:column>							
+							<h:outputText value="#{consultaResumoLiquidacaoWebBean.totalizadorLiquidacaoCredito.valorLiquidacoesTotal}">
+								<f:convertNumber groupingUsed="true" minFractionDigits="2" />
+							</h:outputText>							
+						</rich:column>
+					</rich:columnGroup>
+				</f:facet>
+			
+				<rich:column style="width: 10%; text-align: center;">
+					<h:outputText value="#{liqc.nomeBandeira}">							
+					</h:outputText>
+				</rich:column>			
+
+				<rich:column style="width: 5%; text-align: center;">
+					<h:outputText value="#{liqc.quantidadeLiquidacoesEfetivadas}">
+					</h:outputText>
+				</rich:column>
+			
+				<rich:column style="width: 5%; text-align: center;">
+					<h:outputText value="#{liqc.valorLiquidacoesEfetivadas}">
+						<f:convertNumber groupingUsed="true" minFractionDigits="2" />
+					</h:outputText>
+				</rich:column>
+				
+				<rich:column style="width: 5%; text-align: center;">
+					<h:outputText value="#{liqc.quantidadeLiquidacoesRejeitadas}">
+					</h:outputText>
+				</rich:column>
+				
+				<rich:column style="width: 5%; text-align: center;">
+					<h:outputText value="#{liqc.valorLiquidacoesRejeitadas}">
+						<f:convertNumber groupingUsed="true" minFractionDigits="2" />
+					</h:outputText>
+				</rich:column>
+				
+				<rich:column style="width: 5%; text-align: center;">				
+					<h:outputText value="#{liqc.quantidadeLiquidacoesTotal}" />
+				</rich:column>
+				
+				<rich:column style="width: 5%; text-align: center;">
+					<h:outputText value="#{liqc.valorLiquidacoesTotal}">
+						<f:convertNumber groupingUsed="true" minFractionDigits="2" />
+					</h:outputText>
+				</rich:column>
+									
+			</rich:dataTable>
+		</div>
+		
+		<br/><br/>
+		<h:outputLabel value="Função: Crédito + Débito" />
+	
+	<!-- Formulário -->	
+		<div id="cad" align="center">
+			<rich:dataTable id="listagem3"
+				value="#{consultaResumoLiquidacaoWebBean.dadosResumoLiquidacaoResult}"
+				var="liqr" style="width: 100%;" 				
+				rowClasses="even-row, odd-row, active-row">
+
+
+				<f:facet name="header">
+					<rich:columnGroup>
+						
+						<rich:column></rich:column>
+						<rich:column colspan="2">#{messages['label.consulta.liquidacoes.efetivadas']}</rich:column>
+						<rich:column colspan="2">#{messages['label.consulta.liquidacoes.rejeitadas']}</rich:column>
+						<rich:column colspan="2">#{messages['label.consulta.liquidacoes.total']}</rich:column>
+						<rich:column breakRowBefore="true"></rich:column>											
+						<rich:column>#{messages['label.consuta.liquidacoes.quantidade']}</rich:column>							
+						<rich:column>#{messages['label.consuta.liquidacoes.total.m']}</rich:column>
+						<rich:column>#{messages['label.consuta.liquidacoes.quantidade']}</rich:column>							
+						<rich:column>#{messages['label.consuta.liquidacoes.total.m']}</rich:column>
+						<rich:column>#{messages['label.consuta.liquidacoes.quantidade']}</rich:column>							
+						<rich:column>#{messages['label.consuta.liquidacoes.total.m']}</rich:column>
+						<rich:column breakRowBefore="true">							
+							<h:outputText value="#{consultaResumoLiquidacaoWebBean.totalizadorLiquidacaoGeral.nomeBandeira}"/>															
+						</rich:column>	
+						<rich:column>							
+							<h:outputText value="#{consultaResumoLiquidacaoWebBean.totalizadorLiquidacaoGeral.quantidadeLiquidacoesEfetivadas}"/>							
+						</rich:column>		
+						<rich:column>							
+							<h:outputText value="#{consultaResumoLiquidacaoWebBean.totalizadorLiquidacaoGeral.valorLiquidacoesEfetivadas}">
+								<f:convertNumber groupingUsed="true" minFractionDigits="2" />
+							</h:outputText>							
+						</rich:column>
+						<rich:column>							
+							<h:outputText value="#{consultaResumoLiquidacaoWebBean.totalizadorLiquidacaoGeral.quantidadeLiquidacoesRejeitadas}"/>							
+						</rich:column>	
+						<rich:column>							
+							<h:outputText value="#{consultaResumoLiquidacaoWebBean.totalizadorLiquidacaoGeral.valorLiquidacoesRejeitadas}">
+								<f:convertNumber groupingUsed="true" minFractionDigits="2" />
+							</h:outputText>							
+						</rich:column>						
+						<rich:column>							
+							<h:outputText value="#{consultaResumoLiquidacaoWebBean.totalizadorLiquidacaoGeral.quantidadeLiquidacoesTotal}"/>							
+						</rich:column>	
+						<rich:column>							
+							<h:outputText value="#{consultaResumoLiquidacaoWebBean.totalizadorLiquidacaoGeral.valorLiquidacoesTotal}">
+								<f:convertNumber groupingUsed="true" minFractionDigits="2" />
+							</h:outputText>							
+						</rich:column>											
+					</rich:columnGroup>
+				</f:facet>
+			
+				<rich:column style="width: 10%; text-align: center;">
+					<h:outputText value="#{liqr.nomeBandeira}">							
+					</h:outputText>
+				</rich:column>			
+
+				<rich:column style="width: 5%; text-align: center;">
+					<h:outputText value="#{liqr.quantidadeLiquidacoesEfetivadas}">
+					</h:outputText>
+				</rich:column>
+			
+				<rich:column style="width: 5%; text-align: center;">
+					<h:outputText value="#{liqr.valorLiquidacoesEfetivadas}">
+						<f:convertNumber groupingUsed="true" minFractionDigits="2" />
+					</h:outputText>
+				</rich:column>
+				
+				<rich:column style="width: 5%; text-align: center;">
+					<h:outputText value="#{liqr.quantidadeLiquidacoesRejeitadas}">
+					</h:outputText>
+				</rich:column>
+				
+				<rich:column style="width: 5%; text-align: center;">
+					<h:outputText value="#{liqr.valorLiquidacoesRejeitadas}">
+						<f:convertNumber groupingUsed="true" minFractionDigits="2" />
+					</h:outputText>
+				</rich:column>
+				
+				<rich:column style="width: 5%; text-align: center;">				
+					<h:outputText value="#{liqr.quantidadeLiquidacoesTotal}" />
+				</rich:column>
+				
+				<rich:column style="width: 5%; text-align: center;">
+					<h:outputText value="#{liqr.valorLiquidacoesTotal}">
+						<f:convertNumber groupingUsed="true" minFractionDigits="2" />
+					</h:outputText>
+				</rich:column>
+									
+			</rich:dataTable>
+		</div>
+		
+</ui:composition>

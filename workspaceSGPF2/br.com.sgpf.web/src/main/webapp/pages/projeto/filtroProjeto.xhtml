@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:pdvix="http://pdvix.com/facelets">
+
+	<div id="titulo" align="left">
+		<h1 class="tituloForm">#{messages['label.menu.projeto']}</h1>				
+		<h1 class="itemForm">
+			#{messages['label.filtro']}			
+		</h1>
+	</div>
+	
+	<script type="text/javascript">
+			function aplicaMascara() {
+				mascaraFormulario('formulario', 'CNPJAdquirenteFiltro', 'CNPJ');						
+			}				
+	</script>
+	
+	<a4j:outputPanel id="pnlJS2" ajaxRendered="true">
+		<script type="text/javascript">
+			aplicaMascara();
+		</script>
+	</a4j:outputPanel>
+	
+
+<!-- Formulário -->
+	<div id="form" align="center">	
+		<table border="0" width="50%" align="left">
+		
+			<tr>
+				
+			
+				<td width="50%">
+					<h:outputLabel value="Identificador do Projeto: " />
+
+	
+            		<h:inputText value="#{projetoBean.projetoFiltro.projeto.identificador}" label="Identificador do Projeto"></h:inputText>	
+            	</td>
+				
+				<td width="50%">
+					<h:outputLabel value="Título do Projeto: " />
+
+	
+            		<h:inputText value="#{projetoBean.projetoFiltro.projeto.titulo}" label="Titulo do Projeto"></h:inputText>	
+            	</td>
+				<td width="50%">
+					<h:outputLabel value="Analista: " />
+				
+					<h:selectOneMenu id="idComboAnalistaFiltro"  converter="comboConverter" value="#{projetoBean.projetoFiltro.projeto.analista}">
+						<f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+						<f:selectItems value="#{projetoBean.projetoFiltro.analistas}" var="analista" itemValue="#{analista}" itemLabel="#{analista.nome}"/>						
+												
+					</h:selectOneMenu>		            	
+            	</td>
+            	
+            	        
+            	 <td>
+            	    <h:outputLabel value="Empresa: " />
+            	                	    
+            	    <h:selectOneMenu id="idComboEmpresaFiltro"  converter="comboConverter" value="#{projetoBean.projetoFiltro.empresaSelecionada}">
+						<f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/> 
+						<f:selectItems value="#{projetoBean.projetoFiltro.empresas}" var="empresa" itemValue="#{empresa}" itemLabel="#{empresa.nomeFantasia}"/>
+						<a4j:ajax event="valueChange" execute="idComboSistemaFiltro" render="idComboSistemaFiltro"/>
+					</h:selectOneMenu>
+            	    
+            	 </td>
+        		
+           		<td>
+            	    <h:outputLabel value="Sistema: " />
+  
+					<h:selectOneMenu id="idComboSistemaFiltro"  converter="comboConverter" value="#{projetoBean.projetoFiltro.projeto.sistema}">
+						<f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+						<f:selectItems value="#{projetoBean.projetoFiltro.empresaSelecionada.sistemas}" var="sistema" itemValue="#{sistema}" itemLabel="#{sistema.sigla}"/>
+					</h:selectOneMenu>
+				</td>
+
+			</tr>										
+																																			
+		</table>			
+	</div>	
+	
+
+
+</ui:composition>

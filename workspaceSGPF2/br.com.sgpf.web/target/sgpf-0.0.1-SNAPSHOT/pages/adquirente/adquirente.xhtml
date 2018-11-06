@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:pdvix="http://pdvix.com/facelets">
+
+
+
+<ui:composition template="/pages/templates/template-principal.xhtml">
+	
+		
+	<!-- Conteúdo -->
+	<ui:define name="conteudo">
+		<div>
+		<!-- Inicio do Formulário -->
+		<table width="100%" cellpadding="0" cellspacing="0">
+			<tr>
+				<td align="left" colspan="2">
+
+					<span style="display: none;"><input type="text" /></span>
+
+					<div id="conteudo">
+
+						<a4j:outputPanel id="pnlPanels">
+
+																		
+							<ui:include src="filtroAnalista.xhtml" />
+							
+													
+						</a4j:outputPanel>
+												
+						 <table width="100%">
+							
+						</table> 										
+					</div>					
+																				
+				</td>				
+			</tr>
+		</table>
+		<!-- Fim do Formulario -->
+		</div>
+		<h:panelGroup>
+			<div id="conteudo" style="margin-top:5px">							
+				<a4j:outputPanel id="consulta">		
+					<a4j:outputPanel>
+						<ui:include src="gridAnalista.xhtml" />
+					</a4j:outputPanel>							
+				</a4j:outputPanel>											
+			</div>	
+		</h:panelGroup>						
+	</ui:define>
+
+	<!-- Script -->
+	<ui:define name="script">
+
+		<script type="text/javascript">
+			jQuery(function() {
+				jQuery("[id$=sbcSelecionado]").oneCheckBoxSelected();
+		    });
+
+		</script>
+
+		<a4j:outputPanel >
+
+			<script type="text/javascript">
+				var exitPage = new ExitPageConfirmer("#{messages['msg.alerta.alteracoes']}");
+				//exitPage.needToConfirm = true;
+
+				aplicaMascara();
+				
+			</script>
+
+		</a4j:outputPanel>
+
+	</ui:define>
+	
+</ui:composition>
+</html>

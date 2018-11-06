@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:pdvix="http://pdvix.com/facelets">
+
+	<div id="tituloProjeto" align="left">
+		<h1 class="tituloForm">#{messages['label.menu.funcaoDados']}</h1>				
+		<h1 class="itemForm">
+			Função de Dados:			
+		</h1>
+	</div>
+	
+<!-- Formulário -->
+	<div id="formFuncaoDados" align="center">
+		<h:form id="formularioFuncaoDados">			
+		<table border="0" width="50%" align="left">
+			
+			<tr>
+				<td width="10%">
+					<h:outputText value="Projeto:" />																	
+				</td>
+				<td>
+					<h:selectOneMenu id="idComboProjetoForm"  converter="comboConverter" value="#{funcaoDadosBean.funcaoDadosForm.projeto}" required="true">
+						<f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+						<f:selectItems value="#{funcaoDadosBean.projetos}" var="projeto" itemValue="#{projeto}" itemLabel="#{projeto.identificador} - #{projeto.titulo}"/>
+					</h:selectOneMenu>																	
+				</td>
+			</tr>
+			<tr>
+				<td width="10%">
+					<h:outputText value="Nome:" />																	
+				</td>
+				<td>
+					<h:inputText value="#{funcaoDadosBean.funcaoDadosForm.nome}" />															
+				</td>	
+				
+				<td width="10%">
+					<h:outputText value="Descrição:" />																	
+				</td>
+				<td>
+					<h:inputText value="#{funcaoDadosBean.funcaoDadosForm.descricao}" />															
+				</td>
+			</tr>
+			<tr>
+				<td width="20%">
+					<h:outputText value="Elemento de Contagem:" />																	
+				</td>
+				
+				<td>
+					<h:selectOneMenu id="idElementoContagemForm"   value="#{funcaoDadosBean.funcaoDadosForm.elementoContagem}" required="true">
+						<f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+						<f:selectItem itemLabel="ALI" itemValue="1"/>
+						<f:selectItem itemLabel="AIE" itemValue="2"/>
+					</h:selectOneMenu>																
+				</td>
+			</tr>
+			
+			<tr>	
+				<td width="10%">
+					<h:outputText value="Tipo de Manutenção:" />																	
+				</td>
+				<td>
+					<h:selectOneMenu id="idTipoManutencaoForm"   value="#{funcaoDadosBean.funcaoDadosForm.tipoManutencao}" required="true">
+						<f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+						<f:selectItem itemLabel="INCLUSÃO" itemValue="I"/>
+						<f:selectItem itemLabel="ALTERAÇÃO" itemValue="A"/>
+						<f:selectItem itemLabel="EXCLUSÃO" itemValue="E"/>
+					</h:selectOneMenu>																
+				</td>	
+				<td width="10%">
+					<h:outputText value="Descrição da Manutenção:" />																	
+				</td>
+				<td>
+					<h:inputText value="#{funcaoDadosBean.funcaoDadosForm.descricaoManutencao}" />															
+				</td>
+														
+			</tr>	
+		</table>		
+		<table style="margin-left: -737px">
+			<tr>
+				<td>
+					<table>
+						<tr>
+							<td>
+								<div  id="divTipoRegistro" style="margin-top: 50px;">
+									<a4j:region id="regionTrPEP">
+									<a4j:commandButton id="atualizarTipoRegistro" 																		
+												style="display:none" execute="@region" render="listagemTipoRegistro">												
+									</a4j:commandButton>
+									<table>
+										<tr>
+											<td width="10%">
+												<h:outputText value="Tipo de Registro:" />																	
+											</td>
+											<td>
+												<h:inputText id="tipoRegistro" value="#{funcaoDadosBean.tipoRegistroForm.nome}"></h:inputText>
+											</td>
+											<td>
+												<a4j:commandButton id="incluirTipoRegistro" action="#{funcaoDadosBean.inserirTipoRegistro}"																		
+																 image="/resources/img/ico_plus.png" style="margin-left: 10px" execute="@region" render="listagemTipoRegistro tipoRegistro">
+													<rich:tooltip for="incluirTipoRegistro">#{messages['tip.alterar']}</rich:tooltip>
+												</a4j:commandButton>												
+											</td>
+										</tr>
+										<tr>
+											<td>
+												<rich:dataTable id="listagemTipoRegistro" value="#{funcaoDadosBean.funcaoDadosForm.tiposDeRegistros}"
+															var="tr" style="width: 100%;"
+															rowClasses="even-row, odd-row, active-row">
+									
+									
+												<f:facet name="header">
+													<rich:columnGroup>							
+														<rich:column></rich:column>
+														<rich:column>Nome</rich:column>
+														<rich:column>Quantidade TDs</rich:column>										
+													</rich:columnGroup>
+												</f:facet>				
+									
+												<rich:column style="width: 10%; text-align: center;">						
+													<a4j:commandButton 	id="editTipoRegsitro" action="#{funcaoDadosBean.selecionarTipoRegistro(tr)}"
+																		render="panelAtributos" oncomplete="exibePopup()"
+																	 image="/resources/img/ico_edit.png" style="margin-left: 10px">																																																																				
+													</a4j:commandButton>																
+													
+													<h:commandButton  id="dispararPopup"  style="display:none">
+														<rich:componentControl target="popupAtributos" operation="show" />
+													</h:commandButton>
+												</rich:column>
+													
+												<rich:column style="width: 20%; text-align: center;">
+													<h:outputText
+														value="#{tr.nome}">
+													</h:outputText>
+												</rich:column>
+												<rich:column style="width: 20%; text-align: center;">
+													<h:outputText
+														value="#{tr.quantidadeDados}">
+													</h:outputText>
+												</rich:column>																					
+											</rich:dataTable>	
+											</td>
+										</tr>
+									</table>
+									</a4j:region>
+								</div>
+							</td>
+						</tr>
+					</table>						
+				</td>			
+			</tr>
+			<tr>
+				<td>
+					<h:commandButton id="btnSalvar" value="#{messages['label.salvar']}" 
+										action="#{funcaoDadosBean.salvar()}"  />
+				</td>			
+			</tr>			
+		</table>	
+		
+	
+		</h:form>		
+	</div>	
+	
+	<a4j:outputPanel id="panelAtributos">
+		<rich:popupPanel id="popupAtributos"  domElementAttachment="form"
+			resizeable="false" moveable="false" autosized="true" zindex="3000">
+			<f:facet name="header">
+				<h:outputText value="Atributos" />
+			</f:facet> 
+			<f:facet name="controls">
+				<h:outputLink value="#" onclick="#{rich:component('popupAtributos')}.hide(); return false;" style="color: inherit">
+					X
+				</h:outputLink>
+			</f:facet>
+			<a4j:region>
+				<table border="0" width="100%">
+				 
+					<tr>
+						<td width="10%">
+							<h:outputText value="Nome:" />																	
+						</td>
+						<td>
+							<h:inputText id="nomeAtributo" value="#{funcaoDadosBean.dadoForm.nome}"></h:inputText>
+						</td>
+					</tr>
+					<tr>
+						<td width="10%">
+							<h:outputText value="Formato:" />																	
+						</td>
+						<td>
+							<h:inputText id="formatoAtributo" value="#{funcaoDadosBean.dadoForm.formato}"></h:inputText>
+						</td>
+					</tr>
+					<tr>
+						<td width="10%">
+							<h:outputText value="Tamanho:" />																	
+						</td>
+						<td>
+							<h:inputText id="tamanhoAtributo" value="#{funcaoDadosBean.dadoForm.tamanho}"></h:inputText>
+						</td>
+					</tr>
+					<tr>
+						<td width="10%">
+							<h:outputText value="Validade:" />																	
+						</td>
+						<td>
+							<h:inputText id="validadeAtributo" value="#{funcaoDadosBean.dadoForm.validade}"></h:inputText>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<a4j:commandButton id="adicionarAtributo" action="#{funcaoDadosBean.inserirDado}"																		
+									image="/resources/img/ico_plus.png" style="margin-left: 10px" execute="@region" render="listagemDado">							
+							</a4j:commandButton>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<rich:dataTable id="listagemDado" value="#{funcaoDadosBean.tipoRegistroSelecionado.dados}"
+											var="dado" style="width: 100%;"
+											rowClasses="even-row, odd-row, active-row">
+																
+								<f:facet name="header">
+									<rich:columnGroup>							
+										<rich:column></rich:column>
+										<rich:column>Nome</rich:column>
+										<rich:column>Formato</rich:column>
+										<rich:column>Tamanho</rich:column>
+										<rich:column>Validade</rich:column>											
+									</rich:columnGroup>
+								</f:facet>	
+								
+								<rich:column style="width: 10%; text-align: center;">	
+									<a4j:commandButton id="excluirAtributo" action="#{funcaoDadosBean.excluirDado(dado)}"																		
+										image="/resources/img/ico_cancel.png" style="margin-left: 10px" execute="@region" render="listagemDado">							
+									</a4j:commandButton>
+								</rich:column>
+																							
+								<rich:column style="width: 10%; text-align: center;">							
+									<h:outputText value="#{dado.nome}"></h:outputText>																
+								</rich:column>				
+								
+								<rich:column style="width: 10%; text-align: center;">							
+									<h:outputText value="#{dado.formato}"></h:outputText>																
+								</rich:column>
+								
+								<rich:column style="width: 10%; text-align: center;">							
+									<h:outputText value="#{dado.tamanho}"></h:outputText>																
+								</rich:column>	
+								
+								<rich:column style="width: 10%; text-align: center;">							
+									<h:outputText value="#{dado.validade}"></h:outputText>																
+								</rich:column>						
+																
+							</rich:dataTable>
+						</td>
+					</tr>				
+					<tr>
+						<td>
+							<a4j:commandButton id="okButton" value="OK" onclick="atualizarTiposRegistros(); #{rich:component('popupAtributos')}.hide(); return false;"															
+								style="margin-left: 10px" render="listagemTipoRegistro" execute="atualizarTipoRegistro">							
+							</a4j:commandButton>
+						</td>
+					</tr>					
+				</table> 
+			</a4j:region>
+		</rich:popupPanel>
+	</a4j:outputPanel>
+	<script>
+		function atualizarTiposRegistros(){
+			console.log("sadasdasdsdasd");
+			$("[id$=atualizarTipoRegistro]").trigger('click');
+		}
+		
+		function exibePopup(){ 		
+			$("[id$=dispararPopup]").trigger('click');
+		}
+	</script>
+
+
+</ui:composition>

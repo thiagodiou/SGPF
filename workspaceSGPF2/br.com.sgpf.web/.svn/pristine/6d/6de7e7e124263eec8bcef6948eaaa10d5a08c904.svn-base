@@ -1,0 +1,657 @@
+package br.com.banestes.car.bean;
+
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.enterprise.inject.Produces;
+import javax.faces.context.FacesContext;
+import javax.faces.event.AjaxBehaviorEvent;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.omnifaces.cdi.ViewScoped;
+import org.omnifaces.util.Messages;
+
+import br.com.banestes.car.bean.vo.BandeiraVO;
+import br.com.banestes.car.core.bean.AbstractWebBean;
+import br.com.banestes.car.core.enumerators.OperacoesEnum;
+import br.com.banestes.car.core.enumerators.SituacaoEnum;
+import br.com.banestes.car.core.enumerators.TipoArquivoEnum;
+import br.com.banestes.car.core.exportacao.ExportarDataModel;
+import br.com.banestes.car.core.paginacao.ParametroDataModel;
+import br.com.banestes.car.jpa.core.jpa.enumeration.FinalidadeHistoricoContaCorrenteEnum;
+import br.com.banestes.car.jpa.core.jpa.enumeration.TipoLiquidacao;
+import br.com.banestes.car.jpa.core.util.MessagesPropertiesUtil;
+import br.com.banestes.car.jpa.entity.AdquirenteEntity;
+import br.com.banestes.car.jpa.entity.BandeiraEntity;
+import br.com.banestes.car.jpa.entity.DominioEntity;
+import br.com.banestes.car.jpa.entity.EventoContabilEntity;
+import br.com.banestes.car.jpa.entity.FuncaoEntity;
+import br.com.banestes.car.jpa.entity.HistoricoContaCorrenteEntity;
+import br.com.banestes.car.jpa.entity.ProcessoLiquidacaoEntity;
+import br.com.banestes.car.jpa.model.repository.aplicacao.AdquirenteRepository;
+import br.com.banestes.car.jpa.model.repository.aplicacao.BandeiraRepository;
+import br.com.banestes.car.jpa.model.repository.aplicacao.DominioRepository;
+import br.com.banestes.car.jpa.model.repository.aplicacao.EventoContabilRepository;
+import br.com.banestes.car.jpa.model.repository.aplicacao.FuncaoRepository;
+import br.com.banestes.car.jpa.model.repository.aplicacao.HistoricoContaCorrenteRepository;
+import br.com.banestes.car.jpa.model.repository.aplicacao.ProcessoLiquidacaoRepository;
+import br.com.banestes.car.service.ProcessoLiquidacaoService;
+import br.com.banestes.car.web.security.Credencial;
+
+
+@Named
+@ViewScoped
+public class ProcessoLiquidacaoWebBean extends AbstractWebBean
+{
+
+
+	private static final long serialVersionUID = -4049473872712287781L;
+	
+	private ProcessoLiquidacaoFiltroBean processoLiquidacaoFiltro;
+	
+	private List<ProcessoLiquidacaoEntity> processosLiquidacao;
+	
+	private ProcessoLiquidacaoEntity processoLiquidacao;
+	
+	private String pixels = "100";
+	
+	private AdquirenteEntity nullEntity = null;
+	
+	private String tipoRelatorio;	
+	
+	@Inject
+	private ProcessoLiquidacaoService processoLiquidacaoService;
+	
+	@Inject
+	private Credencial credentials;
+
+	private List<HistoricoContaCorrenteEntity> listaHistoricoContaCorrente;	
+	private List<HistoricoContaCorrenteEntity> listaHistoricoContaCorrenteEC;	
+	private List<AdquirenteEntity> listaAdquirente;
+	private List<BandeiraEntity> listaBandeira;
+	private List<BandeiraEntity> listaBandeiraAtivas;
+	private List<DominioEntity> listaDominio;
+	private List<EventoContabilEntity> listaEvento;	
+	private List<FuncaoEntity> listaFuncao;
+	
+	private List<BandeiraVO> bandeirasNaoSelecionadas;
+		
+	@Inject
+	private transient AdquirenteRepository adquirenteRepository;
+	
+	@Inject
+	private transient BandeiraRepository bandeiraRepository;
+	
+	@Inject
+	private transient DominioRepository dominioRepository;
+	
+	@Inject
+	private transient FuncaoRepository funcaoRepository;
+	
+	@Inject
+	private transient HistoricoContaCorrenteRepository historicoEstabelecimentoRepository;
+	
+	@Inject 
+	private transient EventoContabilRepository eventoContabilRepository; 
+	
+	@Inject
+	private transient ProcessoLiquidacaoRepository processoLiquidacaoRepository;		
+		
+	@Named("processoLiquidacaoDados")
+	@Produces
+	private ParametroDataModel<ProcessoLiquidacaoEntity> dados;
+	
+	private boolean todasBandeirasSelecionadas;
+	
+	private ExportarDataModel exportar;	
+	
+	public void preRenderView() 
+	{
+		if (!FacesContext.getCurrentInstance().isPostback()) 
+		{			
+			processoLiquidacaoFiltro = new ProcessoLiquidacaoFiltroBean();
+			exportar = new ExportarDataModel();
+			preencheCombos();			
+			this.setOperacao(OperacoesEnum.FILTRAGEM);			
+		}
+	}	
+	
+	public String filtrar()
+	{								
+		
+		tipoRelatorio = TipoArquivoEnum.PDF.valor;
+		
+		processosLiquidacao = processoLiquidacaoRepository.findByParameters(processoLiquidacaoFiltro.getCodigoProcesso(),
+																			processoLiquidacaoFiltro.getDescricaoProcessoLiquidacao(),	
+																			processoLiquidacaoFiltro.getIdAdquirente(),
+																			processoLiquidacaoFiltro.getIdBandeira(),
+																			processoLiquidacaoFiltro.getIdDominio(),
+																			processoLiquidacaoFiltro.getIdFuncao(),
+																			processoLiquidacaoFiltro.getStatus()
+																		);
+				
+		processoLiquidacaoFiltro.limpaFiltroComZero();
+		
+		if(processosLiquidacao.size() == 0)
+		{
+			adicionarMensagemErro(
+					MessagesPropertiesUtil
+							.getMessage("label.consulta.vazia"),
+					"");
+			setOperacao(OperacoesEnum.FILTRAGEM);
+			return null;
+		}
+		
+		dados = new ParametroDataModel<ProcessoLiquidacaoEntity>(processosLiquidacao);
+		dados.redefinir();
+		dados.ativar();
+		dados.getLista();
+		dados.iniciarPesquisa();
+		setOperacao(OperacoesEnum.LISTAGEM);
+		return null;
+	}
+
+
+
+
+	public String consultar(ProcessoLiquidacaoEntity prl)
+	{
+		this.processoLiquidacao = prl;	
+		setOperacao(OperacoesEnum.VISUALIZACAO);
+		buscaHistoricoEstabelecimento();	
+		buscaHistoricoEstabelecimentoEC();
+		buscaEventoContabil();
+		if(this.processoLiquidacao.getBandeiras().size() >5 )
+			this.pixels = "155";
+		else
+			this.pixels = String.format("%d",48 + this.processoLiquidacao.getBandeiras().size() * 25);
+		
+		return null;
+	}
+	
+	public String cancelar()
+	{
+		setOperacao(OperacoesEnum.FILTRAGEM);		
+		return filtrar();
+	}
+	
+	public String limpar()
+	{
+		processoLiquidacaoFiltro = new ProcessoLiquidacaoFiltroBean();
+		return null;
+	}
+		
+	
+	public String incluir()
+	{
+		todasBandeirasSelecionadas = false;
+		this.processoLiquidacao = new ProcessoLiquidacaoEntity();		
+		bandeirasNaoSelecionadas = new ArrayList<BandeiraVO>();
+		
+		setOperacao(OperacoesEnum.INSERCAO);
+		
+		buscaHistoricoEstabelecimento();	
+		buscaHistoricoEstabelecimentoEC();
+		buscaEventoContabil();	
+		buscaBandeirasAtivas();
+		
+		for(BandeiraEntity bna: listaBandeiraAtivas)					
+			bandeirasNaoSelecionadas.add(new BandeiraVO(bna));				
+		
+		if(bandeirasNaoSelecionadas.size() >5 )
+			this.pixels = "155";
+		else
+			this.pixels = String.format("%d",48 + bandeirasNaoSelecionadas.size() * 25);
+		return null;
+	}
+	
+	public String salvar()
+	{
+		if(processoLiquidacao.getBandeiras() == null || processoLiquidacao.getBandeiras().isEmpty())
+			processoLiquidacao.setBandeiras(new ArrayList<BandeiraEntity>());			
+		
+		for(BandeiraVO bna: bandeirasNaoSelecionadas)
+			if(bna.isSelecionada() && !bna.isJaVinculada())
+				processoLiquidacao.addBandeira(bna.getBandeira());
+		
+		if(processoLiquidacao.getBandeiras().isEmpty())
+		{
+			Messages.addError(null, MessagesPropertiesUtil.getMessage("label.bandeira.processo.vazio"), "");		
+			return null;
+		}
+						
+		if(verificaDuplicidade())
+			return null;
+		
+		this.processoLiquidacao = processoLiquidacaoService.gravar(processoLiquidacao, credentials.getUsername());
+		if(this.getOperacao().equals(OperacoesEnum.ALTERACAO)) 
+			Messages.addInfo(null, MessagesPropertiesUtil.getMessage("mensage.sucesso.alteracao"), "");		
+		else
+			Messages.addInfo(null, MessagesPropertiesUtil.getMessage("mensage.sucesso.insercao"), "");	
+		
+		filtrar();
+		return null;
+	}
+		
+	
+	
+	public boolean verificaDuplicidade()
+	{
+
+		
+		
+		boolean existeDuplicidade = this.processoLiquidacaoRepository.findDuplicidade(	this.processoLiquidacao.getIdProcessoLiquidacao(),
+																						this.processoLiquidacao.getAdquirente().getIdAdquirente(),
+																						this.processoLiquidacao.getDominio().getIdDominio(), 
+																						this.processoLiquidacao.getFuncao().getIdFuncao(), 
+																						this.processoLiquidacao.getTipoLiquidacao(),
+																						this.processoLiquidacao.getTipoProcessoLiquidacao().getEventoContabil() == null ? null : this.processoLiquidacao.getTipoProcessoLiquidacao().getEventoContabil().getIdEventoContabil(),
+																						this.processoLiquidacao.getTipoProcessoLiquidacao().getHistoricoContaCorrente() == null ? null : this.processoLiquidacao.getTipoProcessoLiquidacao().getHistoricoContaCorrente().getIdHistoricoContaCorrente());
+																						 
+																						
+		if(existeDuplicidade)
+		{			
+			adicionarMensagemErro(String.format("Registro Duplicado com mesmo Adquirente, Função, Domínio, Liquidação Adquirente e %s",
+									this.processoLiquidacao.getTipoLiquidacao().equals(TipoLiquidacao.STR.valor) ?
+									"Código Evento Contábil" :
+									"Histórico Conta Corrente"),"");			
+		}
+				
+		
+		return existeDuplicidade;
+	}
+	
+	public String alterar(ProcessoLiquidacaoEntity prl)
+	{
+		this.todasBandeirasSelecionadas = false;
+		setOperacao(OperacoesEnum.ALTERACAO);
+		
+		bandeirasNaoSelecionadas = new ArrayList<BandeiraVO>();		
+		this.processoLiquidacao = prl; 						
+		
+		buscaHistoricoEstabelecimento();
+		buscaHistoricoEstabelecimentoEC();	
+		buscaEventoContabil();
+		buscaBandeirasAtivas();
+		atualizaCombo(null);
+		List<BigInteger> idsBandeiras = prl.getIdsBandeiras();
+		
+		for(BandeiraEntity bna: listaBandeiraAtivas)
+		{
+			BandeiraVO bandeiraNova = new BandeiraVO(bna);
+			if (idsBandeiras.contains(bna.getIdBandeira()))
+			{
+				bandeiraNova.setJaVinculada(true);
+				bandeiraNova.setSelecionada(true);
+			}	
+			bandeirasNaoSelecionadas.add(bandeiraNova);			
+		}		
+		
+
+		if(bandeirasNaoSelecionadas.size() >5 )
+			this.pixels = "155";
+		else
+			this.pixels = String.format("%d",50 + bandeirasNaoSelecionadas.size() * 25);
+		
+		
+		
+		
+		return null;
+	}
+	
+	public void valueChangeMethod(AjaxBehaviorEvent event){
+		//...
+		this.todasBandeirasSelecionadas = false;
+		
+		bandeirasNaoSelecionadas = new ArrayList<BandeiraVO>();
+		if(	processoLiquidacao.getAdquirente() != null && 
+			processoLiquidacao.getDominio() != null &&
+			processoLiquidacao.getFuncao() != null )
+		{
+			List<BandeiraEntity> bandeirasNaoVinculadas = processoLiquidacaoRepository.findBandeirasNaoVinculadas(	processoLiquidacao.getIdProcessoLiquidacao(),
+																													processoLiquidacao.getAdquirente().getIdAdquirente(),
+																													processoLiquidacao.getDominio().getIdDominio(),
+																													processoLiquidacao.getFuncao().getIdFuncao());
+			 			
+			for(BandeiraEntity ban: bandeirasNaoVinculadas)
+			{
+				bandeirasNaoSelecionadas.add(new BandeiraVO(ban));
+			}
+		}
+		else
+		{
+			List<BigInteger> idsBandeiras = this.processoLiquidacao.getIdsBandeiras();
+			
+			for(BandeiraEntity bna: listaBandeiraAtivas)
+			{
+				if (!idsBandeiras.contains(bna.getIdBandeira()))
+					bandeirasNaoSelecionadas.add(new BandeiraVO(bna));			
+			}		
+		}
+		
+		if(bandeirasNaoSelecionadas.size() >5 )
+			this.pixels = "155";
+		else
+			this.pixels = String.format("%d",50 + bandeirasNaoSelecionadas.size() * 25);
+	}	
+	
+	public void atualizaCombo(AjaxBehaviorEvent event)
+	{		
+		this.listaHistoricoContaCorrente = this.historicoEstabelecimentoRepository.findByAdquirente(processoLiquidacao.getAdquirente() == null ? null : processoLiquidacao.getAdquirente().getIdAdquirente());
+		this.listaEvento = this.eventoContabilRepository.findByAdquirenteAndFuncao(	processoLiquidacao.getAdquirente() == null ? null : processoLiquidacao.getAdquirente().getIdAdquirente(),
+																					processoLiquidacao.getFuncao() == null ? null : processoLiquidacao.getFuncao().getIdFuncao());
+	}
+	
+	public String excluir(ProcessoLiquidacaoEntity prl)		
+	{
+		if(prl.getStatus().equals(SituacaoEnum.INATIVO.valor))
+		{
+			adicionarMensagemErro(
+					MessagesPropertiesUtil
+							.getMessage("label.registro.inativo"),
+					"");
+		
+			return null;
+		}
+		
+		processoLiquidacaoService.deletar(prl, credentials.getUsername());
+		Messages.addInfo(null, MessagesPropertiesUtil.getMessage("mensage.sucesso.exclusao"), "");
+		filtrar();
+		return null;
+	}
+	
+	
+	
+	
+	private void preencheCombos()
+	{
+		buscaAdquirentes();
+		buscaBandeiras();
+		buscaDominios();
+		buscaFuncoes();
+		
+	}
+	
+	public void selecionaTodasBandeiras(AjaxBehaviorEvent event)
+	{
+		if(todasBandeirasSelecionadas)
+		{
+			for(BandeiraVO bna : bandeirasNaoSelecionadas)
+			{
+				if( !bna.isJaVinculada() )
+					bna.setSelecionada(true);
+			}
+		}	
+		else
+		{
+			for(BandeiraVO bna : bandeirasNaoSelecionadas)
+			{
+				if( !bna.isJaVinculada() )
+					bna.setSelecionada(false);
+			}
+		}		
+	}	
+	
+	public String exportar()
+	{								
+		HashMap<String, Object> param = new HashMap<String, Object>();
+		String pathReport = "/pages/relatorio/ProcessoLiquidacaoPDF.jrxml";
+		List<String> contents = new ArrayList<String>();
+		
+		if(tipoRelatorio.equals(TipoArquivoEnum.CSV.valor))
+		{								
+			contents.add(preencheCabecalhoCSV());
+			contents.add(preencheContentCSV());		
+		}
+		else
+		{
+			param.put("codigo", this.processoLiquidacaoFiltro.getCodigoProcesso() == null ? null : this.processoLiquidacaoFiltro.getCodigoProcesso().toString());
+			param.put("idAdquirente", this.processoLiquidacaoFiltro.getIdAdquirente() == null ? null : this.processoLiquidacaoFiltro.getIdAdquirente().toString());
+			param.put("idBandeira", this.processoLiquidacaoFiltro.getIdBandeira() == null ? null : this.processoLiquidacaoFiltro.getIdBandeira().toString());
+			param.put("idDominio", this.processoLiquidacaoFiltro.getIdDominio() == null ? null : this.processoLiquidacaoFiltro.getIdDominio().toString());
+			param.put("idFuncao", this.processoLiquidacaoFiltro.getIdFuncao() == null ? null : this.processoLiquidacaoFiltro.getIdFuncao().toString());
+			param.put("status", this.processoLiquidacaoFiltro.getStatus().isEmpty() ? null : this.processoLiquidacaoFiltro.getStatus().toString());
+				
+			
+		}
+		exportar.exportar(tipoRelatorio, param, pathReport, this.processoLiquidacaoRepository, contents);										
+		
+		Messages.addInfo(null, MessagesPropertiesUtil.getMessage("label.exportado.sucesso"), "");
+		
+		tipoRelatorio = TipoArquivoEnum.PDF.valor;
+		
+		return null;
+		
+	}
+	
+	public String preencheCabecalhoCSV()
+	{
+		StringBuilder cabecalho = new StringBuilder();
+		cabecalho.append("Código Processo de Liquidacao;Descrição;Adquirente;Função;Domínio;Liquidação Adquirente;Evento Contabil;Histórico CC;Crédito Estabelecimento;Status");
+		cabecalho.append("\n");
+		return cabecalho.toString();
+	}
+	
+	public String preencheContentCSV()
+	{
+		StringBuilder content = new StringBuilder();
+		for(ProcessoLiquidacaoEntity prl : processosLiquidacao)
+		{						
+			content.append(prl.getIdProcessoLiquidacao());
+			content.append(";");
+			content.append(prl.getDescricao());
+			content.append(";");
+			content.append(prl.getAdquirente().getNome());
+			content.append(";");
+			content.append(prl.getFuncao().getDescricao());
+			content.append(";");			
+			content.append(prl.getDominio().getDescricao());
+			content.append(";");			
+			content.append(prl.getTipoLiquidacao().equals("S") ? "STR" : "HIST. DE CC");
+			content.append(";");
+			content.append(prl.getTipoProcessoLiquidacao().getEventoContabil() == null ? "" : prl.getTipoProcessoLiquidacao().getEventoContabil().getCodigo());
+			content.append(";");
+			content.append(prl.getTipoProcessoLiquidacao().getHistoricoContaCorrente() == null ? "" : prl.getTipoProcessoLiquidacao().getHistoricoContaCorrente().getCodigo());
+			content.append(";");
+			content.append(prl.getTipoProcessoLiquidacao().getCreditoEstabelecimento() == null ? "" : prl.getTipoProcessoLiquidacao().getCreditoEstabelecimento().getCodigo());
+			content.append(";");
+			content.append(prl.getStatus().equals(SituacaoEnum.ATIVO.valor) ? "Ativo" : "Inativo");
+			content.append("\n");
+		}
+		
+		return content.toString();
+	}
+
+	
+	private void buscaAdquirentes()
+	{	
+		this.listaAdquirente = adquirenteRepository.getAll();
+	}
+	
+	private void buscaBandeiras()
+	{
+		this.listaBandeira = bandeiraRepository.getAll();
+	}
+
+	private void buscaDominios()
+	{
+		this.listaDominio = dominioRepository.getAll();
+	}
+	
+	private void buscaFuncoes()
+	{
+		this.listaFuncao = funcaoRepository.getAll();
+	}
+	
+	private void buscaBandeirasAtivas(){
+		this.listaBandeiraAtivas = bandeiraRepository.getAllAtivas();
+	}
+	
+	private void buscaHistoricoEstabelecimento()
+	{
+		this.listaHistoricoContaCorrente = historicoEstabelecimentoRepository.getAll();
+	}
+	
+	public void buscaHistoricoEstabelecimentoEC()
+	{
+		this.listaHistoricoContaCorrenteEC = historicoEstabelecimentoRepository.findByFinalidade(FinalidadeHistoricoContaCorrenteEnum.ESTABELECIMENTO.valor);
+	}
+	
+	private void buscaEventoContabil()
+	{
+		this.listaEvento = eventoContabilRepository.getAllAtivos();
+	}
+	
+	public ProcessoLiquidacaoFiltroBean getProcessoLiquidacaoFiltro() {
+		return processoLiquidacaoFiltro;
+	}
+
+	public void setProcessoLiquidacaoFiltro(
+			ProcessoLiquidacaoFiltroBean processoLiquidacaoFiltro) {
+		this.processoLiquidacaoFiltro = processoLiquidacaoFiltro;
+	}
+
+	public List<ProcessoLiquidacaoEntity> getProcessosLiquidacao() {
+		return processosLiquidacao;
+	}
+
+	public void setProcessosLiquidacao(
+			List<ProcessoLiquidacaoEntity> processoLiquidacao) {
+		this.processosLiquidacao = processoLiquidacao;
+	}
+
+	
+
+	public ParametroDataModel<ProcessoLiquidacaoEntity> getDados() {
+		return dados;
+	}
+
+	public void setDados(ParametroDataModel<ProcessoLiquidacaoEntity> dados) {
+		this.dados = dados;
+	}
+
+	public ProcessoLiquidacaoEntity getProcessoLiquidacao() {
+		return processoLiquidacao;
+	}
+
+	public void setProcessoLiquidacao(ProcessoLiquidacaoEntity processoLiquidacao) {
+		this.processoLiquidacao = processoLiquidacao;
+	}
+
+	public List<BandeiraVO> getBandeirasNaoSelecionadas() {
+		return bandeirasNaoSelecionadas;
+	}
+
+	public void setBandeirasNaoSelecionadas(
+			List<BandeiraVO> bandeirasNaoSelecionadas) {
+		this.bandeirasNaoSelecionadas = bandeirasNaoSelecionadas;
+	}
+
+	public boolean isTodasBandeirasSelecionadas() {
+		return todasBandeirasSelecionadas;
+	}
+
+	public void setTodasBandeirasSelecionadas(boolean todasBandeirasSelecionadas) {
+		this.todasBandeirasSelecionadas = todasBandeirasSelecionadas;
+	}
+
+	public List<HistoricoContaCorrenteEntity> getListaHistoricoContaCorrente() {
+		return listaHistoricoContaCorrente;
+	}
+
+	public void setListaHistoricoContaCorrente(
+			List<HistoricoContaCorrenteEntity> listaHistoricoContaCorrente) {
+		this.listaHistoricoContaCorrente = listaHistoricoContaCorrente;
+	}
+
+	public List<AdquirenteEntity> getListaAdquirente() {
+		return listaAdquirente;
+	}
+
+	public void setListaAdquirente(List<AdquirenteEntity> listaAdquirente) {
+		this.listaAdquirente = listaAdquirente;
+	}
+
+	public List<BandeiraEntity> getListaBandeira() {
+		return listaBandeira;
+	}
+
+	public void setListaBandeira(List<BandeiraEntity> listaBandeira) {
+		this.listaBandeira = listaBandeira;
+	}
+
+	public List<DominioEntity> getListaDominio() {
+		return listaDominio;
+	}
+
+	public void setListaDominio(List<DominioEntity> listaDominio) {
+		this.listaDominio = listaDominio;
+	}
+
+	public List<EventoContabilEntity> getListaEvento() {
+		return listaEvento;
+	}
+
+	public void setListaEvento(List<EventoContabilEntity> listaEvento) {
+		this.listaEvento = listaEvento;
+	}
+
+	public List<FuncaoEntity> getListaFuncao() {
+		return listaFuncao;
+	}
+
+	public void setListaFuncao(List<FuncaoEntity> listaFuncao) {
+		this.listaFuncao = listaFuncao;
+	}
+
+	public List<BandeiraEntity> getListaBandeiraAtivas() {
+		return listaBandeiraAtivas;
+	}
+
+	public void setListaBandeiraAtivas(List<BandeiraEntity> listaBandeiraAtivas) {
+		this.listaBandeiraAtivas = listaBandeiraAtivas;
+	}
+
+	public String getPixels() {
+		return pixels;
+	}
+
+	public void setPixels(String pixels) {
+		this.pixels = pixels;
+	}
+
+	public AdquirenteEntity getNullEntity() {
+		return nullEntity;
+	}
+
+	public void setNullEntity(AdquirenteEntity nullEntity) {
+		this.nullEntity = nullEntity;
+	}
+
+	public String getTipoRelatorio() {
+		return tipoRelatorio;
+	}
+
+	public void setTipoRelatorio(String tipoRelatorio) {
+		this.tipoRelatorio = tipoRelatorio;
+	}
+
+
+	public List<HistoricoContaCorrenteEntity> getListaHistoricoContaCorrenteEC() {
+		return listaHistoricoContaCorrenteEC;
+	}
+
+	public void setListaHistoricoContaCorrenteEC(
+			List<HistoricoContaCorrenteEntity> listaHistoricoContaCorrenteEC) {
+		this.listaHistoricoContaCorrenteEC = listaHistoricoContaCorrenteEC;
+	}
+
+	
+
+	
+	
+	
+}

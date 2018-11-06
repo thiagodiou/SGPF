@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:pdvix="http://pdvix.com/facelets">
+
+
+
+	<!-- Sub título -->
+	<h1 class="itemForm">#{messages['label.title.resultado']}</h1>
+
+	<!-- Formulário -->
+	<div id="cad" align="left">
+		<a4j:outputPanel id="consultaArquivos">
+			<div id="cad" align="center">
+				<rich:dataTable id="listagem"
+					value="#{consultaArquivoWebBean.dadosArquivos}"
+					var="arq" style="width: 100%;" 
+					rows="#{consultaArquivoWebBean.limitePaginacao}"
+					rowClasses="even-row, odd-row, active-row">
+
+
+					<f:facet name="header">
+						<rich:columnGroup>
+							
+							<rich:column>#{messages['label.consulta.arquivo.data']}</rich:column>
+							<rich:column>#{messages['label.consulta.arquivo.nome']}</rich:column>
+							<rich:column>#{messages['label.consulta.arquivo.sequencial']}</rich:column>
+							<rich:column>#{messages['label.consulta.arquivo.origem']}</rich:column>
+							<rich:column>#{messages['label.consulta.arquivo.adquirente']}</rich:column>
+							<rich:column>#{messages['label.consulta.arquivo.funcao']}</rich:column>
+							<rich:column></rich:column>
+							<rich:column>#{messages['label.consulta.arquivo.status.processamento']}</rich:column>
+							<rich:column>#{messages['label.consulta.arquivo.recusas']}</rich:column>
+							<rich:column>#{messages['label.consulta.arquivo.erro.codigo']}</rich:column>
+							<rich:column>#{messages['label.consulta.arquivo.erro.descricao']}</rich:column>							
+						</rich:columnGroup>
+					</f:facet>
+				
+					<rich:column style="width: 5%; text-align: center;">
+						<h:outputText value="#{arq.dataArquivo}">
+							<f:convertDateTime pattern="dd/MM/yyyy"/>
+						</h:outputText>
+					</rich:column>
+
+
+					<rich:column style="width: 10%; text-align: center;" >
+						<h:commandLink value="#{arq.nomeArquivo}" action="#{consultaArquivoWebBean.consultaLiquidacoes()}">
+							<f:param name="idAdquirente" value="#{arq.idAdquirente}"></f:param>
+							<f:param name="dataArquivo" value="#{arq.dataArquivo}"></f:param>
+							<f:param name="codigoFuncao" value="#{arq.codigoFuncao}"></f:param>
+						</h:commandLink> 						
+					</rich:column>
+
+					<rich:column style="width: 5%; text-align: center;">
+						<h:outputText value="#{arq.sequencial}">
+						</h:outputText>
+					</rich:column>
+				
+					<rich:column style="width: 5%; text-align: center;">
+						<h:outputText value="#{arq.origem}">
+						</h:outputText>
+					</rich:column>
+					
+					<rich:column style="width: 10%; text-align: center;">
+						<h:outputText value="#{arq.nomeAdquirente}">
+						</h:outputText>
+					</rich:column>
+					
+					<rich:column style="width: 5%; text-align: center;">
+						<h:outputText value="#{arq.funcao}">
+						</h:outputText>
+					</rich:column>
+					
+					<rich:column style="width: 3%; text-align: center;">				
+						<h:graphicImage value="#{arq.imagemStatus}" />
+					</rich:column>
+					
+					<rich:column style="width: 10%; text-align: center;">
+						<h:outputText value="#{arq.statusProcessamento}">
+						</h:outputText>
+					</rich:column>
+					
+					<rich:column style="width: 3%; text-align: center;">
+						<h:outputText value="#{arq.quantidadeRejeicoes}">
+						</h:outputText>
+					</rich:column>
+					
+					<rich:column style="width: 5%; text-align: center;">
+						<h:outputText value="#{arq.codigoErro}"/>						
+					</rich:column>
+					
+					<rich:column style="width: 10%; text-align: center;">
+						<h:outputText value="#{arq.descricaoErro}"/>						
+					</rich:column>
+					
+				</rich:dataTable>
+			</div>
+		</a4j:outputPanel>
+	</div>
+	<div class="paginacao">
+
+		<ui:include src="/pages/templates/paginacao.xhtml">
+			<ui:param name="id" value="listagem" />
+			<ui:param name="totalLinhas"
+				value="#{arquivoDados.rowCount}" />
+			<ui:param name="pagina" value="#{arquivoDados.pagina}" />
+			<ui:param name="rendered" value="true" />			
+		</ui:include>
+	</div>
+
+
+</ui:composition>

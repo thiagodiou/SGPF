@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:pdvix="http://pdvix.com/facelets">
+
+
+
+	<!-- Sub título -->
+	<h1 class="itemForm">#{messages['label.title.resultado']}</h1>
+
+	<!-- Formulário -->
+	<div id="cad" align="left">
+		
+		<table>
+			<tr>
+				<td>
+					<h:outputLabel value="#{messages['label.consulta.liquidacao.total.quantidade']}:" />								
+				</td>
+				<td>
+					<h:outputText id="quantidadeLiquidacoes"	label="#{messages['label.consulta.liquidacao.total.quantidade']}" 
+						value="#{consultaLiquidacaoRecusadaWebBean.quantidadeLiquidacoes}" style="font-weight: bold">
+					</h:outputText>
+				</td>
+			
+			</tr>			
+		</table>
+		
+		
+		<table>
+						
+			<tr>
+				<a4j:outputPanel id="consultaLiquidacao">
+					<div id="cad" align="center">
+						<rich:dataTable id="listagem"
+							value="#{consultaLiquidacaoRecusadaWebBean.dadosLiquidacao}"
+							var="liq" style="width: 100%;" 
+							rows="#{consultaLiquidacaoRecusadaWebBean.limitePaginacao}"
+							rowClasses="even-row, odd-row, active-row">
+		
+		
+							<f:facet name="header">
+								<rich:columnGroup>									
+									<rich:column>#{messages['label.consulta.arquivo.data']}</rich:column>
+									<rich:column>#{messages['label.consulta.arquivo.nome']}</rich:column>
+									<rich:column>#{messages['label.consulta.arquivo.sequencial']}</rich:column>
+									<rich:column>#{messages['label.consulta.arquivo.adquirente']}</rich:column>																		
+									<rich:column>#{messages['label.consulta.arquivo.funcao']}</rich:column>
+									<rich:column>#{messages['label.menu.bandeira']}</rich:column>
+									<rich:column>#{messages['label.consulta.liquidacao.numero.unico']}</rich:column>
+									<rich:column>#{messages['label.consulta.liquidacao.status']}</rich:column>
+									<rich:column>#{messages['label.ocorrencia.codigo']}</rich:column>
+									<rich:column>#{messages['label.vinculos.ocorrencia.descricao.cip']}</rich:column>	
+									<rich:column>#{messages['label.vinculos.ocorrencia.codigo.banestes']}</rich:column>									
+																									
+								</rich:columnGroup>
+							</f:facet>
+													
+						
+							<rich:column style="width: 5%; text-align: center;">
+								<h:outputText value="#{liq.dataArquivoTexto}">
+									<f:convertDateTime pattern="dd/MM/yyyy"/>
+								</h:outputText>
+							</rich:column>
+		
+		
+							<rich:column style="width: 10%; text-align: center;">
+								<h:outputText value="#{liq.nomeArquivo}">
+								</h:outputText>
+							</rich:column>
+		
+							<rich:column style="width: 5%; text-align: center;">
+								<h:outputText value="#{liq.sequencial}">
+								</h:outputText>
+							</rich:column>
+						
+							<rich:column style="width: 5%; text-align: center;">
+								<h:outputText value="#{liq.nomeAdquirente}">									
+								</h:outputText>
+							</rich:column>
+							
+							<rich:column style="width: 3%; text-align: center;">
+								<h:outputText value="#{liq.nomeFuncao}">
+								</h:outputText>
+							</rich:column>
+							
+							<rich:column style="width: 5%; text-align: center;">
+								<h:outputText value="#{liq.nomeBandeira}">
+								</h:outputText>
+							</rich:column>
+													
+							<rich:column style="width: 10%; text-align: center;" >
+								<h:commandLink value="#{liq.numeroUnicoLiquidacao}" action="#{consultaLiquidacaoRecusadaWebBean.consultaLiquidacao(liq)}">
+									<f:param name="numeroUnico" value="#{liq.numeroUnicoLiquidacao}"></f:param>									
+								</h:commandLink> 						
+							</rich:column>
+							
+							<rich:column style="width: 3%; text-align: center;">										
+								<h:outputText value="#{liq.statusLiquidacao}"/>
+							</rich:column>
+							
+							
+							
+							<rich:column style="width: 5%; text-align: center;">
+								<h:outputText value="#{liq.codigoOcorrenciaCIP}">
+								</h:outputText>
+							</rich:column>
+							
+							<rich:column style="width: 5%; text-align: center;">
+								<h:outputText value="#{liq.descricaoOcorrenciaCIP}">
+								</h:outputText>
+							</rich:column>
+							
+							<rich:column style="width: 5%; text-align: center;">
+								<h:outputText value="#{liq.codigoOcorrenciaBanestes}">
+								</h:outputText>
+							</rich:column>
+							
+						</rich:dataTable>
+					</div>
+				</a4j:outputPanel>
+			</tr>
+		</table>
+	</div>
+	<div class="paginacao">
+
+		<ui:include src="/pages/templates/paginacao.xhtml">
+			<ui:param name="id" value="listagem" />
+			<ui:param name="totalLinhas"
+				value="#{liquidacaoDados.rowCount}" />
+			<ui:param name="pagina" value="#{liquidacaoDados.pagina}" />
+			<ui:param name="rendered" value="true" />			
+		</ui:include>
+	</div>
+
+
+</ui:composition>

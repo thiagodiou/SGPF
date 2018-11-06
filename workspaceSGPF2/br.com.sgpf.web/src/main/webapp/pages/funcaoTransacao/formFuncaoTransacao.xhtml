@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+    <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:a4j="http://richfaces.org/a4j" xmlns:rich="http://richfaces.org/rich" xmlns:s="http://jboss.com/products/seam/taglib" xmlns:pdvix="http://pdvix.com/facelets">
+
+        <div id="tituloProjeto" align="left">
+            <h1 class="tituloForm">#{messages['label.menu.funcaoTransacao']}</h1>
+            <h1 class="itemForm">
+			Função de Transação:			
+		</h1>
+        </div>
+		
+        <!-- Formulário -->
+        <div id="formFuncaoDados" align="center">        
+            <a4j:region>	            	
+                <h:form id="formularioFuncaoDados">
+                            		                    	               
+                	<h:commandButton id="dispararPopupBaseline" style="display:none">
+                        <rich:componentControl target="popupBaseline" operation="show" />
+                    </h:commandButton>
+                	
+                    <table border="0" width="100%" align="left">
+						
+                        <tr>
+                            <td width="15%">
+                                <h:outputText value="Projeto:" />
+                            </td>
+                            <td>
+                                <h:selectOneMenu id="idComboProjetoForm" converter="comboConverter" value="#{funcaoTransacaoBean.funcaoTransacaoForm.projeto}" 
+                                					required="true" label="Projeto">                                	
+                                    <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true" />
+                                    <f:selectItems value="#{funcaoTransacaoBean.projetos}" var="projeto" itemValue="#{projeto}" itemLabel="#{projeto.identificador} - #{projeto.titulo}" />
+                                    <a4j:ajax listener="#{funcaoTransacaoBean.buscarFuncaoDados}" event="change"  execute="idComboProjetoForm listagem listagemFuncaoDados listagemFDP" render="listagem listagemFuncaoDados idComboALI"/>
+                                </h:selectOneMenu>
+                                
+                                 	
+                            </td>
+                            <td width="15%">   
+                            	<a4j:outputPanel rendered="#{funcaoTransacaoBean.operacao == 'INCLUIR'}">
+                            	<table width="100%">
+                            		<tr>
+                            			<td>
+                            				<h:outputText value="Consultar Baseline:" />      		
+                            			</td>
+                            			<td>
+                            				<a4j:commandButton  
+			                           	 		action="#{funcaoTransacaoBean.buscarDadosBaseline}"  
+			                           	 		execute="@this idComboProjetoForm" render="panelBaseline" 
+			                           	 		oncomplete="exibePopupBaseline()" image="/resources/img/ico_lov.png" style="margin-left: 10px"/>  
+                            			</td>
+                            		</tr>
+                            	</table>   
+                            	</a4j:outputPanel>                           	             	                                                     		                         
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="15%">                                                                                     
+                                <h:outputText value="Nome:" />
+                            </td>
+                            <td>
+                                <h:inputText value="#{funcaoTransacaoBean.funcaoTransacaoForm.nome}" required="true" label="Nome"/>
+                            </td>
+
+                            <td width="15%">
+                                <h:outputText value="Descrição:" />
+                            </td>
+                            <td>
+                                <h:inputText value="#{funcaoTransacaoBean.funcaoTransacaoForm.descricao}" required="true" label="Descrição"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="15%">
+                                <h:outputText value="Elemento de Contagem:" />
+                            </td>
+
+                            <td>
+                                <h:selectOneMenu id="idElementoContagemForm" value="#{funcaoTransacaoBean.funcaoTransacaoForm.elementoContagem}" required="true" label="Elemento de Contagem">
+                                    <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true" />
+                                    <f:selectItems value="#{funcaoTransacaoBean.elementosContagem}" var="elm" itemLabel="#{elm.descricao}" itemValue="#{elm}"></f:selectItems>
+                                </h:selectOneMenu>
+                            </td>
+                            
+                            <td width="15%">
+                                <h:outputText value="Conversão de Dados:" />
+                            </td>
+                            
+                            <td>
+                            	<h:selectBooleanCheckbox value="{#funcaoTransacaoBean.funcaoTransacaoForm.conversaoDados}"></h:selectBooleanCheckbox>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td width="15%">
+                                <h:outputText value="Tipo de Manutenção:" />
+                            </td>
+                            <td>
+                                <h:selectOneMenu id="idTipoManutencaoForm" value="#{funcaoTransacaoBean.funcaoTransacaoForm.tipoManutencao}" required="true" label="Tipo de Manutenção">
+                                    <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true" />
+                                    <f:selectItem itemLabel="INCLUSÃO" itemValue="I" />
+                                    <f:selectItem itemLabel="ALTERAÇÃO" itemValue="A" />
+                                    <f:selectItem itemLabel="EXCLUSÃO" itemValue="E" />
+                                </h:selectOneMenu>
+                            </td>
+                            <td width="15%">
+                                <h:outputText value="Descrição da Manutenção:" />
+                            </td>
+                            <td>
+                                <h:inputText value="#{funcaoTransacaoBean.funcaoTransacaoForm.descricaoManutencao}" />
+                            </td>
+                        </tr>    
+                        
+                   		<tr>
+                   			<td width="15%">
+                                <h:outputText value="Arquivo Referenciado:" />
+                            </td>
+							<td colspan="1">
+							
+				                    <h:selectOneMenu id="idComboALI" converter="comboConverter" value="#{funcaoTransacaoBean.funcaoDadosProjetoSelecionado}" 
+				                        					required="false" label="AR:">                                	
+				                        <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true" />
+				                        <f:selectItems value="#{funcaoTransacaoBean.funcoesDadosProjetos}" var="fdp" itemValue="#{fdp}" itemLabel="#{fdp.nome}" />                                                                                                           
+				                    </h:selectOneMenu>
+			                    <a4j:commandButton id="incluirALI" action="#{funcaoTransacaoBean.adicionarFuncaoDados}" image="/resources/img/ico_plus.png" style="margin-left: 10px" execute="@this idComboALI painelMensagem"  render="listagemFuncaoDados listagem panelAli listagemALI">
+			                        <rich:tooltip for="incluirTipoRegistro">#{messages['tip.adicionar']}</rich:tooltip>
+			                    </a4j:commandButton>
+			                   	    
+							</td>
+						</tr>                       
+                    </table>                                      
+                   	
+                    <table width="100%">
+                    	<tr>
+                    		<td width="40%" style="vertical-align: -webkit-baseline-middle;">
+                    			<a4j:commandButton id="atualizarListagemALI" style="display:none" render="panelAli listagemALI listagemFuncaoDados listagem"/>
+			                   	<a4j:outputPanel id="panelAli">
+			                   		<table width="100%">
+			                   			<tr>
+			                   				<td>
+			                   					<rich:dataTable id="listagemALI" value="#{funcaoTransacaoBean.funcoesDadosProjetosSelecionadas}" 
+																	var="ftp" style="width: 100%;"
+																	rowClasses="even-row, odd-row, active-row">
+																	
+													<f:facet name="header">
+														<rich:columnGroup>															
+															<rich:column></rich:column>		
+															<rich:column>Arquivo Referenciado</rich:column>																					
+														</rich:columnGroup>
+													</f:facet>
+													
+													<rich:column style="width: 10%; text-align: center;">
+				                                        <a4j:commandButton id="excluirDado" action="#{funcaoTransacaoBean.excluirALI(ftp)}" image="/resources/img/ico_cancel.png" style="margin-left: 10px" execute="@this" oncomplete="atualizarListagemALI()">
+				                                        </a4j:commandButton>
+			                                   		</rich:column>
+													
+													<rich:column style="width: 10%; text-align: center;">
+														 <h:outputText value="#{ftp.nome}" />		
+													</rich:column>	
+																	
+																	
+												</rich:dataTable>
+			                   				</td>
+			                   			</tr>				                   							                   			
+			                   		</table>
+			                   	</a4j:outputPanel>
+                    		</td>
+                    		
+                    		<td width="60%" style="vertical-align: -webkit-baseline-middle;">
+                    			<a4j:commandButton id="atualizarTipoDados" style="display:none" render="listagemTipoDado listagemFuncaoDados" execute="listagemTipoDado"/>
+			                    <a4j:outputPanel id="listagemFuncaoDados" > 
+			                    	<table width="100%">
+			                    		<tr>
+			                    			<td>
+			                    				<div style="overflow: auto; height: 300px">
+			                    				<table width="100%" style="margin-top: -3px">									
+													<tr>
+														<td>																							  
+															<rich:dataTable id="listagem" value="#{funcaoTransacaoBean.funcoesDadosProjetosSelecionadas}" 
+																				var="ftp" style="width: 100%;"
+																				rowClasses="even-row, odd-row, active-row">
+									
+									
+																<f:facet name="header">
+																	<rich:columnGroup>					
+																	
+																		<rich:column>Selecione</rich:column>		
+																		<rich:column>Arquivo Referenciado</rich:column>
+																		<rich:column>Dado</rich:column>											
+																	</rich:columnGroup>
+																</f:facet>													
+																
+																 <rich:collapsibleSubTable var="registro" value="#{ftp.tiposDeRegistros}">
+																 	<rich:collapsibleSubTable var="dado" value="#{registro.dados}">										 		
+																 		<rich:column style="width: 10%; text-align: center;">
+																			 <h:selectBooleanCheckbox  value="#{dado.selecionado}"/>		
+																		</rich:column>
+																 		<rich:column style="width: 10%; text-align: center;">
+																			 <h:outputText value="#{ftp.nome}" />		
+																		</rich:column>
+																 		<rich:column style="width: 10%; text-align: center;">
+																			<h:outputText value="#{dado.nome}" />		
+																		</rich:column>
+																 	</rich:collapsibleSubTable>									 	
+																 </rich:collapsibleSubTable>
+																
+															</rich:dataTable>
+														</td>
+													</tr>					
+												</table>
+											</div>	
+			                    			</td>
+			                    		</tr>
+			                    		<tr>
+			                    			<td>
+			                    				<table width="100%">
+													<tr>
+														<td>
+															<a4j:commandButton id="atualizarDados" style="display:none" render="listagemDado"/>
+															<a4j:region>
+																			                          			                           
+									                            <table>
+									                                <tr>
+									                                	<td>
+									                                        <a4j:commandButton id="incluirDado" action="#{funcaoTransacaoBean.adicionarDadoManual}" image="/resources/img/ico_plus.png" style="margin-left: 10px" oncomplete="atualizarListagemDados()"  render="listagemDado">
+									                                            <rich:tooltip for="incluirTipoRegistro">#{messages['tip.adicionar']}</rich:tooltip>
+									                                        </a4j:commandButton>
+									                                    </td>
+									                                    <td width="10%">
+									                                        <h:outputText value="Dado:" />
+									                                    </td>
+									                                    <td>
+									                                        <h:inputText id="tipoRegistro" value="#{funcaoTransacaoBean.dadoForm.nome}"></h:inputText>
+									                                    </td>			                                    
+									                                    <td>
+									                                    	<h:selectBooleanCheckbox value="#{funcaoTransacaoBean.dadoForm.dadoDerivado}" ></h:selectBooleanCheckbox>
+									                                    </td>
+									                                    <td>
+									                                        <h:outputText value="Dado Derivado?" />
+									                                    </td>			                                    
+									                                </tr>			                                			                              
+									                            </table>
+									                        
+									                        	<table width="100%">
+									                        		<tr>
+									                        			<td>
+									                        				 <rich:dataTable id="listagemDado" value="#{funcaoTransacaoBean.dadosAdicionadosManualmente}" var="dado" style="width: 100%;" rowClasses="even-row, odd-row, active-row">
+						
+							                                                     <f:facet name="header">
+							                                                         <rich:columnGroup>
+							                                                             <rich:column></rich:column>
+							                                                             <rich:column>Nome</rich:column>
+							                                                             <rich:column>Dado Derivado</rich:column>
+							                                                         </rich:columnGroup>
+							                                                     </f:facet>
+									
+																				  <rich:column style="width: 35%; text-align: center;">
+																				  	 <a4j:commandButton id="deleteTipoRegsitro" action="#{funcaoTransacaoBean.excluirDado(dado)}" oncomplete="atualizarListagemDados()" execute="atualizarDados" image="/resources/img/ico_cancel.png"/>
+																				  </rich:column>
+							                                                     <rich:column style="width: 35%; text-align: center;">
+							                                                     	<h:outputText value="#{dado.nome}"/>
+							                                                    </rich:column>
+							                                                    <rich:column style="width: 35%; text-align: center;">
+							                                                     	<h:outputText value="#{dado.dadoDerivado ? 'Sim' : 'Não'}"/>
+							                                                    </rich:column>
+							                                                 </rich:dataTable>                                                                    			
+									                        			</td>	
+									                        		</tr>
+									                        	</table>			                        	
+									                        </a4j:region>
+														</td>
+													</tr>
+												</table>					
+			                    			</td>
+			                    		</tr>
+			                    	</table>
+									
+													                            
+								</a4j:outputPanel>
+                    		
+                    		</td>
+                    	</tr>
+                    
+                    </table>
+                    
+                </h:form>
+            </a4j:region>
+        </div>
+		<a4j:outputPanel id="panelBaseline">
+			<rich:popupPanel id="popupBaseline" domElementAttachment="form" resizeable="false" moveable="false" autosized="true" zindex="3000">
+                <f:facet name="header">
+                    <h:outputText value="Baseline" />
+                </f:facet>
+                <f:facet name="controls">
+                    <h:outputLink value="#" onclick="#{rich:component('popupBaseline')}.hide(); return false;" style="color: inherit">
+                        X
+                    </h:outputLink>
+                </f:facet>
+                
+                   <rich:dataTable id="listagemBaseline" value="#{funcaoTransacaoBean.funcoesTransacaoBaseline}" var="ftp" style="width: 100%;" rowClasses="even-row, odd-row, active-row">
+
+                    <f:facet name="header">
+                        <rich:columnGroup>
+                            <rich:column></rich:column>
+                            <rich:column>Nome</rich:column>
+                            <rich:column>Descrição</rich:column>	 	   
+                            <rich:column>Tipo Manutenção</rich:column>       
+                            <rich:column>Descrição manutenção</rich:column>	 	          
+                            <rich:column>Elemento Contagem</rich:column>
+                            	 	          	 	             
+                        </rich:columnGroup>
+                    </f:facet>
+
+                    <rich:column style="width: 10%; text-align: center;">
+                        <a4j:commandButton id="selecionarFuncaoDado" action="#{funcaoTransacaoBean.criarFuncaoTransacaoApartirDaBaseline(ftp)}" 
+                        	onclick="#{rich:component('popupBaseline')}.hide();" execute="@this" render="@all" 
+                        	image="/resources/img/ico_selecionar.png" style="margin-left: 10px"/>
+                        
+                    </rich:column>
+
+                    <rich:column style="width: 10%; text-align: center;">
+                        <h:outputText value="#{ftp.nome}"></h:outputText>
+                    </rich:column>
+                    
+                    <rich:column style="width: 10%; text-align: center;">
+                        <h:outputText value="#{ftp.descricao}"></h:outputText>
+                    </rich:column>
+                    
+                    <rich:column style="width: 10%; text-align: center;">
+                        <h:outputText value="#{ftp.descricaoTipoManutencao}"></h:outputText>
+                    </rich:column>
+                    
+                    <rich:column style="width: 10%; text-align: center;">
+                        <h:outputText value="#{ftp.descricaoManutencao}"></h:outputText>
+                    </rich:column>
+                    
+                    <rich:column style="width: 10%; text-align: center;">
+                        <h:outputText value="#{ftp.elementoContagem.descricao}"></h:outputText>
+                    </rich:column>
+				</rich:dataTable>		
+				
+			</rich:popupPanel>		
+		</a4j:outputPanel>
+		
+
+        
+        <script>			
+
+	        function atualizarListagemALI() {                
+	            $("[id$=atualizarListagemALI]").trigger('click');
+	        }
+		
+	        function atualizarListagemDados() {                
+	            $("[id$=atualizarDados]").trigger('click');
+	        }
+			
+	        function atualizarListagem() {                
+	            $("[id$=atualizarListagem]").trigger('click');
+	        }
+		
+	        function selecionarDados() {                
+	            $("[id$=selecionarDados]").trigger('click');
+	        }
+		
+	        function selecionarFuncaoDados() {                
+	            $("[id$=selecionarFuncaoDados]").trigger('click');
+	        }
+		
+
+			function atualizarTipoDados(){
+				$("[id$=atualizarTipoDados]").trigger('click');
+			}
+    		
+            function atualizarTiposRegistros() {                
+                $("[id$=atualizarTipoRegistro]").trigger('click');
+            }
+
+            function exibePopup() {
+                $("[id$=dispararPopup]").trigger('click');
+            }
+            
+            function exibePopupBaseline() {
+                $("[id$=dispararPopupBaseline]").trigger('click');
+            }
+            
+        </script>
+
+    </ui:composition>

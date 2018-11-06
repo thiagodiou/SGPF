@@ -1,0 +1,40 @@
+package br.com.banestes.car.core.converter;
+
+import java.math.BigInteger;
+
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.convert.FacesConverter;
+
+import org.apache.commons.lang.StringUtils;
+
+/**
+* 
+* @author
+* 
+*/
+@FacesConverter(value="horaConverter")   
+public class HoraConverter implements javax.faces.convert.Converter {
+
+
+	@Override
+	public String getAsString(FacesContext ctx, UIComponent comp, Object value) 
+	{
+		String valueString = ((BigInteger) value).toString();
+		
+		String hora = StringUtils.leftPad( valueString, 4 , "0" );
+
+		return hora;
+				
+	}
+
+	@Override
+	public Object getAsObject(FacesContext ctx, UIComponent comp, String value) {
+			
+		
+		BigInteger retorno = new BigInteger(value.replaceAll(":", ""));
+		
+		return retorno;
+	}
+
+}

@@ -1,0 +1,122 @@
+/**
+ * @(#) ErroPageWebBean.java.
+ * 
+ *      Copyright (c) 2014 PD CASE Belo Horizonte, MG - Brasil Todos os direitos reservados.
+ * 
+ *      Este software e confidencial e é propriedade da PD CASE, não é permitida a distribuição/alteração da
+ *      mesma sem prévia autorização.
+ */
+
+package br.com.banestes.car.bean;
+
+import static javax.servlet.RequestDispatcher.ERROR_EXCEPTION;
+import static javax.servlet.RequestDispatcher.ERROR_STATUS_CODE;
+import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN;
+
+import java.util.Map;
+
+import javax.ejb.EJBException;
+import javax.el.ELException;
+import javax.enterprise.context.RequestScoped;
+import javax.faces.FacesException;
+import javax.faces.application.FacesMessage;
+import javax.faces.application.ViewExpiredException;
+import javax.faces.context.FacesContext;
+import javax.inject.Named;
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.OptimisticLockException;
+
+import org.omnifaces.util.Messages;
+
+import br.com.banestes.car.jpa.core.util.MessagesPropertiesUtil;
+
+/**
+ * Descrição da classe.
+ * 
+ * @author <a href="mailto:tiago.augusto@pdcase.com.br">Tiago Augusto</a>.
+ * @version $Revision: 1.1 $
+ */
+@Named
+@RequestScoped
+public class ErroPageWebBean {
+
+	public ErroPageWebBean() {
+	}
+
+	/**
+	 * Adiciona mensagem de erro para ser exibida na tela JSF.
+	 * 
+	 */
+	public void computarMensagem() {
+
+		Map<String, Object> requestMap = FacesContext.getCurrentInstance().getExternalContext()
+				.getRequestMap();
+
+		// Recupera informações do erro
+		Integer statusCode = (Integer) requestMap.get(ERROR_STATUS_CODE);
+		Exception exception = (Exception) requestMap.get(ERROR_EXCEPTION);
+
+		FacesMessage facesMsg = Messages.createError("msg.erro.generico");
+
+		// caso exista exceção, trata-la
+		if (exception != null) {
+
+			exception = ignoreUselessExpection(exception);
+
+			if (exception instanceof EntityNotFoundException) {
+				facesMsg = Messages.createError(MessagesPropertiesUtil.getMessage("msg.erro.registro.nao.encotrado"));
+			} else if (exception instanceof EntityExistsException) {
+				facesMsg = Messages.createError(MessagesPropertiesUtil.getMessage("msg.erro.registro.duplicado"));
+			} else if (exception instanceof OptimisticLockException) {
+				facesMsg = Messages.createError(MessagesPropertiesUtil.getMessage("msg.erro.lock.otimista"));
+			} else if (exception instanceof ViewExpiredException) {
+				facesMsg = Messages.createError(MessagesPropertiesUtil.getMessage("msg.erro.sessao.expirada"));
+			}else {
+				facesMsg = Messages.createError(MessagesPropertiesUtil.getMessage("msg.erro.generico"));
+			}
+
+		} else if (statusCode != null) {
+			if (SC_FORBIDDEN == statusCode) {
+				facesMsg = Messages.createError(MessagesPropertiesUtil.getMessage("msg.erro.usuario.acesso.negado"));
+			}
+			
+		} 
+
+		Messages.addGlobal(facesMsg);
+	}
+
+	/**
+	 * 
+	 * Procura a causa da exceção, ignorando exceções do tipo :
+	 * <ul>
+	 * <li>FacesException</li>
+	 * <li>EJBException</li>
+	 * <li>ELException</li>
+	 * </ul>
+	 * 
+	 * @author <a href="mailto:tiago.augusto@pdcase.com.br">Tiago Augusto</a>.
+	 * @param e
+	 * @return
+	 */
+	private Exception ignoreUselessExpection(Exception e) {
+
+		while ((e instanceof FacesException || e instanceof EJBException || e instanceof ELException)
+				&& e.getCause() != null) {
+
+			e = (Exception) e.getCause();
+		}
+
+		return e;
+	}
+
+	/**
+	 * Adiciona mensagem de erro para ser exibida na tela JSF.
+	 * 
+	 */
+	public void adicionarMsgErro(String msg) {
+		FacesContext.getCurrentInstance().addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_ERROR, msg, msg));
+	}
+
+}

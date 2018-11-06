@@ -1,0 +1,318 @@
+package br.com.banestes.car.bean.datamodel;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.el.Expression;
+import javax.faces.context.FacesContext;
+
+import org.ajax4jsf.model.DataVisitor;
+import org.ajax4jsf.model.ExtendedDataModel;
+import org.ajax4jsf.model.Range;
+import org.ajax4jsf.model.SequenceRange;
+import org.richfaces.component.SortOrder;
+import org.richfaces.model.Arrangeable;
+import org.richfaces.model.ArrangeableState;
+import org.richfaces.model.SortField;
+
+/**
+ * Classe base para a criacao de DataModel com navegacao "verdadeira".
+ * 
+ */
+public abstract class BaseExtendedDataModel<T, ID> extends ExtendedDataModel<T> implements Arrangeable {
+
+	private List<T> listRow;
+	private ID currentId;
+	private Map<ID, T> wrappedData = new HashMap<ID, T>();
+
+	/**
+	 * Armazena o numero total de registros, funciona como cache.
+	 */
+	private Integer rowCount;
+
+	/**
+	 * Controla se as operacoes de recuperacao estao ativas. Se ativar o componente ira realizar as pesquisas.
+	 */
+	private boolean ativo = false;
+
+	private Integer lastFirstRow;
+	private Integer lastMaxResults;
+
+	/**
+	 * Armazena as ultimas opcoes de ordenacao. Utilizado para evitar invocacao duplicado pelo RF.
+	 */
+	private List<SortField> lastSort;
+
+	/**
+	 * Marce se  necessario realizar recuperacao devido a ordenacao dos campos.
+	 */
+	private boolean needSort = false;
+
+	/**
+	 * Armazena a pagina que deve ser exibida. Usando no atributo page do dataScroller.
+	 */
+	private int pagina = 1;
+
+	public void ativar() {
+		ativo = true;
+	}
+
+	/**
+	 * Responsavel por retornar o numero total de registros.
+	 * 
+	 * @return numero total de registros.
+	 */
+	public abstract int getTotalRegistros();
+
+	/**
+	 * Realiza a pesquisa de total de registros.
+	 * 
+	 * @return total de registros.
+	 */
+	public int iniciarPesquisa() {
+		return rowCount = getTotalRegistros();
+	}
+
+	/**
+	 * Recupera os dados armazenados no dataModel.
+	 * 
+	 * @return listRow.
+	 */
+	public List<T> getDados() {
+		return listRow != null ? new ArrayList<T>(listRow) : null;
+	}
+
+	/**
+	 * Responsavel por retornar o valor do id da linha informada.
+	 * 
+	 * @param row registro da linha.
+	 * @return id do objeto.
+	 */
+	protected abstract ID getId(T row);
+
+	protected List<T> getList(Integer firstRow, Integer maxResults) {
+
+		if (ativo) {
+			if (needSort || !firstRow.equals(lastFirstRow) || !maxResults.equals(lastMaxResults)) {
+				needSort = false;
+				List<String[]> ordenacoes = criarOrdenacoes();
+
+				if (firstRow != null && maxResults != null && maxResults > 0) {
+					listRow = recuperarLista(firstRow, maxResults, ordenacoes);
+				}
+
+				lastFirstRow = firstRow;
+				lastMaxResults = maxResults;
+			}
+
+			return listRow;
+		}
+
+		return new ArrayList<T>();
+	}
+
+	/**
+	 * Nao deve ser utilizado nas classes filhas, utilizar o metodo getTotalRegistros();
+	 */
+	@Override
+	public int getRowCount() {
+
+		if (ativo) {
+			if (rowCount == null) {
+				return (rowCount = getTotalRegistros());
+			}
+			return rowCount.intValue();
+		}
+
+		return 0;
+	}
+
+	/**
+	 * This is main way to obtain data row. It is intensively used by framework. We strongly recommend use of
+	 * local cache in that method.
+	 */
+	@Override
+	public T getRowData() {
+		if (currentId == null) {
+			return null;
+		}
+
+		return wrappedData.get(currentId);
+	}
+
+	@Override
+	public Object getRowKey() {
+		return currentId;
+	}
+
+	@Override
+	public boolean isRowAvailable() {
+		return getRowData() != null;
+	}
+
+	@Override
+	public int getRowIndex() {
+		throw new UnsupportedOperationException("Não esta implementado o método getRowIndex() no dataModel.");
+	}
+
+	@Override
+	public void setRowIndex(int rowIndex) {
+		throw new UnsupportedOperationException(
+				"Não esta implementado o método setRowIndex(int) no dataModel.");
+	}
+
+	@Override
+	public Object getWrappedData() {
+		throw new UnsupportedOperationException(
+				"Não esta implementado o método getWrappedData() no dataModel.");
+	}
+
+	@Override
+	public void setWrappedData(Object data) {
+		throw new UnsupportedOperationException(
+				"Não esta implementado o método setWrappedData(Object) no dataModel.");
+	}
+
+	/**
+	 * Responsavel por fazer a pesquisa dos dados.
+	 * 
+	 * @param firstRow primeiro item a ser pesquisado.
+	 * @param maxResults tamanho maximo da itens pesquisados.
+	 * @param ordenacoes propriedades de ordenacaao.
+	 * @return lista pesquisada.
+	 */
+	protected abstract List<T> recuperarLista(Integer firstRow, Integer maxResults, List<String[]> ordenacoes);
+
+	/**
+	 * Redefine o componente para seu estado inicial.
+	 */
+	public void redefinir() {
+
+		ativo = false;
+		listRow = null;
+		currentId = null;
+		wrappedData = new HashMap<ID, T>();
+		rowCount = null;
+		lastFirstRow = null;
+		lastMaxResults = null;
+		pagina = 1;
+	}
+
+	/*
+	 * This method normally called by Visitor before request Data Row.
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public void setRowKey(Object key) {
+		this.currentId = (ID) key;
+	}
+
+	/**
+	 * Nao deve ser redefinido, utilizar o metodo recuperarLista().
+	 */
+	@Override
+	public void walk(FacesContext context, DataVisitor visitor, Range range, Object argument) {
+
+		int firstRow = ((SequenceRange) range).getFirstRow();
+		int maxResults = ((SequenceRange) range).getRows();
+
+		wrap(context, visitor, range, argument, getList(firstRow, maxResults));
+	}
+
+	private void wrap(FacesContext context, DataVisitor visitor, Range range, Object argument, List<T> list) {
+
+		wrappedData = new HashMap<ID, T>();
+
+		if (list != null) {
+			for (T row : list) {
+				ID id = getId(row);
+
+				wrappedData.put(id, row);
+
+				visitor.process(context, id, argument);
+			}
+		}
+	}
+
+	/**
+	 * Metodo invocado pelo RF quando ordenaca eh selecionada. Pode ocorrer de invocar duas vezes, uma para a
+	 * ordenacao anterior e outra para a nova.
+	 */
+	@Override
+	public void arrange(FacesContext context, ArrangeableState state) {
+
+		if (state != null) {
+
+			List<SortField> ordenadores = state.getSortFields();
+
+			// se ordena��o for diferente da anterior, invoca o m�todo
+			if (alterouOrdenacao(lastSort, ordenadores)) {
+				needSort = true;
+			}
+
+			lastSort = ordenadores;
+		}
+	}
+
+	/**
+	 * Verifica se houve alteracao nos parametros de ordenacao.
+	 * 
+	 * @param ordenadores1 lista de ordenadores 1
+	 * @param ordenadores2 lista de ordenadores 2
+	 * @return true se houve alteracao.
+	 */
+	private boolean alterouOrdenacao(List<SortField> ordenadores1, List<SortField> ordenadores2) {
+
+		if (ordenadores1 == null || ordenadores1.size() != ordenadores2.size()) {
+			return true;
+		}
+
+		for (int i = 0; i < ordenadores2.size(); i++) {
+			if (!ordenadores2.get(i).getSortOrder().equals(ordenadores1.get(i).getSortOrder())) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private List<String[]> criarOrdenacoes() {
+
+		List<String[]> ordenacoes = new ArrayList<String[]>();
+
+		if (lastSort != null) {
+			for (SortField field : lastSort) {
+				ordenacoes.add(criarOrdenacao(field));
+			}
+		}
+
+		return ordenacoes;
+	}
+
+	private String[] criarOrdenacao(SortField sortField) {
+
+		Expression expression = sortField.getSortBy();
+		String expressionString = expression.getExpressionString();
+
+		String propriedade;
+		if (expression.isLiteralText()) {
+			propriedade = expressionString;
+		} else {
+			propriedade = expressionString.replaceAll("[#|$]\\{", "").replaceAll("\\}", "");
+		}
+
+		String ordem = SortOrder.ascending.equals(sortField.getSortOrder()) ? "asc" : "desc";
+
+		return new String[]{propriedade, ordem};
+	}
+
+	public int getPagina() {
+		return pagina;
+	}
+
+	public void setPagina(int pagina) {
+		this.pagina = pagina;
+	}
+}

@@ -1,0 +1,17 @@
+package br.com.banestes.car.core.exceptions;
+
+public class PersistenceException extends RuntimeException {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2258739038124062882L;	
+
+	public PersistenceException(String message) {
+		super(message);
+	}
+
+	public PersistenceException(String message, Throwable cause) {
+		super(message, cause);
+	}
+	
+}

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:pdvix="http://pdvix.com/facelets">
+
+	<div id="tituloProjeto" align="left">
+		<h1 class="tituloForm">#{messages['label.menu.projeto']}</h1>				
+		<h1 class="itemForm">
+			Dados do Projeto			
+		</h1>
+	</div>
+	
+<!-- Formulário -->
+	<div id="formProjeto" align="center">	
+		<table border="0" width="50%" align="left">
+			
+			<tr>
+				<td width="10%">
+					<h:outputText value="Analista:" />																	
+				</td>
+				<td>
+					<h:selectOneMenu id="idComboAnalistaForm"  converter="comboConverter" value="#{projetoBean.projetoForm.analista}" required="true">
+						<f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+						<f:selectItems value="#{projetoBean.projetoFiltro.analistas}" var="analista" itemValue="#{analista}" itemLabel="#{analista.nome}"/>
+					</h:selectOneMenu>																	
+				</td>				
+			</tr>
+			
+			<tr>
+				<td width="10%">
+					<h:outputText value="Empresa:" />																	
+				</td>
+				<td>
+            	    <h:selectOneMenu id="idComboEmpresaForm"  converter="comboConverter" value="#{projetoBean.projetoFiltro.empresaSelecionada}">
+						<f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/> 
+						<f:selectItems value="#{projetoBean.projetoFiltro.empresas}" var="empresa" itemValue="#{empresa}" itemLabel="#{empresa.nomeFantasia}"/>
+						<a4j:ajax event="valueChange" execute="idComboSistemaForm" render="idComboSistemaForm"/>
+					</h:selectOneMenu>																
+				</td>				
+			</tr>		
+			
+			<tr>
+				<td width="10%">
+					<h:outputText value="Sistema:" />																	
+				</td>
+				<td>
+					<h:selectOneMenu id="idComboSistemaForm"  converter="comboConverter" value="#{projetoBean.projetoForm.sistema}">
+						<f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+						<f:selectItems value="#{projetoBean.projetoFiltro.empresaSelecionada.sistemas}" var="sistema" itemValue="#{sistema}" itemLabel="#{sistema.sigla}"/>
+					</h:selectOneMenu>																
+				</td>				
+			</tr>	
+			<tr>
+				<td width="10%">
+					<h:outputText value="Identificador do Projeto:" />																	
+				</td>
+				<td>
+					<h:inputText value="#{projetoBean.projetoForm.identificador}" />																	
+				</td>				
+			</tr>					
+
+			<tr>
+				<td width="10%">
+					<h:outputText value="Título:" />																	
+				</td>
+				<td>
+					<h:inputText value="#{projetoBean.projetoForm.titulo}" />																	
+				</td>				
+			</tr>	
+		
+			<tr>
+				<td width="10%">
+					<h:outputText value="Descrição:" />																	
+				</td>
+				<td>
+					<h:inputTextarea value="#{projetoBean.projetoForm.descricao}" />																	
+				</td>				
+			</tr>
+			<tr>
+				<td width="10%">
+					<h:outputText value="Tipo de Projeto:" />																	
+				</td>
+				<td>
+					<h:selectOneMenu id="idTipoProjetoForm"   value="#{projetoBean.projetoForm.tipoProjeto}" required="true">
+						<f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+						<f:selectItem itemLabel="Desenvolvimento" itemValue="1"/>
+						<f:selectItem itemLabel="Melhoria" itemValue="2"/>
+						<f:selectItem itemLabel="Aplicação" itemValue="3"/>
+					</h:selectOneMenu>																	
+				</td>				
+			</tr>
+			
+		</table>
+		
+		<table>
+			<tr>
+				<td>
+					<h:commandButton id="btnSalvar" value="#{messages['label.salvar']}" 
+										action="#{projetoBean.salvar()}"  />
+				</td>
+			</tr>
+		</table>			
+	</div>	
+	
+
+
+</ui:composition>

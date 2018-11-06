@@ -1,0 +1,18 @@
+<datasources xmlns="http://www.jboss.org/ironjacamar/schema">
+
+  <datasource jndi-name="java:/carDS" pool-name="OracleDS"	use-java-context="true">
+      <connection-url>jdbc:oracle:thin:@192.200.7.35:1521:ORCL</connection-url>
+      <driver>oracle</driver>
+		<pool>
+			<prefill>true</prefill>
+			<min-pool-size>0</min-pool-size>
+			<max-pool-size>20</max-pool-size>
+		</pool>
+		<security>
+			<user-name>car00h</user-name>
+			<password>pd2001</password>
+		</security>
+  </datasource>
+</datasources>
+
+

@@ -1,0 +1,50 @@
+package br.com.banestes.car.core.log;
+
+import java.util.HashMap;
+import java.util.Map;
+
+
+public class LoggerManager {
+	private static Map<String, Logger> MAP_LOGGER = new HashMap<String, Logger>();
+
+	public static Logger getLogger(String name) {
+		Logger logger = MAP_LOGGER.get(name);
+		if (logger == null) {
+			synchronized (MAP_LOGGER) {
+				logger = new Logger(org.apache.log4j.Logger.getLogger(name));
+				logger.entering(logger.getName(), "Log criado");
+				MAP_LOGGER.put(name, logger);
+			}
+		}
+
+		return logger;
+	}
+
+	public void entering(String appName, Object clazz, String method, Object message) {
+		getLogger(appName).entering(clazz.getClass().getName(), method, message);
+	}
+
+	public static void entering(String appName, Object clazz, String method) {
+		getLogger(appName).entering(clazz.getClass().getName(), method);
+	}
+
+	public static void exiting(String appName, Object clazz, String method, Object message) {
+		getLogger(appName).exiting(clazz.getClass().getName(), method, message);
+	}
+
+	public static void exiting(String appName, Object clazz, String method) {
+		getLogger(appName).exiting(clazz.getClass().getName(), method);
+	}
+
+	public static void warning(String appName, Object clazz, String method, Object message) {
+		getLogger(appName).warning(clazz.getClass().getName(), method, message);
+	}
+
+	public static void severe(String appName, Object clazz, String method, String message) {
+		getLogger(appName).severe(clazz.getClass().getName(), method, message);
+	}
+
+	public static void severe(String appName, Object clazz, String message, Throwable ex) {
+		getLogger(appName).severe(clazz.getClass().getName(), message, ex);
+	}
+}

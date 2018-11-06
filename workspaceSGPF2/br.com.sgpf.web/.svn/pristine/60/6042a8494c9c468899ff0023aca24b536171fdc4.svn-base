@@ -1,0 +1,304 @@
+package br.com.banestes.car.bean;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.enterprise.inject.Produces;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.omnifaces.cdi.ViewScoped;
+import org.omnifaces.util.Messages;
+
+import br.com.banestes.car.core.bean.AbstractWebBean;
+import br.com.banestes.car.core.enumerators.OperacoesEnum;
+import br.com.banestes.car.core.enumerators.SituacaoEnum;
+import br.com.banestes.car.core.enumerators.TipoArquivoEnum;
+import br.com.banestes.car.core.exportacao.ExportarDataModel;
+import br.com.banestes.car.core.paginacao.ParametroDataModel;
+import br.com.banestes.car.jpa.core.util.MessagesPropertiesUtil;
+import br.com.banestes.car.jpa.entity.CodigoOcorrenciaBanestesEntity;
+import br.com.banestes.car.jpa.entity.CodigoOcorrenciaCIPEntity;
+import br.com.banestes.car.jpa.entity.CodigoOcorrenciaEntity;
+import br.com.banestes.car.jpa.entity.VinculoCodigoOcorrenciaEntity;
+import br.com.banestes.car.jpa.model.repository.aplicacao.OcorrenciaRepository;
+import br.com.banestes.car.jpa.model.repository.aplicacao.VinculoCodigoOcorrenciaRepository;
+import br.com.banestes.car.service.VinculoOcorrenciaServiceBean;
+
+@Named
+@ViewScoped
+public class VinculoCodigoOcorrenciaWebBean extends AbstractWebBean{
+
+	
+	private static final long serialVersionUID = -3141038459398084861L;
+
+	private VinculoCodigoOcorrenciaFiltroBean vinculoFiltro;
+	
+	private List<VinculoCodigoOcorrenciaEntity> vinculos;
+	
+	private List<CodigoOcorrenciaEntity> listaCodigosOcorrenciaCIP;
+	
+	private List<CodigoOcorrenciaEntity> listaCodigosOcorrenciaAtivos;
+	
+	private VinculoCodigoOcorrenciaEntity vinculo;
+	
+	@Inject
+	private transient VinculoOcorrenciaServiceBean vinculoService;
+	
+	@Inject
+	private transient VinculoCodigoOcorrenciaRepository vinculoRepository;
+	
+	@Inject
+	private transient OcorrenciaRepository ocorrenciaRepository;
+
+	private String tipoRelatorio;
+	
+	private ExportarDataModel exportar;	
+	
+	@Named("vinculoCodigoOcorrenciaDados")
+	@Produces
+	private ParametroDataModel<VinculoCodigoOcorrenciaEntity> dados;
+	
+	public void preRenderView() 
+	{
+		if (!FacesContext.getCurrentInstance().isPostback()) 
+		{			
+			vinculoFiltro = new VinculoCodigoOcorrenciaFiltroBean();		
+			preencheCombos();			
+			exportar = new ExportarDataModel();
+			this.setOperacao(OperacoesEnum.FILTRAGEM);			
+		}
+	}
+	
+	public String incluir()
+	{
+		vinculo = new VinculoCodigoOcorrenciaEntity();
+		setOperacao(OperacoesEnum.INSERCAO);
+		return null;
+	}
+	
+	public String salvar()
+	{
+		if(!validar())
+		{
+			vinculo = vinculoService.gravar(this.vinculo);
+			if(this.getOperacao().equals(OperacoesEnum.ALTERACAO))
+			{
+				Messages.addInfo(null, MessagesPropertiesUtil.getMessage("mensage.sucesso.alteracao"), "");
+				filtrar();
+			}
+			else
+			{
+				Messages.addInfo(null, MessagesPropertiesUtil.getMessage("mensage.sucesso.insercao"), "");				
+				CodigoOcorrenciaCIPEntity codCip = this.vinculo.getCodigoOcorrenciaCIP();				
+				CodigoOcorrenciaBanestesEntity novoCodBan = new CodigoOcorrenciaBanestesEntity();
+				novoCodBan.setSistemaBanestes(this.vinculo.getCodigoOcorrenciaBanestes().getSistemaBanestes());				
+				this.vinculo = new VinculoCodigoOcorrenciaEntity();
+				vinculo.setCodigoOcorrenciaBanestes(novoCodBan);
+				vinculo.setCodigoOcorrenciaCIP(codCip);
+			}
+			
+		}
+		return null;
+	}
+	
+	public String alterar(VinculoCodigoOcorrenciaEntity vnc)
+	{
+		this.vinculo = vnc;
+		setOperacao(OperacoesEnum.ALTERACAO);
+		return null;
+	}
+	
+	public String filtrar()
+	{
+		tipoRelatorio = TipoArquivoEnum.PDF.valor;
+		
+		vinculos = vinculoRepository.findByParameters(	vinculoFiltro.getSistemaBanestes(),
+														vinculoFiltro.getCodigoOcorrenciaBanestes(),
+														vinculoFiltro.getIdCodigoOcorrenciaCIP(),
+														vinculoFiltro.getStatus());
+		
+		
+														
+		if(vinculos.size() == 0)
+		{
+			adicionarMensagemErro(
+					MessagesPropertiesUtil
+							.getMessage("label.consulta.vazia"),
+					"");
+			setOperacao(OperacoesEnum.FILTRAGEM);
+			return null;
+		}
+		
+		setOperacao(OperacoesEnum.LISTAGEM);
+		dados = new ParametroDataModel<VinculoCodigoOcorrenciaEntity>(vinculos);
+		dados.redefinir();
+		dados.ativar();
+		dados.getLista();
+		dados.iniciarPesquisa();
+		return null;
+	}
+	
+	public String cancelar()
+	{
+		setOperacao(OperacoesEnum.FILTRAGEM);			
+		return filtrar();
+	}
+	
+	public String limpar()
+	{
+		setVinculoFiltro(new VinculoCodigoOcorrenciaFiltroBean());
+		return null;
+	}
+	
+	public String excluir(VinculoCodigoOcorrenciaEntity vnc)
+	{	
+		
+		vinculoService.deletar(vnc);
+		Messages.addInfo(null, MessagesPropertiesUtil.getMessage("mensage.sucesso.exclusao"), "");		
+		filtrar();
+		
+		return null;
+	}
+	
+	private void preencheCombos()
+	{
+		listaCodigosOcorrenciaCIP = ocorrenciaRepository.getAllOcorrenciaCIP();
+		listaCodigosOcorrenciaAtivos = ocorrenciaRepository.getAllOcorrenciaCIPAtivas();
+	}
+	
+	private boolean validar()
+	{
+		
+		boolean duplicateUnique = vinculoRepository.verifyDuplicateUnique(	vinculo.getCodigoOcorrenciaBanestes().getSistemaBanestes().getNome(),
+																			vinculo.getCodigoOcorrenciaBanestes().getCodigo(),
+																			vinculo.getStatus(),
+																			vinculo.getIdVinculo());
+
+													
+		if(duplicateUnique)			
+			Messages.addError(null, MessagesPropertiesUtil.getMessage("msg.erro.registro.duplicado"), "");
+			
+		return 	duplicateUnique;
+	}
+
+	
+	public String exportar()
+	{					
+		
+		HashMap<String, Object> param = new HashMap<String, Object>();
+		String pathReport = "/pages/relatorio/VinculoOcorrenciaPDF.jrxml";
+		List<String> contents = new ArrayList<String>();
+		
+		if(tipoRelatorio.equals(TipoArquivoEnum.CSV.valor))
+		{								
+			contents.add(preencheCabecalhoCSV());
+			contents.add(preencheContentCSV());		
+		}
+		else
+		{
+			param.put("sistemaBanestes", this.vinculoFiltro.getSistemaBanestes().isEmpty() ? null : this.vinculoFiltro.getSistemaBanestes().toLowerCase());
+			param.put("codigoOcorrenciaBanestes", this.vinculoFiltro.getCodigoOcorrenciaBanestes() == null ? null : this.vinculoFiltro.getCodigoOcorrenciaBanestes().toString());
+			param.put("idCodigoOcorrenciaCIP", this.vinculoFiltro.getIdCodigoOcorrenciaCIP() == null ? null : this.vinculoFiltro.getIdCodigoOcorrenciaCIP().toString());				
+			
+		}
+		exportar.exportar(tipoRelatorio, param, pathReport, this.vinculoRepository, contents);										
+		
+		Messages.addInfo(null, MessagesPropertiesUtil.getMessage("label.exportado.sucesso"), "");
+		
+		tipoRelatorio = TipoArquivoEnum.PDF.valor;
+		
+		return null;
+	}
+	
+	
+	public String preencheCabecalhoCSV()
+	{
+		StringBuilder cabecalho = new StringBuilder();
+		cabecalho.append("Sistema - Banestes;Codigo Ocorrencia - Banestes;Codigo Ocorrencia - CIP;Descricao CIP;Status");
+		cabecalho.append("\r\n");
+		return cabecalho.toString();
+	}
+	
+	public String preencheContentCSV()
+	{
+		StringBuilder content = new StringBuilder();
+		for(VinculoCodigoOcorrenciaEntity vin : vinculos)
+		{						
+			content.append(vin.getCodigoOcorrenciaBanestes().getSistemaBanestes().getNome());
+			content.append(";");
+			content.append(vin.getCodigoOcorrenciaBanestes().getCodigo());
+			content.append(";");
+			content.append(vin.getCodigoOcorrenciaCIP().getCodigo());
+			content.append(";");
+			content.append(vin.getCodigoOcorrenciaCIP().getDescricao());
+			content.append(";");
+			content.append(vin.getStatus().equals(SituacaoEnum.ATIVO.valor) ? "Ativo" : "Inativo");			
+			content.append("\r\n");
+		}
+		
+		return content.toString();
+	}
+
+	public String lpad(Integer valor)
+	{
+		
+		return valor.toString().length() < 2 ? String.format("%02d",valor) : valor.toString();
+		
+	}
+	
+	
+	
+	public VinculoCodigoOcorrenciaFiltroBean getVinculoFiltro() {
+		return vinculoFiltro;
+	}
+
+	public void setVinculoFiltro(VinculoCodigoOcorrenciaFiltroBean vinculoFiltro) {
+		this.vinculoFiltro = vinculoFiltro;
+	}
+
+	public List<VinculoCodigoOcorrenciaEntity> getVinculos() {
+		return vinculos;
+	}
+
+	public void setVinculos(List<VinculoCodigoOcorrenciaEntity> vinculos) {
+		this.vinculos = vinculos;
+	}
+
+	public List<CodigoOcorrenciaEntity> getListaCodigosOcorrenciaCIP() {
+		return listaCodigosOcorrenciaCIP;
+	}
+
+	public void setListaCodigosOcorrenciaCIP(
+			List<CodigoOcorrenciaEntity> listaCodigosOcorrenciaCIP) {
+		this.listaCodigosOcorrenciaCIP = listaCodigosOcorrenciaCIP;
+	}
+
+	public VinculoCodigoOcorrenciaEntity getVinculo() {
+		return vinculo;
+	}
+
+	public void setVinculo(VinculoCodigoOcorrenciaEntity vinculo) {
+		this.vinculo = vinculo;
+	}
+
+	public List<CodigoOcorrenciaEntity> getListaCodigosOcorrenciaAtivos() {
+		return listaCodigosOcorrenciaAtivos;
+	}
+
+	public void setListaCodigosOcorrenciaAtivos(
+			List<CodigoOcorrenciaEntity> listaCodigosOcorrenciaAtivos) {
+		this.listaCodigosOcorrenciaAtivos = listaCodigosOcorrenciaAtivos;
+	}
+
+	public String getTipoRelatorio() {
+		return tipoRelatorio;
+	}
+
+	public void setTipoRelatorio(String tipoRelatorio) {
+		this.tipoRelatorio = tipoRelatorio;
+	}
+
+}

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a4j="http://richfaces.org/a4j" xmlns:rich="http://richfaces.org/rich"
+	xmlns:pdvix="http://pdvix.com/facelets">
+
+	
+	
+	<!-- Sub título -->
+	<h1 class="itemForm">
+		#{messages['label.title.resultado']} 
+	</h1>
+	
+	<!-- Formulário -->
+	<div id="cad" align="left">
+		<a4j:outputPanel id="bandeiras">
+			<div id="cad" align="center">
+				<rich:dataTable id="listagem" value="#{vinculoCodigoOcorrenciaWebBean.vinculos}"
+								var="vnc" style="width: 100%;" rows="#{vinculoCodigoOcorrenciaWebBean.limitePaginacao}"
+								rowClasses="even-row, odd-row, active-row">
+
+					<f:facet name="header">
+						<rich:columnGroup>
+							<rich:column></rich:column>
+							<rich:column>#{messages['label.vinculos.ocorrencia.sistema.banestes']}</rich:column>
+							<rich:column>#{messages['label.vinculos.ocorrencia.codigo.banestes']}</rich:column>
+							<rich:column>#{messages['label.vinculos.ocorrencia.codigo.cip']}</rich:column>
+							<rich:column>#{messages['label.vinculos.ocorrencia.descricao.cip']}</rich:column>
+							<rich:column>#{messages['label.vinculos.ocorrencia.status']}</rich:column>										
+		
+						</rich:columnGroup>
+					</f:facet>				
+		
+					<rich:column style="width: 10%; text-align: center;">
+						<h:commandButton id="editVinculo" action="#{vinculoCodigoOcorrenciaWebBean.alterar(vnc)}" image="/resources/img/ico_edit.png">
+							<rich:tooltip for="editVinculo">#{messages['tip.alterar']}</rich:tooltip>
+						</h:commandButton>
+						<h:commandButton id="excluirVinculo" action="#{vinculoCodigoOcorrenciaWebBean.excluir(vnc)}" reRender="bandeiras" status="indicator" image="/resources/img/ico_del.png" style="margin-left: 30px" onclick="if (!confirma('#{messages['mensagem.confirmacao.operacao.delecao']}',this)) return false;">
+							<rich:tooltip for="editVinculo">#{messages['tip.excluir']}</rich:tooltip>
+						</h:commandButton>					
+					</rich:column>														
+					
+					<rich:column style="width: 10%; text-align: center;">
+						<h:outputText
+							value="#{vnc.codigoOcorrenciaBanestes.sistemaBanestes.nome}">
+						</h:outputText>
+					</rich:column>
+		
+					<rich:column style="width: 25%; text-align: center;">
+						<h:outputText
+							value="#{vnc.codigoOcorrenciaBanestes.codigo}">
+							<f:convertNumber minIntegerDigits="2"/>
+						</h:outputText>
+					</rich:column>
+			
+					<rich:column style="width: 15%; text-align: center;">
+						<h:outputText
+							value="#{vnc.codigoOcorrenciaCIP.codigo}">
+							<f:convertNumber minIntegerDigits="2"/>
+						</h:outputText>
+					</rich:column>
+					
+					<rich:column style="width: 20%; text-align: center;">
+						<h:outputText
+							value="#{vnc.codigoOcorrenciaCIP.descricao}">
+						</h:outputText>
+					</rich:column>
+					
+					<rich:column style="width: 20%; text-align: center;">
+						<h:outputText
+							value="#{vnc.status == 'A' ? 'Ativo' : 'Inativo'}">
+						</h:outputText>
+					</rich:column>
+					
+														
+				</rich:dataTable>
+			</div>
+		</a4j:outputPanel>		
+	</div>
+	
+	<div class="paginacao">
+	
+		<ui:include src="/pages/templates/paginacao.xhtml">
+			<ui:param name="id" value="listagem" />
+			<ui:param name="totalLinhas"
+				value="#{vinculoCodigoOcorrenciaDados.rowCount}" />
+			<ui:param name="pagina"
+				value="#{vinculoCodigoOcorrenciaDados.pagina}" />
+			<ui:param name="rendered" value="true" />			
+		</ui:include>
+	</div>			
+	
+</ui:composition>

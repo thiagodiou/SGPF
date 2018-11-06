@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:pdvix="http://pdvix.com/facelets"
+	xmlns:customer="http://java.sun.com/jsf/composite/components/customer">
+	<div id="titulo" align="left">
+		<h1 class="tituloForm">#{messages['label.menu.historico.cc']}</h1>
+		<h1 class="itemForm">#{messages['label.filtro']}</h1>
+	</div>
+
+	<a4j:outputPanel id="pnlJS" ajaxRendered="true">
+		<script type="text/javascript">
+			aplicaMascara();
+		</script>
+	</a4j:outputPanel>
+
+
+	<!-- Formulário -->
+	<div id="form" align="center">
+		<table border="0" width="100%" align="left">
+			<tr>
+				<td width="30%"><pdvix:label
+						value="#{messages['label.historico.cc.codigo']}" /> <h:inputText
+						id="codigoHistorico" 
+						value="#{historicoContaCorrenteWebBean.historicoContaCorrenteFiltro.codigo}"
+						size="15" label="#{messages['filtro.codigo']}" validatorMessage="#{messages['label.campo.codigo.numerico.invalido']}">
+						<f:validateRegex pattern="([0-9]*)" />
+					</h:inputText></td>
+			
+				
+				<td width="30%" style="vertical-align: text-top">	
+					<a4j:outputPanel>
+						<pdvix:label value="#{messages['label.historico.cc.finalidade']}" />	
+						<h:selectOneRadio 	id="finalidadeAdquirente" layout="pageDirection" 
+												label="#{messages['label.historico.cc.finalidade']}"
+												value="#{historicoContaCorrenteWebBean.historicoContaCorrenteFiltro.finalidade}">											
+							<f:ajax event="click" render="adquirenteFiltro"/>
+														
+							<f:selectItem 	itemValue="A"  
+							 				itemLabel="#{messages['label.historico.cc.finalidade.adquirente']}" />						 					
+							 			
+							<f:selectItem 	itemValue="E" 
+							 				itemLabel="#{messages['label.historico.cc.finalidade.estabelecimento']}" />
+							 
+							<f:selectItem 	itemValue="T" 
+							 				itemLabel="#{messages['label.historico.cc.finalidade.todos']}"/>	
+							 						 											 				   					
+						</h:selectOneRadio>	
+						
+				</a4j:outputPanel>																
+				</td>
+				
+				<td width="30%" style="vertical-align: text-top">
+
+						<a4j:outputPanel id="adquirenteFiltro">  							
+						    <h:panelGroup id="adquirenteComboFiltro" rendered="#{historicoContaCorrenteWebBean.historicoContaCorrenteFiltro.finalidade == 'A'}">  
+						    	<pdvix:label value="#{messages['label.historico.cc.adquirente']}" />						   
+						    	 
+						    	 <h:selectOneMenu 	value="#{historicoContaCorrenteWebBean.historicoContaCorrenteFiltro.idAdquirente}"
+						    	 					style="width:200px"
+						    	 					label="#{messages['label.evento.contabil.adquirente']}">	
+						    	 										    	 											    	 										    	 								    	 										    	 									    	 											    	 	
+						    	 	<f:selectItem itemLabel="#{messages['label.selecione']}" />			
+					                <f:selectItems value="#{historicoContaCorrenteWebBean.listaAdquirente}" var="adq" itemLabel="#{adq.nome}" itemValue="#{adq.idAdquirente}" />					                
+					            </h:selectOneMenu>					       
+						    </h:panelGroup>  
+ 
+					</a4j:outputPanel>
+				</td>
+
+			</tr>
+			<tr>
+				<td><pdvix:label
+						value="#{messages['label.historico.cc.descricao']}"
+						for="descricaoHistorico" /> <rich:autocomplete
+						id="descricaoHistorico"
+						style="border-style:none; background-image:none !important"
+						mode="cachedAjax" minChars="1" autofill="true" size="40"
+						value="#{historicoContaCorrenteWebBean.historicoContaCorrenteFiltro.descricao}"
+						autocompleteMethod="#{historicoContaCorrenteWebBean.autoComplete.execute}" />
+				</td>
+			</tr>
+		</table>
+	</div>
+
+
+
+</ui:composition>

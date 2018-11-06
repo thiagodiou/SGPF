@@ -1,0 +1,13 @@
+package br.com.banestes.car.core.enumerators;
+
+public enum TipoArquivoEnum 
+{
+
+	PDF("P"), CSV("C");
+	
+	public String valor;
+	TipoArquivoEnum(String valor){
+		this.valor = valor;
+	}
+	
+}

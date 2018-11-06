@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2016-06-10T15:52:13 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="HistoricoEstabelecimento" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c85b0886-65f3-4489-96e0-6cf2bdb582c4">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="CAR"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<parameter name="codigo" class="java.lang.String"/>
+	<parameter name="idAdquirente" class="java.lang.String"/>
+	<parameter name="idBandeira" class="java.lang.String"/>
+	<parameter name="idDominio" class="java.lang.String"/>
+	<parameter name="idFuncao" class="java.lang.String"/>
+	<parameter name="status" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+DISTINCT(TO_NUMBER(TB_PRL.PRL_ID_PROCESSO_LIQUIDACAO)) AS ID_PROC_LIQ,
+TB_PRL.PRL_DS_DESCRICAO,						 					
+(SELECT TB_ADQ.ADQ_NM_ADQUIRENTE FROM TB_ADQ_ADQUIRENTE TB_ADQ WHERE TO_NUMBER(TB_PRL.ADQ_ID_ADQUIRENTE) = TO_NUMBER(TB_ADQ.ADQ_ID_ADQUIRENTE)) AS NOME_ADQUIRENTE,	 
+(SELECT TB_FUN.FUN_DC_FUNCAO FROM TB_FUN_FUNCAO TB_FUN WHERE  TO_NUMBER(TB_PRL.FUN_ID_FUNCAO) = TO_NUMBER(TB_FUN.FUN_ID_FUNCAO)) AS DESCRICAO_FUNCAO,
+(SELECT TB_DOM.DOM_DS_DESCRICAO FROM TB_DOM_DOMINIO TB_DOM WHERE  TO_NUMBER(TB_PRL.DOM_ID_DOMINIO) = TO_NUMBER(TB_DOM.DOM_ID_DOMINIO)) AS DESCRICAO_DOMINIO,
+DECODE (TB_PRL.PRL_TP_TIPO_LIQUIDACAO, 'S', TO_CHAR((SELECT TB_EVN.EVC_CD_EVENTO_CONTABIL FROM TB_EVC_EVENTO_CONTABIl TB_EVN WHERE TO_NUMBER(TB_EVN.EVC_ID_EVENTO_CONTABIL) = TO_NUMBER(TB_PLA.EVC_ID_EVENTO_CONTABIL))), '-') AS CODIGO_EVC,
+DECODE(TB_PRL.PRL_TP_TIPO_LIQUIDACAO,'S','STR','HIST. DE CC') AS TIPO_LIQ,
+DECODE (TB_PRL.PRL_TP_TIPO_LIQUIDACAO, 'S', TO_CHAR((SELECT TB_HST.HST_CD_CODIGO FROM TB_HST_CTA_CORRENTE TB_HST WHERE TO_NUMBER(TB_HST.HST_ID_CTA_CORRENTE) = TO_NUMBER(TB_PLA.HST_ID_CTA_CORRENTE_EST))),
+											TO_CHAR((SELECT TB_HST.HST_CD_CODIGO FROM TB_HST_CTA_CORRENTE TB_HST WHERE TO_NUMBER(TB_HST.HST_ID_CTA_CORRENTE) = TO_NUMBER(TB_PLE.HST_ID_CTA_CORRENTE_EST)))) AS CODIGO_CREDITO_HST,
+DECODE (TB_PRL.PRL_TP_TIPO_LIQUIDACAO, 'C', TO_CHAR((SELECT TB_HST.HST_CD_CODIGO FROM TB_HST_CTA_CORRENTE TB_HST WHERE TO_NUMBER(TB_HST.HST_ID_CTA_CORRENTE) = TO_NUMBER(TB_PLE.HST_ID_CTA_CORRENTE))), '-') AS CODIGO_HISTORICO_CC,	
+DECODE (TB_PRL.PRL_FL_STATUS, 'A', 'Ativo', 'Inativo' ) AS SITUACAO_PROCESSO
+FROM 
+TB_PRL_PROCESSO_LIQUIDACAO TB_PRL LEFT JOIN  TB_PLA_PROC_LIQ_ADQ TB_PLA
+	ON TB_PRL.TPL_ID_TIPO_PROC_LIQ_ADQ = TB_PLA.PRL_ID_PROCESSO_LIQ
+	LEFT JOIN
+	TB_PLE_PROC_LIQ_EST TB_PLE 
+	ON TB_PRL.TPL_ID_TIPO_PROC_LIQ_EST = TB_PLE.PRL_ID_PROCESSO_LIQ
+	LEFT JOIN
+	TB_PRB_PROCESSO_LIQ_BANDEIRA TB_LIQ_BNA
+	ON TB_LIQ_BNA.PRL_ID_PROCESSO_LIQUIDACAO = TB_PRL.PRL_ID_PROCESSO_LIQUIDACAO
+WHERE
+((TO_NUMBER($P{codigo}) IS NOT NULL AND  TO_NUMBER(TB_PRL.PRL_ID_PROCESSO_LIQUIDACAO) = TO_NUMBER($P{codigo})) OR (TO_NUMBER($P{codigo}) IS NULL))
+AND
+((TO_NUMBER($P{idAdquirente}) IS NOT NULL AND  TO_NUMBER(TB_PRL.ADQ_ID_ADQUIRENTE) = TO_NUMBER($P{idAdquirente})) OR (TO_NUMBER($P{idAdquirente}) IS NULL))
+AND
+((TO_NUMBER($P{idBandeira}) IS NOT NULL AND  TO_NUMBER(TB_LIQ_BNA.BNA_ID_BANDEIRA) = TO_NUMBER($P{idBandeira}) AND (TO_NUMBER(TB_LIQ_BNA.PRL_ID_PROCESSO_LIQUIDACAO) = TO_NUMBER(TB_PRL.PRL_ID_PROCESSO_LIQUIDACAO))) OR (TO_NUMBER($P{idBandeira}) IS NULL))
+AND
+((TO_NUMBER($P{idDominio}) IS NOT NULL AND  TO_NUMBER(TB_PRL.DOM_ID_DOMINIO) = TO_NUMBER($P{idDominio})) OR (TO_NUMBER($P{idDominio}) IS NULL))
+AND
+((TO_NUMBER($P{idFuncao}) IS NOT NULL AND  TO_NUMBER(TB_PRL.FUN_ID_FUNCAO) = TO_NUMBER($P{idFuncao})) OR (TO_NUMBER($P{idFuncao}) IS NULL))
+AND
+(($P{status} IS NOT NULL AND  TB_PRL.PRL_FL_STATUS = $P{status}) OR ($P{status} IS NULL))
+AND
+(TB_PRL.TPL_ID_TIPO_PROC_LIQ_ADQ = TB_PLA.PRL_ID_PROCESSO_LIQ
+OR
+TB_PRL.TPL_ID_TIPO_PROC_LIQ_EST = TB_PLE.PRL_ID_PROCESSO_LIQ)
+ORDER BY ID_PROC_LIQ]]>
+	</queryString>
+	<field name="ID_PROC_LIQ" class="java.math.BigDecimal"/>
+	<field name="PRL_DS_DESCRICAO" class="java.lang.String"/>
+	<field name="NOME_ADQUIRENTE" class="java.lang.String"/>
+	<field name="DESCRICAO_FUNCAO" class="java.lang.String"/>
+	<field name="DESCRICAO_DOMINIO" class="java.lang.String"/>
+	<field name="CODIGO_EVC" class="java.lang.String"/>
+	<field name="TIPO_LIQ" class="java.lang.String"/>
+	<field name="CODIGO_CREDITO_HST" class="java.lang.String"/>
+	<field name="CODIGO_HISTORICO_CC" class="java.lang.String"/>
+	<field name="SITUACAO_PROCESSO" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="45" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="25" width="40" height="20" forecolor="#878787" backcolor="#969696" uuid="88c175a0-aafb-44e2-a96b-0ddcc7caaec7"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="25" width="40" height="20" uuid="c6f2c820-c6ef-4e3c-9e5e-0c23a60cd8cb"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Código	]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="40" y="25" width="110" height="20" forecolor="#878787" backcolor="#969696" uuid="5ab4fb02-8914-48fb-928e-787d7217537a"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="40" y="25" width="110" height="20" uuid="c35460ad-659a-4c53-905c-6bb201cac26c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Descrição]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="150" y="25" width="120" height="20" forecolor="#878787" backcolor="#969696" uuid="870208a3-15f4-497a-8909-e3609dbc1ef0"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="150" y="25" width="120" height="20" uuid="f7ea77dd-29d5-4fa4-b5f8-de6842cc79e9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Adquirente]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="270" y="25" width="70" height="20" forecolor="#878787" backcolor="#969696" uuid="7c4b993f-d051-4123-8108-781f5c2ba160"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="270" y="25" width="70" height="20" uuid="950d35ef-508c-4048-9a25-20406f95e376"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Função]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="340" y="25" width="70" height="20" forecolor="#878787" backcolor="#969696" uuid="864ad223-7515-4f73-aac3-63b7a285b621"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="340" y="25" width="70" height="20" uuid="4045379c-b14f-49c7-b53a-0de0ac11a490"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Domínio]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="410" y="25" width="80" height="20" forecolor="#878787" backcolor="#969696" uuid="07450dfe-67f9-4655-b996-3c15a3b7b230"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="410" y="25" width="80" height="20" uuid="d9261fc1-c73d-4a43-9a5d-5d8ca54053c0"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Liq. Adquirente]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="490" y="25" width="80" height="20" forecolor="#878787" backcolor="#969696" uuid="2428101d-fbbb-4576-86c8-1e2aa8ca354f"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="490" y="25" width="80" height="20" uuid="56870838-dce6-488b-a5f8-9b8b198e88aa"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Evento Contábil]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="570" y="25" width="80" height="20" forecolor="#878787" backcolor="#969696" uuid="1001b0bb-1e47-45b1-92b6-7d0b50de2866"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="570" y="25" width="80" height="20" uuid="e123b8d9-83b1-4a6d-abc2-470462432786"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Histórico CC]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="650" y="25" width="80" height="20" forecolor="#878787" backcolor="#969696" uuid="55037c7b-2414-4837-b3dd-106437805535"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="650" y="25" width="80" height="20" uuid="df121728-e0e8-4f4c-83a7-00b7655a082a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Crédito Est]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="730" y="25" width="72" height="20" forecolor="#878787" backcolor="#969696" uuid="843c2261-f27f-4f59-ab22-ac7f5ef0ed0e"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="730" y="25" width="72" height="20" uuid="0df7c778-0a18-4acb-9269-7434a586899f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Status]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="0" y="0" width="802" height="25" forecolor="#878787" backcolor="#969696" uuid="1dfa3e9b-847c-4346-b101-3f18f7e5e15f"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="780" height="24" forecolor="#030000" uuid="7837e9a1-3dfb-403c-bd46-2a3f7c3da03d"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="14" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Resultado Consulta - Processo de Liquidação]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="40" height="20" uuid="5956d54c-fc7a-4e33-ad7a-8717ebff81d1"/>
+			</rectangle>
+			<textField>
+				<reportElement x="0" y="0" width="39" height="20" uuid="b05823b1-a852-4181-af61-bbc79daa3ee6"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ID_PROC_LIQ}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="40" y="0" width="111" height="20" uuid="0e27b466-9032-489e-9233-966bb7fa3019"/>
+			</rectangle>
+			<textField>
+				<reportElement x="40" y="0" width="110" height="20" uuid="c10cebd5-2b66-40f6-9331-898fc9aa8de7"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PRL_DS_DESCRICAO}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="150" y="0" width="120" height="20" uuid="d97e3bac-ebd7-4008-9ac5-cd5305c6171f"/>
+			</rectangle>
+			<textField>
+				<reportElement x="150" y="0" width="120" height="20" uuid="f58529d0-1d33-49ba-a0c0-76e15647fc6e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{NOME_ADQUIRENTE}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="270" y="0" width="70" height="20" uuid="89841ef5-ed49-45f7-a95f-1812661e0aba"/>
+			</rectangle>
+			<textField>
+				<reportElement x="270" y="0" width="69" height="20" uuid="6b756ff7-8f1e-4639-8cca-4ba469458a93"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{DESCRICAO_FUNCAO}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="340" y="0" width="70" height="20" uuid="4292c544-8de0-4247-bcb7-86fc18bbccda"/>
+			</rectangle>
+			<textField>
+				<reportElement x="340" y="0" width="69" height="20" uuid="9b0c2aa6-526f-4a63-af07-84dd6008184a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{DESCRICAO_DOMINIO}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="410" y="0" width="80" height="20" uuid="3f1fbffb-2d19-4be4-b4e9-edb8d4b3f30a"/>
+			</rectangle>
+			<textField>
+				<reportElement x="410" y="0" width="79" height="20" uuid="d1e7b12f-77eb-4a34-ad88-1f096b1c1fe9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{TIPO_LIQ}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="490" y="0" width="80" height="20" uuid="9f3dd622-0a14-46fa-9c92-11a59c448492"/>
+			</rectangle>
+			<textField>
+				<reportElement x="490" y="0" width="79" height="20" uuid="c994ac32-6678-4b8d-b47a-98f021970ef7"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{CODIGO_EVC} == null ? "-" :  $F{CODIGO_EVC}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="570" y="0" width="80" height="20" uuid="f245b917-c496-4342-b1b7-f6f800fa4d09"/>
+			</rectangle>
+			<textField>
+				<reportElement x="570" y="0" width="79" height="20" uuid="e8c12c3a-84bf-4f3f-acac-67a3ba86c2d3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{CODIGO_HISTORICO_CC} == null ? "-" : $F{CODIGO_HISTORICO_CC}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="650" y="0" width="80" height="20" uuid="7015875c-cd9b-4017-9e7d-0dc453462b4d"/>
+			</rectangle>
+			<textField>
+				<reportElement x="650" y="0" width="79" height="20" uuid="45ee68e0-dcc1-40b1-87ec-3be03ca8505f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{CODIGO_CREDITO_HST}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="730" y="0" width="72" height="20" uuid="eece506d-6eb3-48b6-8973-bec4cf41dd50"/>
+			</rectangle>
+			<textField>
+				<reportElement x="730" y="0" width="71" height="20" uuid="b9be0f73-91cf-4ee8-ab57-231f9cec4158"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{SITUACAO_PROCESSO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="42" splitType="Stretch">
+			<textField>
+				<reportElement x="702" y="10" width="100" height="30" uuid="a6feebfe-ba9b-4a87-8649-b0d2097c32a3"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA[String.format("Página %s",$V{PAGE_NUMBER})]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

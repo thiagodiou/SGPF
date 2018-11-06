@@ -1,0 +1,108 @@
+package br.com.banestes.car.bean;
+
+import java.io.Serializable;
+import java.math.BigInteger;
+
+public class ProcessoLiquidacaoFiltroBean implements Serializable
+{
+
+	private static final long serialVersionUID = -7935932448339646702L;
+	
+	
+	private BigInteger codigoProcesso;
+	
+	private BigInteger idAdquirente;
+	
+	private BigInteger idBandeira;
+	
+	private BigInteger idDominio;
+	
+	private BigInteger idFuncao;
+	
+	private String descricaoProcessoLiquidacao;
+	
+
+
+
+
+	private String status;	
+	
+	public BigInteger getCodigoProcesso() {		
+		return codigoProcesso == null || codigoProcesso.compareTo(BigInteger.ZERO) == 0 ? null : codigoProcesso ;
+	}
+
+	public void setCodigoProcesso(BigInteger codigoProcesso) {
+		this.codigoProcesso = codigoProcesso;
+	}
+
+	public BigInteger getIdAdquirente() {		
+		return idAdquirente == null || idAdquirente.compareTo(BigInteger.ZERO) == 0 ? null : idAdquirente ;
+	}
+
+	public void setIdAdquirente(BigInteger idAdquirente) {
+		this.idAdquirente = idAdquirente;
+	}
+
+	public BigInteger getIdBandeira() {		
+		return idBandeira == null || idBandeira.compareTo(BigInteger.ZERO) == 0 ? null : idBandeira ;
+		
+	}
+
+	public void setIdBandeira(BigInteger idBandeira) {
+		this.idBandeira = idBandeira;
+	}
+
+	public BigInteger getIdDominio() {		
+		return idDominio == null || idDominio.compareTo(BigInteger.ZERO) == 0 ? null : idDominio ;
+	}
+
+	public void setIdDominio(BigInteger idDominio) {
+		this.idDominio = idDominio;
+	}
+
+	public BigInteger getIdFuncao() {		
+		return idFuncao == null || idFuncao.compareTo(BigInteger.ZERO) == 0 ? null : idFuncao ;
+	}
+
+	public void setIdFuncao(BigInteger idFuncao) {
+		this.idFuncao = idFuncao;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String situacao) {
+		this.status = situacao;
+	}
+	
+	
+	public String getDescricaoProcessoLiquidacao() {
+		return descricaoProcessoLiquidacao;
+	}
+
+	public void setDescricaoProcessoLiquidacao(String descricaoProcessoLiquidacao) {
+		this.descricaoProcessoLiquidacao = descricaoProcessoLiquidacao;
+	}
+	
+	public void limpaFiltroComZero()
+	{
+		if (codigoProcesso.compareTo(BigInteger.ZERO) == 0)
+			codigoProcesso = null;
+		
+		if (idAdquirente.compareTo(BigInteger.ZERO) == 0)
+			idAdquirente = null;
+		
+		if (idBandeira.compareTo(BigInteger.ZERO) == 0)
+			idBandeira = null;
+		
+		if (idDominio.compareTo(BigInteger.ZERO) == 0)
+			idDominio = null;
+		
+		if (idFuncao.compareTo(BigInteger.ZERO) == 0)
+			idFuncao = null;
+				
+		
+	}	
+
+}

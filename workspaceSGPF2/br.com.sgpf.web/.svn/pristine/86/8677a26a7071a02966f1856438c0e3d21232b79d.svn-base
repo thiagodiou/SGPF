@@ -1,0 +1,61 @@
+package br.com.banestes.car.bean;
+
+import java.io.Serializable;
+import java.math.BigInteger;
+
+public class VinculoCodigoOcorrenciaFiltroBean implements Serializable{
+
+
+	private static final long serialVersionUID = 7180311444095769708L;
+
+	private String sistemaBanestes;
+	
+	private String codigoOcorrenciaBanestes;
+	
+	private BigInteger idCodigoOcorrenciaCIP;	
+	
+	private String status;
+	
+	
+	
+	
+	
+	public String getSistemaBanestes() {
+		return sistemaBanestes;
+	}
+	
+
+	public void setSistemaBanestes(String sistemaBanestes) {
+		this.sistemaBanestes = sistemaBanestes;
+	}
+
+	public String getCodigoOcorrenciaBanestes() {
+		return codigoOcorrenciaBanestes;
+	}
+
+	public void setCodigoOcorrenciaBanestes(String codigoOcorrenciaBanestes) {
+		this.codigoOcorrenciaBanestes = codigoOcorrenciaBanestes;
+	}
+
+
+	public BigInteger getIdCodigoOcorrenciaCIP() {
+		return idCodigoOcorrenciaCIP == null || idCodigoOcorrenciaCIP.compareTo(BigInteger.ZERO) == 0 ? null : idCodigoOcorrenciaCIP;
+	}
+
+	public void setIdCodigoOcorrenciaCIP(BigInteger idCodigoOcorrenciaCIP) {
+		this.idCodigoOcorrenciaCIP = idCodigoOcorrenciaCIP;
+	}
+
+
+	public String getStatus() {
+		return status;
+	}
+
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+
+	
+}//end_class...

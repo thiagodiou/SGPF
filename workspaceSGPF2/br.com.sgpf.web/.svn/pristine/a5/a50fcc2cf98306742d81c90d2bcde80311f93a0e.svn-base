@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:pdvix="http://pdvix.com/facelets">
+
+	<div id="titulo" align="left">
+		<h1 class="tituloForm">#{messages['label.menu.ocorrencia']}</h1>				
+		<h1 class="itemForm">
+			#{messages['label.filtro']}			
+		</h1>
+	</div>
+	
+	<a4j:outputPanel id="pnlJS" ajaxRendered="true">
+		<script type="text/javascript">
+			aplicaMascara();
+		</script>
+	</a4j:outputPanel>
+	
+
+<!-- Formulário -->
+	<div id="form" align="center">	
+		<table border="0" width="40%" align="left">
+		
+			<tr>		
+				<td width="50%">
+					<pdvix:label value="#{messages['filtro.codigo.ocorrencia']}" />					
+					<h:inputText 	id="codigoOcorrenciaFiltro" label="#{messages['filtro.codigo.ocorrencia']}" 
+									value="#{ocorrenciaWebBean.ocorrenciaFiltroBean.codigo}" size="15" maxlength="4"/>																		
+				</td>
+				
+				<td width="50%">
+					<pdvix:label value="#{messages['filtro.status']}" />					
+						<h:selectOneMenu id="statusOcorrenciaFiltro" label="#{messages['filtro.status']}" value="#{ocorrenciaWebBean.ocorrenciaFiltroBean.status}" >
+							<f:selectItem itemLabel="#{messages['label.selecione']}" />
+			        		<f:selectItem itemValue="A" itemLabel="#{messages['filtro.status.ativo']}" />
+							<f:selectItem itemValue="I" itemLabel="#{messages['filtro.status.inativo']}" />
+			        	</h:selectOneMenu>							
+				</td>
+			</tr>															
+		
+			<tr>
+				<td width="100%">
+					<pdvix:label value="#{messages['filtro.descricao']}" />					
+					<rich:autocomplete 	style="border-style:none; background-image:none !important"
+										mode="cachedAjax" minChars="1" autofill="true" 
+										value="#{ocorrenciaWebBean.ocorrenciaFiltroBean.descricao}" 
+										autocompleteMethod="#{ocorrenciaWebBean.autoComplete.execute}" />		
+				</td>				
+			</tr>												
+																		
+		</table>
+		<h:form>
+			<rich:popupPanel id="popup" modal="false" autosized="true" resizeable="false" domElementAttachment="form">
+		        <f:facet name="header">
+		            <h:outputText value="#{messages['label.tipo.arquivo.selecione']}" />
+		        </f:facet>		
+		        <f:facet name="controls">
+		        																								
+		        </f:facet>	        
+		        <table>	        	
+		        	<tr>
+		        		<td>	        			
+					        <h:selectOneRadio 	id="tipoRelatorio" layout="pageDirection" 
+													label="teste" 
+													value="#{ocorrenciaWebBean.tipoRelatorio}">											
+										
+									<f:selectItem 	itemValue="P" itemLabel="#{messages['label.tipo.arquivo.PDF']}"/>										 										 																 		
+									<f:selectItem 	itemValue="C" itemLabel="#{messages['label.tipo.arquivo.CSV']}"/>		
+							</h:selectOneRadio>
+						
+						</td>
+					</tr>
+					
+					<tr align="center">	
+						<td>								
+							<h:commandButton id="btnExportarEfetivo" value="#{messages['label.exportar']}" 
+								 action="#{ocorrenciaWebBean.exportar()}" onclick="#{rich:component('popup')}.hide(); return true;"/>
+							<h:commandButton id="btnExportarCancelar" value="#{messages['label.cancelar']}" 
+								 immediate="true" onclick="#{rich:component('popup')}.hide(); $('[id$=nomeArquivo]').prop('value',''); return false;">														 														 																																												 
+							</h:commandButton>
+						</td>
+					</tr>
+				</table>					
+			</rich:popupPanel>
+		</h:form>		
+	</div>	
+
+</ui:composition>

@@ -1,0 +1,87 @@
+.notification {
+	line-height: 10px;
+	cursor: pointer;
+	clear: both;
+	height: 30px;
+	margin: 8px 0px 8px 0px;
+	padding: 5px 0px 8px 60px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	margin: 0 auto;
+	margin-top: 10px;
+	width: 80%;
+	height: 100%;
+	min-height: 30px;
+}
+
+.notification strong {
+	margin-right: 5px;
+}
+
+.notification p {
+	font-size: 11px;
+	padding: 0px;
+	margin: 0px;
+	color: #333333;
+	line-height: 18px;
+}
+
+.warn {
+	background-image: url("#{resource['img/warn.png']}");
+	background-position: 15px center;
+	background-repeat: no-repeat;
+	border: 2px solid #FFC237;
+	background-color: #FFEAA8;
+	color: #826200;
+}
+
+.success {
+	background-image: url("#{resource['img/accept.png']}");
+	background-position: 15px center;
+	background-repeat: no-repeat;
+	border: 2px solid #99C600;
+	background-color: #EFFFB9;
+	color: #3C5A01;
+}
+
+.error {
+	background-image: url("#{resource['img/error.png']}");
+	background-position: 15px center;
+	background-repeat: no-repeat;
+	border: 2px solid #EB5339;
+	background-color: #FCCAC2;
+	color: #AC260F;
+}
+
+.information {
+	background-image: url("#{resource['img/information.png']}");
+	background-position: 15px center;
+	background-repeat: no-repeat;
+	border: 2px solid #418ACC;
+	background-color: #D0E4F4;
+	color: #235685;
+}
+
+/* Inicio - Mensagens do Richfacecs */
+.rf-msg-err,.rf-msgs-err,.rf-msg-ftl,.rf-msgs-ftl,.rf-msg-inf,.rf-msgs-inf,.rf-msg-wrn,.rf-msgs-wrn,.rf-msg-ok,.rf-msgs-ok
+	{
+	font-weight: bold;
+	font-size: 11px;
+	color: #000000;
+	display: block;
+	margin-top: 8px;
+	padding-left: 0px;
+}
+
+.rf-msg-err, .rf-msgs-err, .rf-msg-inf, .rf-msgs-inf {
+	background-image: none;
+}
+
+.rf-msg, .rf-msgs {
+    font-family: inherit;
+}
+/* Fim - Mensagens do Richfacecs, ajustando seu estilo */
+
+#javax_faces_developmentstage_messages {
+	display: none;
+}

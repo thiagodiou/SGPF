@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:pdvix="http://pdvix.com/facelets"
+	xmlns:customer="http://java.sun.com/jsf/composite/components/customer">
+	<div id="titulo" align="left">
+		<h1 class="tituloForm">#{messages['label.menu.consulta.liquidacao.resumo']}</h1>
+		<h1 class="itemForm">#{messages['label.filtro']}</h1>
+	</div>
+
+	<a4j:outputPanel id="pnlJS" ajaxRendered="true">
+		<script type="text/javascript">
+			aplicaMascara();
+		</script>
+	</a4j:outputPanel>
+
+
+	<!-- Formulário -->
+	<div id="form" align="center">
+		<table border="0" width="100%" align="left">
+			<tr>								
+			
+				<td width="25%">			 													    
+			    	<pdvix:label value="#{messages['label.menu.adquirente']}" required="true"/>				    				    					   				
+			    	<h:selectOneMenu required="true"  label="#{messages['label.menu.adquirente']}" value="#{consultaResumoLiquidacaoWebBean.consultaResumoLiquidacaofiltro.idAdquirente}" style="width:200px">				    				    	 				    	 					    	 						    	 										    	 								    	 										    	 									    	 										   
+			    	 	<f:selectItem 	itemLabel="#{messages['label.selecione']}" />		    	
+		                <f:selectItems 	value="#{consultaResumoLiquidacaoWebBean.listaAdquirentes}" var="adq" itemLabel="#{adq.nome}" itemValue="#{adq.idAdquirente}" />					                
+		            </h:selectOneMenu>					       						    
+				</td>				
+								
+													
+			</tr>	
+			<tr>
+				<td>
+					<table width="50%">
+						<tr>
+							<td width="20%">
+								<h:selectOneRadio 	id="tipoData" layout="pageDirection" 
+															label="#{messages['label.historico.cc.finalidade']}"
+															value="#{consultaResumoLiquidacaoWebBean.consultaResumoLiquidacaofiltro.tipoData}">
+															
+															  
+																										
+									<f:ajax event="click" render="dataPanel periodoPanel"/>
+																
+									<f:selectItem 	itemValue="D"  
+									 				itemLabel="#{messages['label.consulta.data']}" />						 					
+									 			
+									<f:selectItem 	itemValue="P" 
+									 				itemLabel="#{messages['label.consulta.liquidacao.periodo']}" />						 					
+									 						 											 				   					
+								</h:selectOneRadio>	
+							</td>
+							<td width="80%">
+								<a4j:outputPanel id="dataPanel">
+									<h:panelGroup rendered="#{consultaResumoLiquidacaoWebBean.consultaResumoLiquidacaofiltro.tipoData == 'D'}">
+										
+											<pdvix:label for="data" value="#{messages['label.consulta.data']}" />					
+											<rich:calendar id="data" value="#{consultaResumoLiquidacaoWebBean.consultaResumoLiquidacaofiltro.data}" datePattern="dd/MM/yyyy"/>																				
+											
+									</h:panelGroup>
+								</a4j:outputPanel>
+								
+								<a4j:outputPanel id="periodoPanel">
+									<h:panelGroup rendered="#{consultaResumoLiquidacaoWebBean.consultaResumoLiquidacaofiltro.tipoData == 'P'}">
+										
+											<pdvix:label value="#{messages['label.consulta.liquidacao.periodo']}" />						
+											<rich:calendar id="dataInicialPeriodo" value="#{consultaResumoLiquidacaoWebBean.consultaResumoLiquidacaofiltro.dataInicial}" datePattern="dd/MM/yyyy" inputStyle="width:80px"/>
+											
+											<rich:calendar id="dataFinalPeriodo" value="#{consultaResumoLiquidacaoWebBean.consultaResumoLiquidacaofiltro.dataFim}" datePattern="dd/MM/yyyy" inputStyle="width:80px"/>																															
+										
+									</h:panelGroup>
+								</a4j:outputPanel>
+							</td>	
+						</tr>					
+					</table>
+				</td>				
+			</tr>		
+		</table>	
+		<h:form>
+			<rich:popupPanel id="popup" modal="false" autosized="true" resizeable="false" domElementAttachment="form">
+		        <f:facet name="header">
+		            <h:outputText value="#{messages['label.tipo.arquivo.selecione']}" />
+		        </f:facet>		
+		        <f:facet name="controls">
+		        																								
+		        </f:facet>	        
+		        <table>	        	
+		        	<tr>
+		        		<td>	        			
+					        <h:selectOneRadio 	id="tipoRelatorio" layout="pageDirection" 
+													label="teste" 
+													value="#{consultaResumoLiquidacaoWebBean.tipoRelatorio}">											
+										
+									<f:selectItem 	itemValue="P" itemLabel="#{messages['label.tipo.arquivo.PDF']}"/>										 										 																 		
+									<f:selectItem 	itemValue="C" itemLabel="#{messages['label.tipo.arquivo.CSV']}"/>		
+							</h:selectOneRadio>
+						
+						</td>
+					</tr>				
+					<tr align="center">	
+						<td>								
+							<h:commandButton id="btnExportarEfetivo" value="#{messages['label.exportar']}"
+								 action="#{consultaResumoLiquidacaoWebBean.exportar()}" onclick="#{rich:component('popup')}.hide(); return true;"/>
+							<h:commandButton id="btnExportarCancelar" value="#{messages['label.cancelar']}" 
+								 immediate="true" onclick="#{rich:component('popup')}.hide(); return false;">														 														 																																												 
+							</h:commandButton>
+						</td>
+					</tr>
+				</table>					
+			</rich:popupPanel>
+		</h:form> 	
+	</div>
+
+
+
+</ui:composition>

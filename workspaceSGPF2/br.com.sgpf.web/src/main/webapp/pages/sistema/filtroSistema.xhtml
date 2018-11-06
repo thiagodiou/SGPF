@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:pdvix="http://pdvix.com/facelets">
+
+	<div id="titulo" align="left">
+		<h1 class="tituloForm">#{messages['label.menu.sistema']}</h1>				
+		<h1 class="itemForm">
+			#{messages['label.filtro']}			
+		</h1>
+	</div>
+	
+	<script type="text/javascript">
+			function aplicaMascara() {
+				mascaraFormulario('formulario', 'CNPJAdquirenteFiltro', 'CNPJ');						
+			}				
+	</script>
+	
+	<a4j:outputPanel id="pnlJS2" ajaxRendered="true">
+		<script type="text/javascript">
+			aplicaMascara();
+		</script>
+	</a4j:outputPanel>
+	
+
+<!-- Formulário -->
+	<div id="form" align="center">	
+		<table border="0" width="50%" align="left">
+		
+			<tr>
+				
+			
+				<td width="50%">
+					<h:outputText value="Sigla do Sistema: " />
+
+	
+            		<h:inputText value="#{sistemaBean.sistemaFiltro.sigla}" label="Sigla Sistema"></h:inputText>	
+            	</td>
+				
+				
+				<td width="50%">
+					<h:outputText value="Nome do Sistema: " />
+
+	
+            		<h:inputText value="#{sistemaBean.sistemaFiltro.nome}" label="Nome Sistema"></h:inputText>	
+            	</td>
+            	
+            	<td>
+            	    <h:outputText value="Empresa: " />
+ 
+ 
+				<h:selectOneMenu id="idComboEmpresaFiltro"  converter="comboConverter" value="#{sistemaBean.sistemaFiltro.empresa}">
+					<f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+					<f:selectItems value="#{sistemaBean.empresas}" var="empresa" itemValue="#{empresa}" itemLabel="#{empresa.nomeFantasia}"/>
+				</h:selectOneMenu>
+				
+				</td>
+				<td>
+				<h:commandButton id="btnProcurar" value="#{messages['label.procurar']}"
+					action="#{sistemaBean.filtrar()}"/>	
+				</td>
+			</tr>										
+				
+			
+																															
+		</table>	
+		<table >
+			<tr>
+				<td>
+					<h:commandButton id="btnIncluir" value="#{messages['label.inserir']}" 
+										action="#{sistemaBean.incluir()}"  />
+				</td>
+			</tr>
+		</table>
+	</div>	
+	
+
+
+</ui:composition>

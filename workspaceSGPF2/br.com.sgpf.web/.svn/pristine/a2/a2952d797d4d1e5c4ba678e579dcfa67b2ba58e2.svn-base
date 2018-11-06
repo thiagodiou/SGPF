@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	 xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:pdvix="http://pdvix.com/facelets">
+	
+	<div id="titulo" align="left">
+		<h1 class="tituloForm">#{bandeiraWebBean.operacao == 'INSERCAO' ? messages['label.menu.bandeira.inclusao'] : messages['label.menu.bandeira.alteracao'] }</h1>				
+		<h1 class="itemForm">
+			#{messages['label.bandeira.dados']}			
+		</h1>
+	</div>
+	
+	<a4j:outputPanel id="pnlJS2" ajaxRendered="true">
+		<script type="text/javascript">
+			aplicaMascara();
+		</script>
+	</a4j:outputPanel>
+	
+
+<!-- Formulário -->
+	<div id="cad" align="center">					
+			<table border="0" width="50%" align="left">
+				<tr>
+					<td width="10%">
+						<pdvix:label value="#{messages['filtro.nome']}" required="true" for="bandeiraNome" />						
+						<h:inputText 	id="bandeiraNome" required="true" disabled="#{bandeiraWebBean.bandeira.status == 'I'}"
+										value="#{bandeiraWebBean.bandeira.nome}" size="15" 
+										label="#{messages['filtro.nome']}"/>																		
+					</td>				
+					
+					<td width="30%">	
+						<a4j:outputPanel rendered="#{bandeiraWebBean.operacao == 'ALTERACAO'}" >
+						<pdvix:label id="labelStatus" value="#{messages['filtro.status']}" required="true" for="situacaoBandeira" />
+						<h:selectOneMenu 	id= "situacaoBandeira"  
+											required="true" value="#{bandeiraWebBean.bandeira.status}" label="#{messages['filtro.status']}">
+							<f:selectItem itemLabel="#{messages['label.selecione']}" />
+							<f:selectItem itemValue="A" itemLabel="#{messages['filtro.status.ativo']}" />
+							<f:selectItem itemValue="I" itemLabel="#{messages['filtro.status.inativo']}" />
+						</h:selectOneMenu>
+						</a4j:outputPanel>
+						
+				     </td>
+				</tr>		
+				<tr>
+					<td>
+						<pdvix:label id="labelCodigo" value="#{messages['filtro.codigo']}" required="true" for="codigoBandeira" />
+						<h:inputText 	required="true" id="codigoBandeira" label="#{messages['filtro.codigo']}"									
+										value="#{bandeiraWebBean.bandeira.codigo}" size="15" disabled="#{bandeiraWebBean.bandeira.status == 'I'}" maxlength="4">																	
+							<f:validateLength maximum="4" />																	
+						</h:inputText>							
+					</td>										
+				</tr>																		
+			</table>					
+	</div>	
+	
+
+
+</ui:composition>

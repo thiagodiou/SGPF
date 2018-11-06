@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:pdvix="http://pdvix.com/facelets">
+
+	<div id="titulo" align="left">
+		<h1 class="tituloForm">#{messages['label.menu.funcaoDados']}</h1>				
+		<h1 class="itemForm">
+			#{messages['label.filtro']}			
+		</h1>
+	</div>
+	
+<!-- Formulário -->
+	<div id="form" align="center">	
+		<table border="0" width="50%" align="left">		
+			<tr>						
+				 <td>
+            	    <h:outputLabel value="Empresa: " />
+            	                	    
+            	    <h:selectOneMenu id="idComboEmpresaFiltro"  converter="comboConverter" value="#{funcaoDadosBean.funcaoDadosFiltro.empresaSelecionada}">
+						<f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/> 
+						<f:selectItems value="#{funcaoDadosBean.funcaoDadosFiltro.empresas}" var="empresa" itemValue="#{empresa}" itemLabel="#{empresa.nomeFantasia}"/>
+						<a4j:ajax event="valueChange" execute="idComboSistemaFiltro" render="idComboSistemaFiltro"/>
+					</h:selectOneMenu>
+            	    
+            	 </td>
+        		
+           		<td>
+            	    <h:outputLabel value="Sistema: " />
+  
+					<h:selectOneMenu id="idComboSistemaFiltro"  converter="comboConverter" value="#{funcaoDadosBean.funcaoDadosFiltro.sistema}">
+						<f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+						<f:selectItems value="#{funcaoDadosBean.funcaoDadosFiltro.empresaSelecionada.sistemas}" var="sistema" itemValue="#{sistema}" itemLabel="#{sistema.sigla}"/>
+					</h:selectOneMenu>
+				</td>
+				
+				<td>
+            	    <h:outputLabel value="Projeto: " />
+  
+					<h:selectOneMenu id="idComboProjetoFiltro"  converter="comboConverter" value="#{funcaoDadosBean.funcaoDadosFiltro.projetoSelecionado}">
+						<f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+						<f:selectItems value="#{funcaoDadosBean.funcaoDadosFiltro.projetos}" var="projeto" itemValue="#{projeto}" itemLabel="#{projeto.identificador}"/>
+					</h:selectOneMenu>
+				</td>
+				
+				<td>
+            	    <h:outputLabel value="Função de Dados: " />
+            	    <h:inputText value="#{funcaoDadosBean.funcaoDadosFiltro.nomeFuncaoDados}"></h:inputText>            	                	  
+            	</td>
+			</tr>																																				
+		</table>	
+	</div>	
+</ui:composition>

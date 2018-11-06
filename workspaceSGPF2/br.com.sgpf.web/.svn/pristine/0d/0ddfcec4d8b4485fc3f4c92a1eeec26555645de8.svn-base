@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2016-06-08T14:10:52 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="HistoricoEstabelecimento" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c85b0886-65f3-4489-96e0-6cf2bdb582c4">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="CAR"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<parameter name="nome" class="java.lang.String"/>
+	<parameter name="cnpj" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+TB_ADQ.ADQ_PJ_CNPJ,
+TB_ADQ.ADQ_AG_AGENCIA,
+TB_ADQ.ADQ_CN_CONTA,
+TB_ADQ.ADQ_DC_ADQUIRENTE,
+TB_ADQ.ADQ_NM_ADQUIRENTE,
+TB_ADQ.ADQ_ID_ADQUIRENTE
+FROM 
+TB_ADQ_ADQUIRENTE TB_ADQ
+WHERE
+(($P{cnpj} IS NOT NULL AND  LOWER(TB_ADQ. ADQ_PJ_CNPJ) LIKE '%$P!{cnpj}%') OR ($P{cnpj} IS NULL))
+AND
+(($P{nome} IS NOT NULL AND  LOWER(TB_ADQ. ADQ_NM_ADQUIRENTE) LIKE '$P!{nome}%') OR ($P{nome} IS NULL))
+ORDER BY TO_NUMBER(TB_ADQ.ADQ_ID_ADQUIRENTE)]]>
+	</queryString>
+	<field name="ADQ_PJ_CNPJ" class="java.lang.String"/>
+	<field name="ADQ_AG_AGENCIA" class="java.lang.String"/>
+	<field name="ADQ_CN_CONTA" class="java.lang.String"/>
+	<field name="ADQ_DC_ADQUIRENTE" class="java.lang.String"/>
+	<field name="ADQ_NM_ADQUIRENTE" class="java.lang.String"/>
+	<field name="ADQ_ID_ADQUIRENTE" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="45" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="25" width="120" height="20" forecolor="#878787" backcolor="#969696" uuid="b72f539b-6f10-4fcb-90af-a241381ff3f5"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="120" y="25" width="180" height="20" forecolor="#878787" backcolor="#969696" uuid="32221f55-7c84-4418-b028-042012b93326"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="300" y="25" width="151" height="20" forecolor="#878787" backcolor="#969696" uuid="fcaf0966-4170-41c5-8059-d65ddacd47aa"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="451" y="25" width="144" height="20" forecolor="#878787" backcolor="#969696" uuid="3f1f6ad7-945c-4bde-a4a0-280a63bd6b96"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="595" y="25" width="90" height="20" forecolor="#878787" backcolor="#969696" uuid="5c5550ab-0eab-43bf-9818-278b10367ac1"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="685" y="25" width="117" height="20" forecolor="#878787" backcolor="#969696" uuid="88c175a0-aafb-44e2-a96b-0ddcc7caaec7"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="5" y="25" width="105" height="20" uuid="c07858a1-bdc7-46b2-be1e-f56521577bac"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Código]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="123" y="25" width="90" height="20" uuid="f79f7536-b6bc-479e-896b-da1e2043259b"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="304" y="25" width="87" height="20" uuid="caf977d7-0699-495f-9803-9f1876fa43a8"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[CNPJ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="455" y="25" width="113" height="20" uuid="ebb211aa-21fa-4a67-bcdf-40fa3462fbb7"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Descrição]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="599" y="25" width="76" height="20" uuid="c218cf82-1434-4a61-9afb-1734823709f8"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Agência]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="690" y="25" width="90" height="20" uuid="c6f2c820-c6ef-4e3c-9e5e-0c23a60cd8cb"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Conta]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="0" y="0" width="802" height="25" forecolor="#878787" backcolor="#969696" uuid="a3564cc8-c232-4f4a-a87b-2ea24b6bca7a"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="780" height="24" forecolor="#030000" uuid="3e2cafa1-1d74-45fd-91d0-8bdeabdfecf3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="14" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Resultado Consulta - Adquirente]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="120" height="20" uuid="f38e80e4-219a-4329-baad-ee21f99e47ee"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="120" y="0" width="180" height="20" uuid="eb44c7ba-8ef5-4db0-99fe-9848c6cc2a2b"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="300" y="0" width="151" height="20" uuid="8f7295cb-aa60-48c3-8cb0-dce064ca04e1"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="451" y="0" width="144" height="20" uuid="e0b3230b-2e72-4876-b70d-783201cae770"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="595" y="0" width="90" height="20" uuid="5d08fdf6-ccbd-4ea0-829a-9ff54a999685"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="685" y="0" width="117" height="20" uuid="5956d54c-fc7a-4e33-ad7a-8717ebff81d1"/>
+			</rectangle>
+			<textField>
+				<reportElement x="5" y="0" width="115" height="20" uuid="dc01900d-c0a1-41b0-8335-152e94d438f9"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ADQ_ID_ADQUIRENTE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="124" y="0" width="114" height="20" uuid="2490fac0-2c03-4686-a5c0-0c9344afd557"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ADQ_NM_ADQUIRENTE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="304" y="0" width="146" height="20" uuid="263a5024-a86d-4681-acee-a20a2a00c69c"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ADQ_PJ_CNPJ}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="455" y="0" width="140" height="20" uuid="fbb1ddb4-56b4-4a16-b32d-4b9461b14c40"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ADQ_DC_ADQUIRENTE} == null ? "" : $F{ADQ_DC_ADQUIRENTE} ]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="599" y="0" width="86" height="20" uuid="72b94945-b8c9-4265-b8b5-5aaa6067a887"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ADQ_AG_AGENCIA} == null ? "" : $F{ADQ_AG_AGENCIA} ]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="690" y="0" width="112" height="20" uuid="b05823b1-a852-4181-af61-bbc79daa3ee6"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ADQ_CN_CONTA} == null ? "" :$F{ADQ_CN_CONTA} ]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="42" splitType="Stretch">
+			<textField>
+				<reportElement x="702" y="10" width="100" height="30" uuid="a6feebfe-ba9b-4a87-8649-b0d2097c32a3"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA[String.format("Página %s",$V{PAGE_NUMBER})]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

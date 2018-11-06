@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:pdvix="http://pdvix.com/facelets"
+	xmlns:customer="http://java.sun.com/jsf/composite/components/customer">
+	
+	
+	
+	<div id="titulo" align="left">
+		<h1 class="tituloForm">#{messages['label.consulta.agenda']}</h1>
+		<h1 class="itemForm">#{messages['label.filtro']}</h1>
+	</div>
+
+
+	<script type="text/javascript">
+		function aplicaMascara() {
+			mascaraFormulario('formulario', 'valorInicial', 'MOEDA142');
+			mascaraFormulario('formulario', 'valorFinal', 'MOEDA142');
+			mascaraFormulario('formulario', 'cnpjCentralizadoraFiltro', 'CNPJ');
+		}				
+	</script>
+	
+
+	<a4j:outputPanel id="pnlJS" ajaxRendered="true">
+		<script type="text/javascript">
+			aplicaMascara();
+		</script>
+	</a4j:outputPanel>
+
+
+	<!-- Formulário -->
+	<div id="form" align="center">
+		<table border="0" width="60%" align="left">
+		
+			<tr>								
+				<td width="25%">			 													    
+			    	<pdvix:label value="#{messages['label.menu.adquirente']}" />				    				    					   				
+			    	<h:selectOneMenu value="#{consultaAgendaWebBean.agendaFiltro.idAdquirente}" style="width:200px">				    				    	 				    	 					    	 						    	 										    	 								    	 										    	 									    	 										   
+			    	 	<f:selectItem 	itemLabel="#{messages['label.selecione']}" />		    	
+		                <f:selectItems 	value="#{consultaAgendaWebBean.listaAdquirentes}" var="adq" itemLabel="#{adq.nome}" itemValue="#{adq.idAdquirente}" />					                
+		            </h:selectOneMenu>					       						    
+				</td>			
+				
+				<td>
+					<pdvix:label value="#{messages['label.consulta.agenda.centralizadora.agencia']}"/>
+					<h:inputText	id="agenciaCentralizadora" value="#{consultaAgendaWebBean.agendaFiltro.agenciaCentralizadora}"
+									size="10" label="#{messages['label.consulta.agenda.centralizadora.agencia']}"/>														
+				</td>				
+													
+			</tr>
+				
+			
+			<tr>				
+				<td width="25%">			 													    
+			    	<pdvix:label value="#{messages['label.menu.bandeira']}" />						   						
+			    	<h:selectOneMenu	value="#{consultaAgendaWebBean.agendaFiltro.idBandeira}" style="width:200px">						    	 							    	 										    	 								    	 										    	 									    	 										    
+			    	 	<f:selectItem 	itemLabel="#{messages['label.selecione']}" />						    	 
+		                <f:selectItems 	value="#{consultaAgendaWebBean.listaBandeiras}" var="bna" itemLabel="#{bna.nome}" itemValue="#{bna.idBandeira}" />					                
+		            </h:selectOneMenu>			       						    
+				</td>
+				
+				<td>
+					<pdvix:label value="#{messages['label.consulta.agenda.centralizadora.cc']}" />
+					<h:inputText	id="contaCentralizadora"
+									value="#{consultaAgendaWebBean.agendaFiltro.contaCentralizadora}"
+									size="10" label="#{messages['label.consulta.agenda.centralizadora.cc']}"/>														
+				</td>
+			</tr>
+			
+			<tr>					
+				<td>
+					<pdvix:label value="#{messages['label.consulta.agenda.centralizadora.cnpj']}" />
+					<h:inputText	id="cnpjCentralizadoraFiltro" converter="cnpjConverter" value="#{consultaAgendaWebBean.agendaFiltro.cnpjCpfCentralizadora}"
+								size="15" label="#{messages['label.consulta.agenda.centralizadora.cnpj']}"/>													
+				</td>
+				
+				<td width="25%">
+					<pdvix:label value="#{messages['label.consulta.liquidacao.periodo']}" />						
+					<rich:calendar id="dataInicialPeriodo" value="#{consultaAgendaWebBean.agendaFiltro.dataInicial}" datePattern="dd/MM/yyyy" inputStyle="width:80px"/>					
+					<rich:calendar id="dataFinalPeriodo" value="#{consultaAgendaWebBean.agendaFiltro.dataFinal}" datePattern="dd/MM/yyyy" inputStyle="width:80px"/>																															
+				</td>	
+				
+			</tr>
+			
+			<tr>
+				<td width="25%">	
+					<a4j:outputPanel>   
+						<table>
+							<tr>
+								<td>
+									<h:selectBooleanCheckbox id="isradicalConsulta" value="#{consultaAgendaWebBean.agendaFiltro.cnpjRadical}"/>															
+								</td>
+								<td>
+									<h:outputLabel value="#{messages['label.consulta.agenda.centralizadora.cnpj.radical']}" style="width: 200px" for="isradicalConsulta"/>	  	
+								</td>							
+							</tr>					
+						</table>      	    					    				
+		    		</a4j:outputPanel>
+				</td>
+
+				<td>
+					<pdvix:label value="#{messages['label.consulta.agenda.valor.faixa']}" />					
+					<h:inputText id="valorInicial" converter="bigDecimalConverter" value="#{consultaAgendaWebBean.agendaFiltro.valorInicial}" size="10"/> 					
+					<h:inputText id="valorFinal" converter="bigDecimalConverter" value="#{consultaAgendaWebBean.agendaFiltro.valorFinal}" size="10"/>
+				</td>
+				
+			</tr>									
+			
+		</table>
+		
+		
+		<h:form>
+			<rich:popupPanel id="popup" modal="false" autosized="true" resizeable="false" domElementAttachment="form">
+		        <f:facet name="header">
+		            <h:outputText value="#{messages['label.tipo.arquivo.selecione']}" />
+		        </f:facet>		
+		        <f:facet name="controls">
+		        																								
+		        </f:facet>	        
+		        <table>	        	
+		        	<tr>
+		        		<td>	        			
+					        <h:selectOneRadio 	id="tipoRelatorio" layout="pageDirection" 
+													label="teste" 
+													value="#{consultaAgendaWebBean.tipoRelatorio}">											
+										
+									<f:selectItem 	itemValue="P" itemLabel="#{messages['label.tipo.arquivo.PDF']}"/>										 										 																 		
+									<f:selectItem 	itemValue="C" itemLabel="#{messages['label.tipo.arquivo.CSV']}"/>		
+							</h:selectOneRadio>
+						
+						</td>
+					</tr>				
+					<tr align="center">	
+						<td>								
+							<h:commandButton id="btnExportarEfetivo" value="#{messages['label.exportar']}"
+								 action="#{consultaAgendaWebBean.exportar()}" onclick="#{rich:component('popup')}.hide(); return true;"/>
+							<h:commandButton id="btnExportarCancelar" value="#{messages['label.cancelar']}" 
+								 immediate="true" onclick="#{rich:component('popup')}.hide(); return false;">														 														 																																												 
+							</h:commandButton>
+						</td>
+					</tr>
+				</table>					
+			</rich:popupPanel>
+		</h:form>	
+	</div>
+</ui:composition>

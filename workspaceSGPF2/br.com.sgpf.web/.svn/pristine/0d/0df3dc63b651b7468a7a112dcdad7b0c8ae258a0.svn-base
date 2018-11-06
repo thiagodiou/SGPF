@@ -1,0 +1,171 @@
+package br.com.banestes.car.core.exportacao;
+
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.sql.Connection;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.faces.context.FacesContext;
+import javax.servlet.ServletContext;
+
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+
+import org.hibernate.Session;
+import org.hibernate.internal.SessionImpl;
+import org.omnifaces.util.Messages;
+
+import br.com.banestes.car.core.bean.AbstractWebBean;
+import br.com.banestes.car.core.enumerators.TipoArquivoEnum;
+import br.com.banestes.car.core.enumerators.TipoDocumentoEnum;
+import br.com.banestes.car.jpa.core.util.MessagesPropertiesUtil;
+import br.com.banestes.car.jpa.model.repository.AbstractRepository;
+import br.com.banestes.car.jpa.vo.ArquivoVO;
+
+public class ExportarDataModel extends AbstractWebBean{
+
+		
+	public void exportar(	String tipoRelatorio, HashMap<String, Object> param, String nomeArquivo,
+			String pathReport, AbstractRepository repository, List<String> contents, JRBeanCollectionDataSource jrb){ 
+	
+		boolean erro = false;
+		
+		byte[] bytes = null;
+									
+		StringBuilder nomeCompletoArquivo = new StringBuilder();			
+		nomeCompletoArquivo.append(nomeArquivo);				
+			
+		
+		if(tipoRelatorio.equals(TipoArquivoEnum.PDF.valor))
+		{
+							
+			try {								
+	
+				ServletContext context = (ServletContext) FacesContext
+						.getCurrentInstance().getExternalContext().getContext();				
+					
+				
+				String arquivo = context
+						.getRealPath(pathReport);
+				erro = false;
+				JasperReport report = JasperCompileManager
+						.compileReport((String) arquivo);
+	
+				param.put("contextPath", context.getRealPath(""));
+						
+				
+				
+				JasperPrint print = JasperFillManager.fillReport(report, param, jrb);
+	
+				bytes = JasperExportManager
+						.exportReportToPdf(print);
+				param.clear();
+	
+				this.downloadReport(nomeCompletoArquivo.toString(), bytes, TipoDocumentoEnum.PDF);
+				
+				
+			} catch (Exception e) {
+				erro = true;
+				e.printStackTrace();				
+			} 			
+		}
+		else
+		{			
+			byte[] bytesCSV = exportarCSV(contents, nomeCompletoArquivo.toString());
+			this.downloadReport(nomeCompletoArquivo.toString(), bytesCSV, TipoDocumentoEnum.CSV);
+			
+		}
+				
+		Messages.addInfo(null, MessagesPropertiesUtil.getMessage("label.exportado.sucesso"), "");
+		
+		
+	}
+	
+	public void exportar(	String tipoRelatorio, HashMap<String, Object> param, String nomeArquivo,
+							String pathReport, AbstractRepository repository, List<String> contents)
+	{
+		
+		boolean erro = false;
+		
+		byte[] bytes = null;
+									
+		StringBuilder nomeCompletoArquivo = new StringBuilder();			
+		nomeCompletoArquivo.append(nomeArquivo);				
+			
+		if(tipoRelatorio.equals(TipoArquivoEnum.PDF.valor))
+		{
+													
+			try {								
+	
+				ServletContext context = (ServletContext) FacesContext
+						.getCurrentInstance().getExternalContext().getContext();				
+	
+				String arquivo = context
+						.getRealPath(pathReport);
+				erro = false;
+				JasperReport report = JasperCompileManager
+						.compileReport((String) arquivo);
+	
+				Session session = repository.getSession();
+				SessionImpl sessionImpl = (SessionImpl) session;
+	
+				Connection conn = sessionImpl.connection();
+				JasperPrint print = JasperFillManager.fillReport(
+						(JasperReport) report, param, (Connection) conn);
+	
+				bytes = JasperExportManager
+						.exportReportToPdf((JasperPrint) print);
+				param.clear();
+	
+				this.downloadReport(nomeCompletoArquivo.toString(), bytes, TipoDocumentoEnum.PDF);
+				
+				
+			} catch (Exception e) {
+				erro = true;
+				e.printStackTrace();				
+			} 			
+		}
+		else
+		{			
+			byte[] bytesCSV = exportarCSV(contents, nomeCompletoArquivo.toString());
+			this.downloadReport(nomeCompletoArquivo.toString(), bytesCSV, TipoDocumentoEnum.CSV);
+			
+		}
+				
+		Messages.addInfo(null, MessagesPropertiesUtil.getMessage("label.exportado.sucesso"), "");
+		
+	}
+	
+	
+	
+	
+	private static byte[] exportarCSV(List<String> content, String path)
+	{		
+		
+		byte[] bytes = null;
+		
+		try {								 	
+			 ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			 DataOutputStream out = new DataOutputStream(baos);			 
+			 for (String element : content) {
+			     out.write(element.getBytes("windows-1252"));
+			 }
+			 
+			 bytes = baos.toByteArray();			 
+			 
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return bytes;
+	}
+	
+}

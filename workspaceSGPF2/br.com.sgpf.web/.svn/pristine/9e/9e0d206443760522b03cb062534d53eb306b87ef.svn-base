@@ -1,0 +1,66 @@
+package br.com.banestes.car.bean;
+
+import java.io.Serializable;
+import java.math.BigInteger;
+import java.util.Date;
+
+
+public class ConsultaArquivoFiltroBean implements Serializable
+{
+	
+
+	private static final long serialVersionUID = 4031471405149397721L;
+
+	private Date dataArquivo;
+	
+	private String nomeArquivo;
+	
+	private BigInteger idAdquirente;
+	
+	private Integer codigoFuncao;
+	
+	private BigInteger idStatusProcessamento;
+
+	public Date getDataArquivo() {
+		return dataArquivo;
+	}
+
+	public void setDataArquivo(Date dataArquivo) {
+		this.dataArquivo = dataArquivo;
+	}
+
+	public String getNomeArquivo() {
+		return nomeArquivo;
+	}
+
+	public void setNomeArquivo(String nomeArquivo) {
+		this.nomeArquivo = nomeArquivo;
+	}
+
+	public BigInteger getIdAdquirente() {		
+		return idAdquirente == null || idAdquirente.compareTo(BigInteger.ZERO) == 0 ? null : idAdquirente ;
+	}
+
+	public void setIdAdquirente(BigInteger idAdquirente) {
+		this.idAdquirente = idAdquirente;
+	}
+
+	
+	public Integer getCodigoFuncao() {		
+		return codigoFuncao == null || codigoFuncao == 0 ? null : codigoFuncao ;
+	}
+
+	public void setCodigoFuncao(Integer codigoFuncao) {
+		this.codigoFuncao = codigoFuncao;
+	}
+
+	public BigInteger getIdStatusProcessamento() {		
+		return idStatusProcessamento == null || idStatusProcessamento.compareTo(BigInteger.ZERO) == 0 ? null : idStatusProcessamento ;
+	}
+
+	public void setIdStatusProcessamento(BigInteger idStatusProcessamento) {
+		this.idStatusProcessamento = idStatusProcessamento;
+	}
+	
+	
+}

@@ -1,0 +1,152 @@
+/**
+ * @(#) AutenticacaoWebBean.java.
+ * 
+ *      Copyright (c) 2014 PD CASE Belo Horizonte, MG - Brasil Todos os direitos reservados.
+ * 
+ *      Este software e confidencial e é propriedade da PD CASE, não é permitida a distribuição/alteração da
+ *      mesma sem prévia autorização.
+ */
+package br.com.banestes.car.web.bean;
+
+import java.io.IOException;
+import java.io.Serializable;
+
+import javax.enterprise.context.SessionScoped;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+
+import org.omnifaces.util.Faces;
+
+import br.com.banestes.car.core.ldap.LdapService;
+import br.com.banestes.car.web.security.Credencial;
+import br.com.banestes.car.web.security.Usuario;
+
+
+
+/**
+ * Bean responsável pela autenticação do usuário.
+ * 
+ *
+ */
+@Named("autenticacao")
+@SessionScoped
+public class AutenticacaoWebBean implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+
+	// URL a ser invocada ap�s o login, caso a URL desejada n�o exista.
+	private static final String URL_AFTER_LOGIN = "/pages/home/home.jsf";
+
+	// URL a ser invocada ap�s o logout
+	private static final String URL_AFTER_LOGOUT = "/pages/home/home.jsf";
+
+	@Inject
+	private Usuario usuario;
+	
+	@Inject
+	private Credencial credencial;
+
+	// Marcado para usu�rio j� logado.
+	private boolean loggedIn = false;
+
+	// Armazena a URL original, antes do pedido de login.
+	private String originalURL;
+
+	public AutenticacaoWebBean() {
+	}
+
+	/**
+	 * Evento invocado antes de renderizar a tela.
+	 * 
+	 * @throws IOException
+	 */
+	public void preRenderView() {
+
+		armazenarURLOriginal();
+
+	}
+
+	private void armazenarURLOriginal() {
+
+		ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+		originalURL = (String) externalContext.getRequestMap().get(RequestDispatcher.FORWARD_REQUEST_URI);
+
+		if (originalURL != null) {
+
+			String originalQuery = (String) externalContext.getRequestMap().get(RequestDispatcher.FORWARD_QUERY_STRING);
+
+			if (originalQuery != null) {
+				originalURL += "?" + originalQuery;
+			}
+
+		}
+
+	}
+
+	/**
+	 * 
+	 * Realiza o login do usu�rio.
+	 * 
+	 * @author <a href="mailto:tiago.augusto@pdcase.com.br">Tiago Augusto</a>.
+	 * @throws IOException
+	 *             erro caso n�o seja poss�vel direcionar para a URL
+	 *             requisitada.
+	 */
+	public void login() throws IOException {
+
+		FacesContext context = FacesContext.getCurrentInstance();
+		ExternalContext externalContext = context.getExternalContext();
+		HttpServletRequest request = (HttpServletRequest) externalContext.getRequest();
+
+		try {
+			request.login(credencial.getUsername(), credencial.getPassword());
+					
+			loggedIn = true;
+			
+			usuario.setUsername(credencial.getUsername());
+			usuario.setGestor(externalContext.isUserInRole("T_CAR_GESTOR"));
+			usuario.preencheDadosLdap(LdapService.getInstance().getUserInformations(usuario.getUsername()));
+						
+			if (originalURL == null) {
+				originalURL = externalContext.getRequestContextPath() + URL_AFTER_LOGIN;
+			}
+
+			externalContext.redirect(originalURL);
+
+		} catch (Exception e) {
+			context.addMessage(null, new FacesMessage("Erro ao realizar autentica��o"));
+			e.printStackTrace();
+		}
+
+	}
+
+	/**
+	 * 
+	 * Encerra a sessão do usuário.
+	 * 
+	 * @author <a href="mailto:tiago.augusto@pdcase.com.br">Tiago Augusto</a>.
+	 * @throws IOException
+	 *             erro caso não seja possível direciona para a URL requisitada.
+	 */
+	public void logout() throws IOException {
+
+		ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+		externalContext.invalidateSession();
+
+		externalContext.redirect(externalContext.getRequestContextPath() + URL_AFTER_LOGOUT);
+
+	}
+
+	public boolean isLoggedIn() {
+		return loggedIn;
+	}
+
+	
+
+}

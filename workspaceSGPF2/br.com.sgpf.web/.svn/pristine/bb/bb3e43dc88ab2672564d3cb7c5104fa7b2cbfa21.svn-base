@@ -1,0 +1,11 @@
+package br.com.banestes.car.core.util.email;
+
+public interface IMail {
+
+	public String getDestino();
+
+	public String getSubject();
+
+	public String getBody();
+
+}

@@ -1,0 +1,49 @@
+package br.com.banestes.car.bean.vo;
+
+import java.util.List;
+
+import br.com.banestes.car.jpa.entity.BandeiraEntity;
+
+public class BandeiraVO {
+
+	private boolean selecionada;
+	
+	private boolean jaVinculada;
+	
+	private BandeiraEntity bandeira;
+
+	public BandeiraVO (BandeiraEntity bna)
+	{
+		this.bandeira = bna;
+	}
+		
+	
+	public boolean isSelecionada() {
+		return selecionada;
+	}
+
+	public void setSelecionada(boolean selecionada) {
+		this.selecionada = selecionada;
+	}
+
+	public BandeiraEntity getBandeira() {
+		return bandeira;
+	}
+
+	public void setBandeira(BandeiraEntity bandeira) {
+		this.bandeira = bandeira;
+	}
+
+
+	public boolean isJaVinculada() {
+		return jaVinculada;
+	}
+
+
+	public void setJaVinculada(boolean jaVinculada) {
+		this.jaVinculada = jaVinculada;
+	}
+	
+	
+	
+}

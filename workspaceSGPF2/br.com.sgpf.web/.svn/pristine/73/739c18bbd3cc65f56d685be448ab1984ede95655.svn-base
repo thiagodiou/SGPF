@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2016-09-13T16:55:12 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="HistoricoEstabelecimento" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c85b0886-65f3-4489-96e0-6cf2bdb582c4">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="CAR_LIST"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<parameter name="contextPath" class="java.lang.String">
+		<parameterDescription><![CDATA[contextPath]]></parameterDescription>
+	</parameter>
+	<parameter name="quantidadeLiquidacoes" class="java.lang.Integer">
+		<parameterDescription><![CDATA[quantidadeLiquidacoes]]></parameterDescription>
+	</parameter>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="dataArquivoTexto" class="java.lang.String">
+		<fieldDescription><![CDATA[dataArquivoTexto]]></fieldDescription>
+	</field>
+	<field name="nomeArquivo" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeArquivo]]></fieldDescription>
+	</field>
+	<field name="sequencial" class="java.lang.String">
+		<fieldDescription><![CDATA[sequencial]]></fieldDescription>
+	</field>
+	<field name="nomeAdquirente" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeAdquirente]]></fieldDescription>
+	</field>
+	<field name="nomeFuncao" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeFuncao]]></fieldDescription>
+	</field>
+	<field name="nomeBandeira" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeBandeira]]></fieldDescription>
+	</field>
+	<field name="numeroUnicoLiquidacao" class="java.lang.String">
+		<fieldDescription><![CDATA[numeroUnicoLiquidacao]]></fieldDescription>
+	</field>
+	<field name="statusLiquidacao" class="java.lang.String">
+		<fieldDescription><![CDATA[statusLiquidacao]]></fieldDescription>
+	</field>
+	<field name="codigoOcorrenciaCIP" class="java.lang.String">
+		<fieldDescription><![CDATA[codigoOcorrenciaCIP]]></fieldDescription>
+	</field>
+	<field name="descricaoOcorrenciaCIP" class="java.lang.String">
+		<fieldDescription><![CDATA[descricaoOcorrenciaCIP]]></fieldDescription>
+	</field>
+	<field name="codigoOcorrenciaBanestes" class="java.lang.String">
+		<fieldDescription><![CDATA[codigoOcorrenciaBanestes]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="108" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="71" width="44" height="37" forecolor="#878787" backcolor="#969696" uuid="88c175a0-aafb-44e2-a96b-0ddcc7caaec7"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="69" width="44" height="39" uuid="c6f2c820-c6ef-4e3c-9e5e-0c23a60cd8cb"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data do Arquivo ]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="44" y="71" width="159" height="37" forecolor="#878787" backcolor="#969696" uuid="5ab4fb02-8914-48fb-928e-787d7217537a"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="44" y="70" width="160" height="38" uuid="c35460ad-659a-4c53-905c-6bb201cac26c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome do Arquivo]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="0" y="0" width="802" height="25" forecolor="#878787" backcolor="#969696" uuid="1dfa3e9b-847c-4346-b101-3f18f7e5e15f"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="780" height="24" forecolor="#030000" uuid="7837e9a1-3dfb-403c-bd46-2a3f7c3da03d"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="14" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Resultado Consulta - Liquidações Recusadas]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="202" y="71" width="44" height="37" forecolor="#878787" backcolor="#969696" uuid="472d28b7-28b5-484d-a5f1-729954ae2515"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="202" y="70" width="44" height="38" uuid="e924bb05-8daf-4812-a846-51fbdfecb322"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sequencial]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="246" y="71" width="107" height="37" forecolor="#878787" backcolor="#969696" uuid="bdd03011-0ed5-42da-a6b5-4f2d8c233559"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="246" y="70" width="107" height="38" uuid="c1197f63-1b54-4593-9b2c-b84078f37ba5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Adquirente]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="353" y="71" width="40" height="37" forecolor="#878787" backcolor="#969696" uuid="65c40d94-fa14-42e0-b40f-63f28a899c84"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="353" y="70" width="40" height="38" uuid="d67b20ca-1e7a-43ce-a2aa-c5cde3e145b4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Função]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="440" y="71" width="145" height="37" forecolor="#878787" backcolor="#969696" uuid="046f6306-9e3b-4724-8f32-bfa85d345159"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="440" y="70" width="145" height="38" uuid="4ee612ac-b65c-4cde-ab8d-12d7fba7048b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[N° Único Liquidação]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="585" y="71" width="49" height="37" forecolor="#878787" backcolor="#969696" uuid="e7b0e38e-f54a-4054-bd79-910f6dbdef35"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="585" y="70" width="48" height="38" uuid="3df777a0-f81f-415c-bc29-428dbeb059be"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Status Liquidação]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="634" y="71" width="46" height="37" forecolor="#878787" backcolor="#969696" uuid="e98563f1-f1fe-4fae-8669-f2b2e9a95ebb"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="635" y="70" width="45" height="36" uuid="8c25e665-e9bc-4b16-a4f5-4c411bd7b5c5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Código de Ocorrência - CIP]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="680" y="71" width="59" height="37" forecolor="#878787" backcolor="#969696" uuid="c4a1050c-8ab2-4ffd-94e4-4698bbaeea89"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="680" y="70" width="59" height="36" uuid="170fcbb2-ba7d-4c5a-b246-e35d799c9c14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Descrição de Ocorrência - CIP]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="393" y="71" width="47" height="37" forecolor="#878787" backcolor="#969696" uuid="48329147-25fa-4e8e-ad8b-78286a063ffa"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="393" y="70" width="47" height="38" uuid="9122c7c2-5343-40a9-9261-a9ceef1b7ffc"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Bandeira]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="739" y="71" width="63" height="37" forecolor="#878787" backcolor="#969696" uuid="b6377f65-af91-4071-bbee-8e9dc8c4c31e"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="739" y="70" width="63" height="36" uuid="4d2f1877-7706-4734-814b-4d275d6a316f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Código de Ocorrência - Banestes]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="40" width="100" height="20" uuid="7de585aa-8f8e-40cb-81bf-3617b4b21c73"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total de Registros: ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="103" y="40" width="100" height="20" uuid="56a0ab20-20e1-4af1-9af6-221dc7cf60ab"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{quantidadeLiquidacoes}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="44" height="20" uuid="5956d54c-fc7a-4e33-ad7a-8717ebff81d1"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="44" y="0" width="158" height="20" uuid="0e27b466-9032-489e-9233-966bb7fa3019"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="202" y="0" width="44" height="20" uuid="bda7f962-abc7-4aff-b04f-ab3f9885d77e"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="246" y="0" width="107" height="20" uuid="22502689-b9eb-43cc-ac2d-980a68ae4c90"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="353" y="0" width="40" height="20" uuid="c198c422-faa1-4c72-b4a7-3e18202c8473"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="440" y="0" width="145" height="20" uuid="d16ed979-b33d-4818-9440-dd8d4f9651fc"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="585" y="0" width="49" height="20" uuid="d4c57ac2-0405-46ae-b3e4-598a8e8bd4f3"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="634" y="0" width="46" height="20" uuid="565528d8-3911-4fe1-87f5-71ea1ed4e796"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="680" y="0" width="59" height="20" uuid="89a6f5fd-b6a4-4b47-b247-32b4f3fb964a"/>
+			</rectangle>
+			<textField>
+				<reportElement x="1" y="0" width="42" height="20" uuid="cc658b22-4bb6-4e7e-baa9-f8e304d30965"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dataArquivoTexto}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="44" y="0" width="158" height="20" uuid="3970d18d-c4b4-49db-bbd5-752230fc5e6c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nomeArquivo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="202" y="0" width="44" height="20" uuid="d8303e19-aeda-4c72-96c2-34c8437dd716"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sequencial}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="246" y="0" width="107" height="20" uuid="db9f101f-dec5-44ff-822a-a9f1750c779b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nomeAdquirente}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="354" y="0" width="39" height="20" uuid="4a46c8c8-52a2-4d9e-b97f-58ed9fe87f5b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nomeFuncao}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="441" y="0" width="143" height="20" uuid="884f04ae-1025-463d-a84d-889281efe9b9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numeroUnicoLiquidacao}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="586" y="0" width="47" height="20" uuid="090d3ad9-86e5-43f0-9ae6-af43625df0af"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{statusLiquidacao}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="634" y="0" width="46" height="20" uuid="dbbfc494-2e07-494d-8390-71bedc49bdcd"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{codigoOcorrenciaCIP}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="680" y="0" width="59" height="20" uuid="21d79e6a-922e-4ad0-a0fb-4b8d4aa71a27"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{descricaoOcorrenciaCIP}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="393" y="0" width="47" height="20" uuid="de010346-3c45-4351-864c-a34815378186"/>
+			</rectangle>
+			<textField>
+				<reportElement x="394" y="0" width="46" height="20" uuid="8afcc9fb-9fe5-421f-b502-b497779a8669"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nomeBandeira}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="739" y="0" width="63" height="20" uuid="98d235fa-f3e0-41a3-8057-95ff1642cb7f"/>
+			</rectangle>
+			<textField>
+				<reportElement x="739" y="0" width="63" height="20" uuid="f2734ce6-6776-4f1b-9ced-709cff90ea5c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{codigoOcorrenciaBanestes}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="42" splitType="Stretch">
+			<textField>
+				<reportElement x="702" y="10" width="100" height="30" uuid="a6feebfe-ba9b-4a87-8649-b0d2097c32a3"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA[String.format("Página %s",$V{PAGE_NUMBER})]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

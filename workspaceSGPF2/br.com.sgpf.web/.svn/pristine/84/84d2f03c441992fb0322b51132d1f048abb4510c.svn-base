@@ -1,0 +1,47 @@
+package br.com.banestes.car.service;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+
+import br.com.banestes.car.jpa.entity.CodigoOcorrenciaEntity;
+import br.com.banestes.car.jpa.entity.SistemaBanestesEntity;
+import br.com.banestes.car.jpa.entity.VinculoCodigoOcorrenciaEntity;
+import br.com.banestes.car.jpa.model.repository.aplicacao.OcorrenciaRepository;
+import br.com.banestes.car.jpa.model.repository.aplicacao.VinculoCodigoOcorrenciaRepository;
+
+
+@Stateless
+@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+public class VinculoOcorrenciaServiceBean {
+
+	@Inject
+	private VinculoCodigoOcorrenciaRepository vinculoRepository;
+	
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	public VinculoCodigoOcorrenciaEntity gravar(VinculoCodigoOcorrenciaEntity vinculo)
+	{
+		
+		SistemaBanestesEntity sis = vinculoRepository.findSistema(vinculo.getCodigoOcorrenciaBanestes().getSistemaBanestes().getNome());
+		sis = vinculoRepository.merge(sis);
+		vinculo.getCodigoOcorrenciaBanestes().setSistemaBanestes(sis);	
+		
+		vinculo.setCodigoOcorrenciaBanestes(vinculoRepository.merge(vinculo.getCodigoOcorrenciaBanestes()));
+		vinculoRepository.merge(vinculo.getCodigoOcorrenciaCIP());		
+		vinculo = vinculoRepository.merge(vinculo);
+		
+		return vinculo;
+		
+	}
+
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	public void deletar(VinculoCodigoOcorrenciaEntity vinculo)
+	{
+		Object obj = vinculoRepository.merge(vinculo);
+		
+		vinculoRepository.remove(obj);
+	}
+	
+	
+}

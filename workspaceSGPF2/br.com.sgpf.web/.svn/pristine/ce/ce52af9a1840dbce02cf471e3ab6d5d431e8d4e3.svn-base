@@ -1,0 +1,31 @@
+package br.com.banestes.car.service;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+
+import br.com.banestes.car.jpa.entity.CodigoOcorrenciaEntity;
+import br.com.banestes.car.jpa.model.repository.aplicacao.OcorrenciaRepository;
+
+
+@Stateless
+@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+public class OcorrenciaServiceBean {
+
+
+
+	@Inject
+	private OcorrenciaRepository ocorrenciaRepository;
+	
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	public CodigoOcorrenciaEntity gravar(CodigoOcorrenciaEntity ocorrencia)
+	{
+		
+		ocorrencia = ocorrenciaRepository.merge(ocorrencia);
+		
+		return ocorrencia;
+		
+	}
+
+}//end_clas...

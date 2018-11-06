@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:pdvix="http://pdvix.com/facelets">
+	
+	<div id="titulo" align="left">
+		<h1 class="tituloForm">#{vinculoCodigoOcorrenciaWebBean.operacao == 'INSERCAO' ? messages['label.menu.vinculo.incluir'] : messages['label.menu.vinculo.alterar'] }</h1>				
+		<h1 class="itemForm">
+			#{messages['label.vinculos.dados']}			
+		</h1>
+	</div>
+	
+	<a4j:outputPanel id="pnlJS2" ajaxRendered="true">
+		<script type="text/javascript">
+			aplicaMascara();
+		</script>
+	</a4j:outputPanel>
+	
+
+<!-- Formulário -->
+	<div id="cad" align="center">	
+		<table border="0" width="50%" align="left">
+			<tr>
+				<td width="25%">
+					<pdvix:label value="#{messages['label.vinculos.ocorrencia.sistema.banestes']}" required="true" for="sistemaBanestesForm"/>	
+					<h:inputText	id="sistemaBanestesForm" required="true"
+									value="#{vinculoCodigoOcorrenciaWebBean.vinculo.codigoOcorrenciaBanestes.sistemaBanestes.nome}"
+									size="15" label="#{messages['label.vinculos.ocorrencia.sistema.banestes']}"
+									disabled="#{vinculoCodigoOcorrenciaWebBean.vinculo.status == 'I'}">
+					</h:inputText>		
+				
+				</td>
+				<td width="25%">					
+					<pdvix:label value="#{messages['label.vinculos.ocorrencia.codigo.cip']}" required="true" for="codigoOcorrenciaCIP"/>				    				    					   				
+			    	<h:selectOneMenu 	id="codigoOcorrenciaCIP" value="#{vinculoCodigoOcorrenciaWebBean.vinculo.codigoOcorrenciaCIP}"
+			    						style="width:200px" converter="comboConverter" required="true" 
+			    						label="#{messages['label.vinculos.ocorrencia.codigo.cip']}"
+			    						disabled="#{vinculoCodigoOcorrenciaWebBean.vinculo.status == 'I'}">	
+			    				    					    					    
+			    		<c:if test="#{vinculoCodigoOcorrenciaWebBean.vinculo.codigoOcorrenciaCIP.idCodigoOcorrencia == null}">
+							<f:selectItem itemLabel="#{messages['label.selecione']}" />
+						</c:if>
+						<f:selectItems 	value="#{vinculoCodigoOcorrenciaWebBean.listaCodigosOcorrenciaAtivos}" var="cdo"
+										itemLabel="#{vinculoCodigoOcorrenciaWebBean.lpad(cdo.codigo)} - #{cdo.descricao}" itemValue="#{cdo}" />	
+																	    					    					    				    	 				    	 					    	 						    	 										    	 								    	 										    	 									    	 									
+			    	</h:selectOneMenu>		
+				
+				</td>
+			</tr>	
+			
+			<tr>
+				<td>
+					<pdvix:label value="#{messages['label.vinculos.ocorrencia.codigo.banestes.filtro']}" required="true" for="codigoOcorrenciaBanestesForm"/>	
+					<h:inputText	id="codigoOcorrenciaBanestesForm" required="true" 
+									value="#{vinculoCodigoOcorrenciaWebBean.vinculo.codigoOcorrenciaBanestes.codigo}"
+									size="15" label="#{messages['label.vinculos.ocorrencia.codigo.banestes.filtro']}" maxlength="4"
+									disabled="#{vinculoCodigoOcorrenciaWebBean.vinculo.status == 'I'}">
+					</h:inputText>		
+					
+				</td>				
+				
+				<td width="50%">
+				<a4j:outputPanel rendered="#{vinculoCodigoOcorrenciaWebBean.operacao == 'ALTERACAO'}">
+					<pdvix:label value="#{messages['filtro.status']}" for="statusVinculoCodigoOcorrenciaForm" required="true"/>			
+					<h:selectOneMenu id="statusVinculoCodigoOcorrenciaForm" value="#{vinculoCodigoOcorrenciaWebBean.vinculo.status}"
+									 label="#{messages['label.vinculos.ocorrencia.status']}" 
+									 required="#{vinculoCodigoOcorrenciaWebBean.operacao == 'ALTERACAO'}" >
+						<f:selectItem itemLabel="#{messages['label.selecione']}" />
+		        		<f:selectItem itemValue="A" itemLabel="#{messages['filtro.status.ativo']}" />
+						<f:selectItem itemValue="I" itemLabel="#{messages['filtro.status.inativo']}" />
+			        </h:selectOneMenu>
+				
+				</a4j:outputPanel>
+															
+				</td>
+				
+							
+			</tr>													
+		</table>		
+	</div>	
+	
+
+
+</ui:composition>

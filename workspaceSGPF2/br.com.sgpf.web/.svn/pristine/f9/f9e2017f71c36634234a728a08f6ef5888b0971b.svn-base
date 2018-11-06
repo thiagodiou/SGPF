@@ -1,0 +1,116 @@
+package br.com.banestes.car.service;
+
+import java.math.BigInteger;
+import java.util.Calendar;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+
+import br.com.banestes.car.core.enumerators.SituacaoEnum;
+import br.com.banestes.car.core.enumerators.TipoAlteracaoEnum;
+import br.com.banestes.car.jpa.core.jpa.enumeration.TipoLiquidacao;
+import br.com.banestes.car.jpa.entity.HistoricoProcessoLiquidacaoEntity;
+import br.com.banestes.car.jpa.entity.ProcessoLiquidacaoEntity;
+import br.com.banestes.car.jpa.entity.TipoProcessoLiquidacaoEntity;
+import br.com.banestes.car.jpa.model.repository.aplicacao.ProcessoLiquidacaoRepository;
+
+@Stateless
+@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+public class ProcessoLiquidacaoService {
+
+	@Inject
+	private ProcessoLiquidacaoRepository processoRepository;
+	
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	public ProcessoLiquidacaoEntity gravar(ProcessoLiquidacaoEntity processoLiquidacao, String nomeUsuario)
+	{
+	
+		TipoProcessoLiquidacaoEntity tprl = processoLiquidacao.getTipoProcessoLiquidacao();
+		
+		TipoAlteracaoEnum tipoAlteracao;
+		
+		tipoAlteracao  = verificaTipoAlteracao(processoLiquidacao);
+		
+		TipoProcessoLiquidacaoEntity sendoDeletada;
+		
+		if(processoLiquidacao.getTipoLiquidacao().equals(TipoLiquidacao.STR.valor))
+		{
+			sendoDeletada = processoLiquidacao.getProcessoLiquidacaoEstabelecimentoComercial();
+			processoLiquidacao.setProcessoLiquidacaoEstabelecimentoComercial(null);
+			if(processoLiquidacao.getIdProcessoLiquidacao() != null  && sendoDeletada != null && sendoDeletada.getIdTipoProcessoLiquidacao() != null)
+				processoRepository.remove(processoRepository.merge(sendoDeletada));
+			
+		}
+		else
+		{
+			sendoDeletada = processoLiquidacao.getProcessoLiquidacaoAdquirente();
+			processoLiquidacao.setProcessoLiquidacaoAdquirente(null);
+			if(processoLiquidacao.getIdProcessoLiquidacao() != null && sendoDeletada != null && sendoDeletada.getIdTipoProcessoLiquidacao() != null)
+				processoRepository.remove(processoRepository.merge(sendoDeletada));				
+		}
+		
+					
+		processoLiquidacao.setTipoProcessoLiquidacao(processoRepository.merge(tprl));
+		
+		processoLiquidacao = processoRepository.merge(processoLiquidacao);
+		
+		gravaHistorico(processoLiquidacao.getIdProcessoLiquidacao(), nomeUsuario, tipoAlteracao);
+		
+		return processoLiquidacao;
+		
+	}
+
+	
+	private TipoAlteracaoEnum verificaTipoAlteracao (ProcessoLiquidacaoEntity processoLiquidacao)
+	{		
+	
+		ProcessoLiquidacaoEntity processoAntesAlteracao = processoRepository.findById(processoLiquidacao.getIdProcessoLiquidacao());
+		
+		if(processoLiquidacao.getIdProcessoLiquidacao() == null || processoLiquidacao.getIdProcessoLiquidacao().compareTo(BigInteger.ZERO) == 0)
+			return TipoAlteracaoEnum.INCLUSAO;						
+			
+		else if(processoAntesAlteracao.getStatus().equals(processoLiquidacao.getStatus()))
+			return TipoAlteracaoEnum.ALTERACAO;
+		
+		else
+		{
+			if(processoAntesAlteracao.getStatus().equals(SituacaoEnum.ATIVO.valor))
+				return TipoAlteracaoEnum.INATIVACAO;
+			else
+				return TipoAlteracaoEnum.ATIVACAO;
+		}		
+	}
+	
+	
+	private void gravaHistorico(BigInteger idProcessoLiquidacao, String nomeUsuario, TipoAlteracaoEnum tipoAlteracao)
+	{
+		HistoricoProcessoLiquidacaoEntity hst = new HistoricoProcessoLiquidacaoEntity(
+													idProcessoLiquidacao, 
+													nomeUsuario,
+													tipoAlteracao.valor);
+				
+		Calendar c = Calendar.getInstance();		
+		hst.setDataHora(c.getTime());
+		
+		processoRepository.merge(hst);
+		
+		
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	public void deletar (ProcessoLiquidacaoEntity prl, String nomeUsuario)
+	{
+		Object processoFilho = processoRepository.merge(prl.getTipoProcessoLiquidacao());
+		
+		processoRepository.remove(processoFilho);
+		
+		Object obj = processoRepository.merge(prl);
+		
+		processoRepository.remove(obj);
+		
+		gravaHistorico(prl.getIdProcessoLiquidacao(), nomeUsuario, TipoAlteracaoEnum.EXLSUSAO);
+	}
+	
+}

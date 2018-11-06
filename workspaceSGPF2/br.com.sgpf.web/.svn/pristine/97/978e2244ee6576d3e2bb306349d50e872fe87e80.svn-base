@@ -1,0 +1,258 @@
+package br.com.banestes.car.bean;	
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.enterprise.inject.Produces;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.omnifaces.cdi.ViewScoped;
+import org.omnifaces.util.Messages;
+
+import br.com.banestes.car.core.bean.AbstractWebBean;
+import br.com.banestes.car.core.enumerators.OperacoesEnum;
+import br.com.banestes.car.core.enumerators.SituacaoEnum;
+import br.com.banestes.car.core.enumerators.TipoArquivoEnum;
+import br.com.banestes.car.core.exportacao.ExportarDataModel;
+import br.com.banestes.car.core.paginacao.ParametroDataModel;
+import br.com.banestes.car.jpa.core.util.DateUtil;
+import br.com.banestes.car.jpa.core.util.MessagesPropertiesUtil;
+import br.com.banestes.car.jpa.entity.AdquirenteEntity;
+import br.com.banestes.car.jpa.entity.ArquivoProcessamentoEntity;
+import br.com.banestes.car.jpa.entity.BandeiraEntity;
+import br.com.banestes.car.jpa.entity.FuncaoEntity;
+import br.com.banestes.car.jpa.model.repository.aplicacao.AdquirenteRepository;
+import br.com.banestes.car.jpa.model.repository.aplicacao.ArquivoRepository;
+import br.com.banestes.car.jpa.model.repository.aplicacao.FuncaoRepository;
+import br.com.banestes.car.jpa.vo.ArquivoVO;
+
+@Named
+@ViewScoped
+public class ConsultaArquivoWebBean extends AbstractWebBean {
+	
+	private ExportarDataModel exportar;
+
+	@Named("arquivoDados")
+	@Produces
+	private ParametroDataModel<ArquivoVO> dados;	
+	
+	private ConsultaArquivoFiltroBean consultaArquivofiltro;
+	private List<AdquirenteEntity> listaAdquirentes;
+	private List<FuncaoEntity> listaFuncoes;
+	private List<ArquivoProcessamentoEntity> listaSituacoesArquivos;
+	
+	@ManagedProperty(value="#{consultaLiquidacaoWebBean}")
+	private ConsultaLiquidacaoWebBean consultaLiquidacaoWebBean;
+	
+	@Inject
+	private transient FuncaoRepository funcaoRepository;
+
+	@Inject
+	private transient AdquirenteRepository adquirenteRepository;
+	
+	@Inject
+	private transient ArquivoRepository arquivoRepository;
+	
+	
+	private List<ArquivoVO> dadosArquivos;
+	private String tipoRelatorio;
+	
+	
+	
+	public void preRenderView() {
+		if (!FacesContext.getCurrentInstance().isPostback()) 
+		{			
+			consultaArquivofiltro = new ConsultaArquivoFiltroBean();
+			exportar = new ExportarDataModel();
+			preencheCombos();
+			this.setOperacao(OperacoesEnum.FILTRAGEM);	
+			consultaLiquidacaoWebBean = getCurrentInstance();
+		}
+	}
+		
+	public String filtrar() 
+	{
+		tipoRelatorio = TipoArquivoEnum.PDF.valor;
+		
+		consultaLiquidacaoWebBean.filtrar();
+		
+		dadosArquivos = arquivoRepository
+						.findByParameters( 	consultaArquivofiltro.getDataArquivo(), consultaArquivofiltro.getIdAdquirente(),
+											consultaArquivofiltro.getCodigoFuncao(), consultaArquivofiltro.getIdStatusProcessamento(),
+											consultaArquivofiltro.getNomeArquivo());
+		
+		if(dadosArquivos.size() == 0)
+		{
+			adicionarMensagemErro(
+					MessagesPropertiesUtil
+							.getMessage("label.consulta.vazia"),
+					"");
+			setOperacao(OperacoesEnum.FILTRAGEM);			
+			return null;
+		}
+		
+		dados = new ParametroDataModel<ArquivoVO>(dadosArquivos);
+		dados.redefinir();
+		dados.ativar();
+		dados.getLista();
+		dados.iniciarPesquisa();
+		setOperacao(OperacoesEnum.LISTAGEM);
+				
+		
+		return null;
+	}
+	
+	
+	 public static ConsultaLiquidacaoWebBean getCurrentInstance() {
+         FacesContext facesContext = FacesContext.getCurrentInstance();
+         return (ConsultaLiquidacaoWebBean) facesContext.getApplication().getELResolver().getValue(facesContext.getELContext(), null, "ConsultaLiquidacaoWebBean");
+     }
+	
+	public String limpar()
+	{
+		this.consultaArquivofiltro = new ConsultaArquivoFiltroBean();
+		return null;
+	}	
+		
+	public String cancelar()
+	{
+		dados = new ParametroDataModel<ArquivoVO>(dadosArquivos);
+		setOperacao(OperacoesEnum.FILTRAGEM);				
+		return null;
+	}
+	
+	public String exportar()
+	{
+		
+		HashMap<String, Object> param = new HashMap<String, Object>();
+		String pathReport = "/pages/relatorio/ConsultaArquivoPDF.jrxml";
+		List<String> contents = new ArrayList<String>();
+		
+		if(tipoRelatorio.equals(TipoArquivoEnum.CSV.valor))
+		{								
+			contents.add(preencheCabecalhoCSV());
+			contents.add(preencheContentCSV());
+			exportar.exportar(tipoRelatorio, param, pathReport, this.arquivoRepository, contents);
+		}
+		else
+		{
+			exportar.exportar(tipoRelatorio, param, pathReport, this.arquivoRepository, contents, dadosArquivos);				
+		}
+												
+		
+		Messages.addInfo(null, MessagesPropertiesUtil.getMessage("label.exportado.sucesso"), "");
+		
+		tipoRelatorio = TipoArquivoEnum.PDF.valor;
+		
+		return null;
+	}
+	
+	public String preencheCabecalhoCSV()
+	{
+		StringBuilder cabecalho = new StringBuilder();
+		cabecalho.append("Data do Arquivo;Nome do Arquivo;Sequencial;Origem;Adquirente;Função;Status Processamento;Rejeições/Recusas;Código de Erro;Descrição do Erro");
+		cabecalho.append("\n");
+		return cabecalho.toString();
+	}
+	
+	public String preencheContentCSV()
+	{
+		StringBuilder content = new StringBuilder();
+		for(ArquivoVO arq: this.dadosArquivos)
+		{						
+			content.append(DateUtil.dateToString(arq.getDataArquivo(),"dd/MM/yyyy"));
+			content.append(";");
+			content.append(arq.getNomeArquivo());
+			content.append(";");
+			content.append(arq.getSequencial());
+			content.append(";");
+			content.append(arq.getOrigem());
+			content.append(";");
+			content.append(arq.getNomeAdquirente());
+			content.append(";");
+			content.append(arq.getFuncao());
+			content.append(";");
+			content.append(arq.getStatusProcessamento());
+			content.append(";");
+			content.append(arq.getQuantidadeRejeicoes());
+			content.append(";");
+			content.append(arq.getCodigoErro() == null || arq.getCodigoErro().isEmpty() ? "-" : arq.getCodigoErro());
+			content.append(";");
+			content.append(arq.getDescricaoErro() == null || arq.getDescricaoErro() .isEmpty() ? "-" : arq.getDescricaoErro());
+			content.append("\n");
+		}
+		
+		return content.toString();
+	}
+	
+	private void preencheCombos()
+	{
+		this.listaAdquirentes = adquirenteRepository.getAll();
+		this.listaFuncoes = funcaoRepository.getAll();
+		this.listaSituacoesArquivos = arquivoRepository.getAllSituacoes();
+	}
+
+	public ParametroDataModel<ArquivoVO> getDados() {
+		return dados;
+	}
+
+	public void setDados(ParametroDataModel<ArquivoVO> dados) {
+		this.dados = dados;
+	}
+
+	public ConsultaArquivoFiltroBean getConsultaArquivofiltro() {
+		return consultaArquivofiltro;
+	}
+
+	public void setConsultaArquivofiltro(
+			ConsultaArquivoFiltroBean consultaArquivofiltro) {
+		this.consultaArquivofiltro = consultaArquivofiltro;
+	}
+
+	public List<AdquirenteEntity> getListaAdquirentes() {
+		return listaAdquirentes;
+	}
+
+	public void setListaAdquirentes(List<AdquirenteEntity> listaAdquirentes) {
+		this.listaAdquirentes = listaAdquirentes;
+	}
+
+	public List<FuncaoEntity> getListaFuncoes() {
+		return listaFuncoes;
+	}
+
+	public void setListaFuncoes(List<FuncaoEntity> listaFuncoes) {
+		this.listaFuncoes = listaFuncoes;
+	}
+
+	public List<ArquivoProcessamentoEntity> getListaSituacoesArquivos() {
+		return listaSituacoesArquivos;
+	}
+
+	public void setListaSituacoesArquivos(
+			List<ArquivoProcessamentoEntity> listaSituacoesArquivos) {
+		this.listaSituacoesArquivos = listaSituacoesArquivos;
+	}
+
+	public List<ArquivoVO> getDadosArquivos() {
+		return dadosArquivos;
+	}
+
+	public void setDadosArquivos(List<ArquivoVO> dadosArquivos) {
+		this.dadosArquivos = dadosArquivos;
+	}
+
+	public String getTipoRelatorio() {
+		return tipoRelatorio;
+	}
+
+	public void setTipoRelatorio(String tipoRelatorio) {
+		this.tipoRelatorio = tipoRelatorio;
+	}
+	
+	
+}

@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:rich="http://richfaces.org/rich" xmlns:a4j="http://richfaces.org/a4j">
+
+    <h:head>
+
+        <title>SGPF</title>
+        <!--  <link rel="shortcut icon" href="#{resource['img/favicon.ico']}" type="image/x-icon" />  -->
+        <h:outputScript name="aguarde.js" library="js" />
+        <h:outputScript name="geral.js" library="js" />
+        <h:outputScript name="jquery.alerts.js" library="js" />
+        <h:outputScript name="jquery.alphanumeric.custom.js" library="js" />
+        <h:outputScript name="jquery.alphanumeric.pack.js" library="js" />
+        <h:outputScript name="jquery.maskedinput-1.3.1.js" library="js" />
+        <h:outputScript name="jquery.maskfinancial-1.3.js" library="js" />
+        <h:outputScript name="jquery.maskMoney.js" library="js" />
+        <h:outputScript name="common.js" library="js" />
+        <h:outputScript name="subModal.js" library="js" />
+
+        <h:outputScript target="head">
+            //var $j = jQuery.noConflict();
+            function noBack() {
+            	window.history.forward() 
+            } noBack();
+            
+            window.onload = noBack; 
+            window.onpageshow = function(evt) {
+            	if (evt.persisted) noBack() 
+            } 
+            
+            window.onunload = function() { 
+            	void (0) 
+           	}
+        </h:outputScript>
+
+    </h:head>
+
+    <h:body>
+
+        <h:form id="formulario">
+
+            <a name="irTopoPagina"></a>
+
+            <div id="main">
+
+                <div id="topo">
+
+                    <div id="bemVindo"></div>
+
+                    <div id="logo">
+
+                        <div id="icone">
+
+                        </div>
+
+                        <div id="login">
+                            <h:outputText id="usu" styleClass="usuNome" value="Seja Bem-Vindo!" />
+                            <br/>
+                            <h:outputText id="app" styleClass="appNome" value="#{messages['app.nome']}" />
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Menu -->
+                <ui:include src="/pages/templates/menu.xhtml" />
+
+                <table width="100%" align="left" border="0" cellpadding="0" cellspacing="0" style="margin-top: 3px; margin-left: 0px; float: left;">
+                    <tr>
+                        <td>
+                            <a4j:outputPanel id="painelMensagem" ajaxRendered="true" styleClass="painelMensagem">
+                                <ui:include src="/pages/templates/mensagem.xhtml" />
+                            </a4j:outputPanel>
+                            <br />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <ui:insert name="cabecalho" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <ui:insert name="breadcrumb" />
+                        </td>
+                    </tr>
+                </table>
+
+                <table width="100%" align="left" border="0" cellpadding="0" cellspacing="0" style="margin-top: 3px; margin-left: 0px; float: left;">
+                    <tr>
+                        <td>
+                            <ui:insert name="abas" />
+                        </td>
+                    </tr>
+                </table>
+
+                <div id="divConfirm"></div>
+
+                <!-- Inicio do Formulário -->
+                <table width="100%" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td align="left" colspan="2">
+
+                            <span style="display: none;"><input type="text" /></span>
+
+                            <!-- INICIO -->
+                            <ui:insert name="conteudo" />
+                            <!-- FIM -->
+
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <br />
+                        </td>
+                    </tr>
+
+                </table>
+                <!-- Fim do Formulario -->
+
+                <rich:jQuery selector="#mascara" query="maskFinancial()" timing="domready" name="maskMascara" />
+                <rich:jQuery selector=".somenteNumeros" query="numeric()" timing="domready" name="maskNumeric" />
+                <rich:jQuery selector=".moeda" query="maskFinancial({max: 18})" timing="domready" name="maskMoeda" />
+
+                <br />
+                <br />
+                <br />
+
+                <!-- rodape -->
+                <div id="rodape">
+                    <div style="padding-top: 5px;">#{messages['app.rodape']}</div>
+                </div>
+
+            </div>
+
+        </h:form>
+
+        <!-- Aguarde, OBS.: Esse página deve ficar fora do form, caso contrário irá gerar erro no status, fazendo não chamar o método onStop. -->
+        <ui:include src="/pages/templates/aguarde.xhtml" />
+
+        <ui:insert name="auxiliar" />
+
+        <script type="text/javascript">
+            iniciarLov('#{request.contextPath}');
+
+            $(":text").keypress(function(e) {
+                if (e.which == 13) {
+                    return false;
+                }
+            });
+
+            function maskCelular() {
+                jQuery('.celular').mask("9999-9999?9")
+                    .live('focusout', function(event) {
+                        var target, phone, element;
+                        target = event.srcElement;
+                        phone = target.value.replace(/\D/g, '');
+                        element = jQuery(target);
+                        element.unmask();
+                        if (phone.length > 8) {
+                            element.mask("99999-999?9");
+                        } else {
+                            element.mask("9999-9999?9");
+                        }
+                    });
+            }
+            jQuery(document).ready(function() {
+                maskCelular();
+            });
+        </script>
+
+        <ui:insert name="script" />
+
+        <!-- Adicionado aqui para sobrescrever o CSS do richfaces -->
+        <h:outputStylesheet name="notificacao.css" library="css" />
+        <h:outputStylesheet name="layout.css" library="css" />
+        <h:outputStylesheet name="componentes.css" library="css" />
+        <h:outputStylesheet name="menu.css" library="css" />
+        <h:outputStylesheet name="cabecalho.css" library="css" />
+        <h:outputStylesheet name="subModal.css" library="css" />
+        <h:outputStylesheet name="breadcrumb.css" library="css" />
+        <h:outputStylesheet name="richfaces.css" library="css" />
+        <h:outputStylesheet name="jquery.alerts.css" library="css" />
+        <h:outputStylesheet name="rsm.css" library="css" />
+
+    </h:body>
+
+    </html>

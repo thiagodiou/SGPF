@@ -1,0 +1,106 @@
+/**
+ * @(#) LDAPUtils.java.
+ *
+ * Copyright (c) 2008 PD CASE
+ * Belo Horizonte, MG - Brasil
+ * Todos os direitos reservados.
+ *
+ * Este software e confidencial e é propriedade da PD CASE, n\u00E3o é permitida a
+ * distribuiç\u00E3o/alteraç\u00E3o da mesma sem prévia autorizaç\u00E3o.
+ */
+package br.com.banestes.car.core.ldap;
+
+import java.util.List;
+import java.util.Map;
+
+
+
+import br.com.banestes.car.jpa.core.util.Configuration;
+import br.com.banestes.car.jpa.core.util.ConstanteGlobal;
+import br.com.banestes.car.jpa.exception.ConfigurationException;
+import br.com.banestes.car.jpa.log.Logger;
+import br.com.banestes.car.jpa.log.LoggerManager;
+
+
+
+/**
+ * Descriç\u00E3o da classe.
+ * 
+ * @author <a href="mailto:flavio.abel@pdcase.com.br">Fl\u00E1vio Júnior</a>.
+ * @version $Revision: 1.1 $
+ */
+public class LdapService {
+
+	private static LdapService instance;
+
+	private LdapIdentityStore ldapIdentityStore = new LdapIdentityStore();
+
+	private static final Logger LOGGER = LoggerManager.getLogger(ConstanteGlobal._APP_NAME);
+
+	static {
+		init();
+	}
+
+	private static void init() {
+		instance = new LdapService();
+		try {
+			instance.getLdapIdentityStore().setServerAddress(
+					Configuration.getInstance().getEnvironmentProperty("ldap-server-address", null));
+			instance.getLdapIdentityStore().setServerPort(
+					Integer.parseInt(Configuration.getInstance().getEnvironmentProperty("ldap-server-port", "0")));
+			instance.getLdapIdentityStore().setUserDNPrefix(
+					Configuration.getInstance().getEnvironmentProperty("ldap-user-DN-prefix", null));
+			instance.getLdapIdentityStore().setUserDNSuffix(
+					Configuration.getInstance().getEnvironmentProperty("ldap-user-DN-suffix", null));
+			instance.getLdapIdentityStore().setUserContextDN(
+					Configuration.getInstance().getEnvironmentProperty("ldap-user-context-DN", null));
+			instance.getLdapIdentityStore().setUserPasswordAttribute(
+					Configuration.getInstance().getEnvironmentProperty("ldap-user-password-attribute", null));
+			instance.getLdapIdentityStore().setRoleContextDN(
+					Configuration.getInstance().getEnvironmentProperty("ldap-role-context-DN", null));
+			instance.getLdapIdentityStore().setRoleDNPrefix(
+					Configuration.getInstance().getEnvironmentProperty("ldap-role-DN-prefix", null));
+			instance.getLdapIdentityStore().setRoleDNSuffix(
+					Configuration.getInstance().getEnvironmentProperty("ldap-role-DN-suffix", null));
+			instance.getLdapIdentityStore().setBindDN(
+					Configuration.getInstance().getEnvironmentProperty("ldap-bind-DN", null));
+			instance.getLdapIdentityStore().setBindCredentials(
+					Configuration.getInstance().getEnvironmentProperty("ldap-bind-credentials", null));
+			instance.getLdapIdentityStore().setUserRoleAttribute(
+					Configuration.getInstance().getEnvironmentProperty("ldap-user-role-attribute", null));
+			instance.getLdapIdentityStore().setUserObjectClasses(
+					Configuration.getInstance().getEnvironmentProperty("ldap-user-object-classes", null)
+							.split(","));
+			instance.getLdapIdentityStore().setUserAttributes(
+					Configuration.getInstance().getEnvironmentProperty("ldap-user-attributes", null)
+							.split(","));
+
+		} catch (ConfigurationException e) {
+			LOGGER.severe("LdapUtils", "init", "Erro ao carregar configurações de acesso ao LDAP");
+		}
+	}
+
+	private LdapService() {
+
+	}
+
+	public static LdapService getInstance() {
+		return instance;
+	}
+
+	public List<String> getImpliedRoles(String name) {
+		return ldapIdentityStore.getImpliedRoles(name);
+	}
+
+	public LdapIdentityStore getLdapIdentityStore() {
+		return ldapIdentityStore;
+	}
+	
+	public Map<String, String> getUserInformations(String username){
+		return ldapIdentityStore.getUserInformations(username);
+	}
+	
+	public List<String> listRoles(){
+		return ldapIdentityStore.listRoles();
+	}
+}

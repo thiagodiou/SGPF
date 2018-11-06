@@ -1,0 +1,713 @@
+/**
+ * @(#) LdapIdentityStore.java.
+ *
+ * Copyright (c) 2008 PD CASE
+ * Belo Horizonte, MG - Brasil
+ * Todos os direitos reservados.
+ *
+ * Este software e confidencial e é propriedade da PD CASE, n\u00E3o é permitida a
+ * distribuiç\u00E3o/alteraç\u00E3o da mesma sem prévia autorizaç\u00E3o.
+ */
+package br.com.banestes.car.core.ldap;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.logging.Logger;
+
+import javax.naming.Context;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.SearchControls;
+import javax.naming.directory.SearchResult;
+import javax.naming.ldap.InitialLdapContext;
+
+import br.com.banestes.car.jpa.exception.IdentityManagementException;
+
+/**
+ * Descriç\u00E3o da classe.
+ * 
+ * @author <a href="mailto:flavio.abel@pdcase.com.br">Fl\u00E1vio Júnior</a>.
+ * @version $Revision: 1.1 $
+ */
+public class LdapIdentityStore {
+	
+	private static final String LDAP_BOOLEAN_TRUE = Boolean.TRUE.toString().toUpperCase();
+
+	private static final Logger log = Logger.getLogger(LdapIdentityStore.class.getName());
+
+	private String serverAddress;
+
+	private int serverPort;
+
+	private String userContextDN = "ou=usuarios,o=banestes";
+
+	private String userDNPrefix = "uid=";
+
+	private String userDNSuffix = ",ou=usuarios,o=banestes";
+
+	private String roleContextDN = "ou=aplicacoes,o=banestes";
+
+	private String roleDNPrefix = "cn=";
+
+	private String roleDNSuffix = ",ou=aplicacoes,o=banestes";
+
+	private String bindDN = "uid=admin,ou=system";
+
+	private String bindCredentials = "secret";
+
+	private String userRoleAttribute = "roles";
+
+	private boolean roleAttributeIsDN = true;
+
+	private String userNameAttribute = "uid";
+
+	private String userPasswordAttribute = "userPassword";
+
+	private String firstNameAttribute = null;
+
+	private String lastNameAttribute = "sn";
+
+	private String fullNameAttribute = "cn";
+
+	private String enabledAttribute = null;
+
+	private String roleNameAttribute = "cn";
+
+	private String objectClassAttribute = "objectClass";
+
+	private String[] roleObjectClasses = {"organizationalRole"};
+
+	private String[] userObjectClasses = {"person", "uidObject"};
+
+	private String[] userAttributes = {};
+	
+	private String securityAuthenticationType = "simple";
+
+	private int searchScope = SearchControls.SUBTREE_SCOPE;
+
+	/**
+	 * Time limit for LDAP searches, in milliseconds
+	 */
+	private int searchTimeLimit = 10000;
+
+	public String[] getUserAttributes() {
+		return userAttributes;
+	}
+
+	public void setUserAttributes(String[] userAttributes) {
+		this.userAttributes = userAttributes;
+	}
+
+	public String getServerAddress() {
+		return serverAddress;
+	}
+
+	public void setServerAddress(String serverAddress) {
+		this.serverAddress = serverAddress;
+	}
+
+	public int getServerPort() {
+		return serverPort;
+	}
+
+	public void setServerPort(int serverPort) {
+		this.serverPort = serverPort;
+	}
+
+	public String getUserContextDN() {
+		return userContextDN;
+	}
+
+	public void setUserContextDN(String userContextDN) {
+		this.userContextDN = userContextDN;
+	}
+
+	public String getRoleContextDN() {
+		return roleContextDN;
+	}
+
+	public void setRoleContextDN(String roleContextDN) {
+		this.roleContextDN = roleContextDN;
+	}
+
+	public String getUserDNPrefix() {
+		return userDNPrefix;
+	}
+
+	public void setUserDNPrefix(String value) {
+		this.userDNPrefix = value;
+	}
+
+	public String getUserDNSuffix() {
+		return userDNSuffix;
+	}
+
+	public void setUserDNSuffix(String value) {
+		this.userDNSuffix = value;
+	}
+
+	public String getRoleDNPrefix() {
+		return roleDNPrefix;
+	}
+
+	public void setRoleDNPrefix(String value) {
+		this.roleDNPrefix = value;
+	}
+
+	public String getRoleDNSuffix() {
+		return roleDNSuffix;
+	}
+
+	public void setRoleDNSuffix(String value) {
+		this.roleDNSuffix = value;
+	}
+
+	public String getBindDN() {
+		return bindDN;
+	}
+
+	public void setBindDN(String bindDN) {
+		this.bindDN = bindDN;
+	}
+
+	public String getBindCredentials() {
+		return bindCredentials;
+	}
+
+	public void setBindCredentials(String bindCredentials) {
+		this.bindCredentials = bindCredentials;
+	}
+
+	public String getUserRoleAttribute() {
+		return userRoleAttribute;
+	}
+
+	public void setUserRoleAttribute(String userRoleAttribute) {
+		this.userRoleAttribute = userRoleAttribute;
+	}
+
+	public boolean getRoleAttributeIsDN() {
+		return roleAttributeIsDN;
+	}
+
+	public void setRoleAttributeIsDN(boolean value) {
+		this.roleAttributeIsDN = value;
+	}
+
+	public String getRoleNameAttribute() {
+		return roleNameAttribute;
+	}
+
+	public void setRoleNameAttribute(String roleNameAttribute) {
+		this.roleNameAttribute = roleNameAttribute;
+	}
+
+	public String getUserNameAttribute() {
+		return userNameAttribute;
+	}
+
+	public void setUserNameAttribute(String userNameAttribute) {
+		this.userNameAttribute = userNameAttribute;
+	}
+
+	public String getUserPasswordAttribute() {
+		return userPasswordAttribute;
+	}
+
+	public void setUserPasswordAttribute(String userPasswordAttribute) {
+		this.userPasswordAttribute = userPasswordAttribute;
+	}
+
+	public String getFirstNameAttribute() {
+		return firstNameAttribute;
+	}
+
+	public void setFirstNameAttribute(String firstNameAttribute) {
+		this.firstNameAttribute = firstNameAttribute;
+	}
+
+	public String getLastNameAttribute() {
+		return lastNameAttribute;
+	}
+
+	public void setLastNameAttribute(String lastNameAttribute) {
+		this.lastNameAttribute = lastNameAttribute;
+	}
+
+	public String getFullNameAttribute() {
+		return fullNameAttribute;
+	}
+
+	public void setFullNameAttribute(String fullNameAttribute) {
+		this.fullNameAttribute = fullNameAttribute;
+	}
+
+	public String getEnabledAttribute() {
+		return enabledAttribute;
+	}
+
+	public void setEnabledAttribute(String enabledAttribute) {
+		this.enabledAttribute = enabledAttribute;
+	}
+
+	public String getObjectClassAttribute() {
+		return objectClassAttribute;
+	}
+
+	public void setObjectClassAttribute(String objectClassAttribute) {
+		this.objectClassAttribute = objectClassAttribute;
+	}
+
+	public String[] getRoleObjectClasses() {
+		return roleObjectClasses;
+	}
+
+	public void setRoleObjectClass(String[] roleObjectClasses) {
+		this.roleObjectClasses = roleObjectClasses;
+	}
+
+	public String[] getUserObjectClasses() {
+		return userObjectClasses;
+	}
+
+	public void setUserObjectClasses(String[] userObjectClasses) {
+		this.userObjectClasses = userObjectClasses;
+	}
+
+	public int getSearchTimeLimit() {
+		return searchTimeLimit;
+	}
+
+	public void setSearchTimeLimit(int searchTimeLimit) {
+		this.searchTimeLimit = searchTimeLimit;
+	}
+
+	public String getSecurityAuthenticationType() {
+		return securityAuthenticationType;
+	}
+
+	public void setSecurityAuthenticationType(String value) {
+		this.securityAuthenticationType = value;
+	}
+
+	public String getSearchScope() {
+		switch (searchScope) {
+		case SearchControls.OBJECT_SCOPE:
+			return "OBJECT_SCOPE";
+		case SearchControls.ONELEVEL_SCOPE:
+			return "ONELEVEL_SCOPE";
+		case SearchControls.SUBTREE_SCOPE:
+			return "SUBTREE_SCOPE";
+		default:
+			return "UNKNOWN";
+		}
+	}
+
+	public void setSearchScope(String value) {
+		if ("OBJECT_SCOPE".equals(value)) {
+			searchScope = SearchControls.OBJECT_SCOPE;
+		} else if ("ONELEVEL_SCOPE".equals(value)) {
+			searchScope = SearchControls.ONELEVEL_SCOPE;
+		} else {
+			searchScope = SearchControls.SUBTREE_SCOPE;
+			if (!"SUBTREE_SCOPE".equals(value)) {
+				log.warning("Invalid search scope specified (" + value
+						+ ") - search scope set to SUBTREE_SCOPE");
+			}
+		}
+	}
+
+	protected final InitialLdapContext initialiseContext() throws NamingException {
+		return initialiseContext(getBindDN(), getBindCredentials());
+	}
+
+//	Diego Rodrigues
+//	Adaptacao para o contexto Banestes
+	protected final InitialLdapContext initialiseContext(String principal, String credentials)
+			throws NamingException {
+		Properties env = new Properties();
+
+		env.setProperty(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+		env.setProperty(Context.SECURITY_AUTHENTICATION, securityAuthenticationType);
+
+		String providerUrl = String.format("ldap://%s:%d", getServerAddress(), getServerPort());
+		env.setProperty(Context.PROVIDER_URL, providerUrl);
+		
+		if (principal != null && !principal.trim().isEmpty()){
+			env.setProperty(Context.SECURITY_PRINCIPAL, principal);
+			env.setProperty(Context.SECURITY_CREDENTIALS, credentials);
+		}
+
+		InitialLdapContext ctx = new InitialLdapContext(env, null);
+		return ctx; 
+	}
+
+	protected String getUserDN(String username) {
+		return String.format("%s%s%s", getUserDNPrefix(), username, getUserDNSuffix());
+	}
+
+	protected String getRoleDN(String role) {
+		return String.format("%s%s%s", getRoleDNPrefix(), role, getRoleDNSuffix());
+	}
+
+	@SuppressWarnings("rawtypes")
+	public boolean roleExists(String role) {
+		InitialLdapContext ctx = null;
+		try {
+			ctx = initialiseContext();
+
+			int searchScope = SearchControls.SUBTREE_SCOPE;
+			int searchTimeLimit = 10000;
+
+			String[] roleAttr = {getRoleNameAttribute()};
+
+			SearchControls controls = new SearchControls();
+			controls.setSearchScope(searchScope);
+			controls.setReturningAttributes(roleAttr);
+			controls.setTimeLimit(searchTimeLimit);
+
+			String roleFilter = "(&(" + getObjectClassAttribute() + "={0})(" + getRoleNameAttribute()
+					+ "={1}))";
+			Object[] filterArgs = {getRoleObjectClasses(), role};
+
+			NamingEnumeration answer = ctx.search(getRoleContextDN(), roleFilter, filterArgs, controls);
+			while (answer.hasMore()) {
+				SearchResult sr = (SearchResult) answer.next();
+				Attributes attrs = sr.getAttributes();
+				Attribute user = attrs.get(getRoleNameAttribute());
+
+				for (int i = 0; i < user.size(); i++) {
+					Object value = user.get(i);
+					if (role.equals(value))
+						return true;
+				}
+			}
+			answer.close();
+
+			return false;
+		} catch (NamingException ex) {
+			throw new IdentityManagementException("Error getting roles", ex);
+		} finally {
+			if (ctx != null) {
+				try {
+					ctx.close();
+				} catch (NamingException ex) {
+				}
+			}
+		}
+	}
+	
+//	Metodo que preenche um Map com as os atributos e os valores de um usuario
+//	Os atributos que serão obtidos devem ser cadastrados no arquivo de contantes
+//	Diego S Rodrigues
+	public Map<String, String> getUserInformations(String username){
+		HashMap<String, String> map = new HashMap<String, String>();
+		
+		InitialLdapContext ctx = null;
+		try {
+			ctx = initialiseContext();
+			
+			Attributes attrs = ctx.getAttributes(getUserDN(username), getUserAttributes());
+			
+			for (NamingEnumeration<? extends Attribute> ae = attrs.getAll(); ae.hasMore();) {
+	          Attribute attr = (Attribute) ae.next();
+	          map.put(attr.getID(), (String)attr.get());
+			}			
+			
+			/*log.info("getUserInformations - " + username);
+			map.forEach((key, v) -> log.info("\t" + key + ": " + v));*/
+			
+		} catch (NamingException e) {
+			e.printStackTrace();
+			log.warning("Não foi possível ao obter os dados do usuario: " + e.toString());
+			
+		}finally{
+			try {
+				ctx.close();
+			} catch (NamingException e) {
+				e.printStackTrace();
+			}
+		}
+		return map;
+	}
+	
+	public boolean isUserEnabled(String name) {
+		if (getEnabledAttribute() == null)
+			return true;
+
+		InitialLdapContext ctx = null;
+		try {
+			ctx = initialiseContext();
+
+			String userDN = getUserDN(name);
+			Attributes attribs = ctx.getAttributes(userDN, new String[]{getEnabledAttribute()});
+			Attribute enabledAttrib = attribs.get(getEnabledAttribute());
+			if (enabledAttrib != null) {
+				for (int r = 0; r < enabledAttrib.size(); r++) {
+					Object value = enabledAttrib.get(r);
+					if (LDAP_BOOLEAN_TRUE.equals(value))
+						return true;
+				}
+			}
+
+			return false;
+		} catch (NamingException ex) {
+			throw new IdentityManagementException("Failed to delete user", ex);
+		} finally {
+			if (ctx != null) {
+				try {
+					ctx.close();
+				} catch (NamingException ex) {
+				}
+			}
+		}
+	}
+
+
+
+	@SuppressWarnings("rawtypes")
+	public List<String> getGrantedRoles(String name) {
+		Set<String> userRoles = new HashSet<String>();
+
+		InitialLdapContext ctx = null;
+		try {
+			ctx = initialiseContext();
+
+			String userFilter = "(" + getUserNameAttribute() + "={0})";
+			String[] roleAttr = {getUserRoleAttribute()};
+
+			SearchControls controls = new SearchControls();
+			controls.setSearchScope(searchScope);
+			controls.setReturningAttributes(roleAttr);
+			controls.setTimeLimit(getSearchTimeLimit());
+			Object[] filterArgs = {name};
+
+			NamingEnumeration answer = ctx.search(getUserContextDN(), userFilter, filterArgs, controls);
+			while (answer.hasMore()) {
+				SearchResult sr = (SearchResult) answer.next();
+				Attributes attrs = sr.getAttributes();
+				Attribute roles = attrs.get(getUserRoleAttribute());
+				if (roles != null) {
+					for (int r = 0; r < roles.size(); r++) {
+						Object value = roles.get(r);
+						String roleName = null;
+						if (getRoleAttributeIsDN() == true) {
+							String roleDN = value.toString();
+							String[] returnAttribute = {getRoleNameAttribute()};
+							try {
+								Attributes result2 = ctx.getAttributes(roleDN, returnAttribute);
+								Attribute roles2 = result2.get(getRoleNameAttribute());
+								if (roles2 != null) {
+									for (int m = 0; m < roles2.size(); m++) {
+										roleName = (String) roles2.get(m);
+										userRoles.add(roleName);
+									}
+								}
+							} catch (NamingException ex) {
+								throw new IdentityManagementException("Failed to query roles", ex);
+							}
+						} else {
+							// The role attribute value is the role name
+							roleName = value.toString();
+							userRoles.add(roleName);
+						}
+					}
+				}
+			}
+			answer.close();
+
+			return new ArrayList<String>(userRoles);
+		} catch (NamingException ex) {
+			throw new IdentityManagementException("Error getting roles", ex);
+		} finally {
+			if (ctx != null) {
+				try {
+					ctx.close();
+				} catch (NamingException ex) {
+				}
+			}
+		}
+	}
+
+	public List<String> getImpliedRoles(String name) {
+		return getGrantedRoles(name);
+	}
+
+
+	@SuppressWarnings("rawtypes")
+	public List<String> listRoles() {
+		List<String> roles = new ArrayList<String>();
+
+		InitialLdapContext ctx = null;
+		try {
+			ctx = initialiseContext();
+
+			String[] roleAttr = {getRoleNameAttribute()};
+
+			SearchControls controls = new SearchControls();
+			controls.setSearchScope(searchScope);
+			controls.setReturningAttributes(roleAttr);
+			controls.setTimeLimit(getSearchTimeLimit());
+
+			StringBuilder roleFilter = new StringBuilder();
+
+			Object[] filterArgs = new Object[getRoleObjectClasses().length];
+			for (int i = 0; i < getRoleObjectClasses().length; i++) {
+				roleFilter.append("(");
+				roleFilter.append(getObjectClassAttribute());
+				roleFilter.append("={");
+				roleFilter.append(i);
+				roleFilter.append("})");
+				filterArgs[i] = getRoleObjectClasses()[i];
+			}
+
+			NamingEnumeration answer = ctx.search(getRoleContextDN(), roleFilter.toString(), filterArgs,
+					controls);
+			while (answer.hasMore()) {
+				SearchResult sr = (SearchResult) answer.next();
+				Attributes attrs = sr.getAttributes();
+				Attribute user = attrs.get(getRoleNameAttribute());
+
+				for (int i = 0; i < user.size(); i++) {
+					Object value = user.get(i);
+					roles.add(value.toString());
+				}
+			}
+			answer.close();
+			return roles;
+		} catch (NamingException ex) {
+			throw new IdentityManagementException("Error getting roles", ex);
+		} finally {
+			if (ctx != null) {
+				try {
+					ctx.close();
+				} catch (NamingException ex) {
+				}
+			}
+		}
+	}
+
+	@SuppressWarnings("rawtypes")
+	public List<String> listUsers(String filter) {
+		List<String> users = new ArrayList<String>();
+
+		InitialLdapContext ctx = null;
+		try {
+			ctx = initialiseContext();
+
+			String[] userAttr = {getUserNameAttribute()};
+
+			SearchControls controls = new SearchControls();
+			controls.setSearchScope(searchScope);
+			controls.setReturningAttributes(userAttr);
+			controls.setTimeLimit(getSearchTimeLimit());
+
+			StringBuilder userFilter = new StringBuilder("(&");
+
+			Object[] filterArgs = new Object[getUserObjectClasses().length];
+			for (int i = 0; i < getUserObjectClasses().length; i++) {
+				userFilter.append("(");
+				userFilter.append(getObjectClassAttribute());
+				userFilter.append("={");
+				userFilter.append(i);
+				userFilter.append("})");
+				filterArgs[i] = getUserObjectClasses()[i];
+			}
+
+			userFilter.append(")");
+
+			NamingEnumeration answer = ctx.search(getUserContextDN(), userFilter.toString(), filterArgs,
+					controls);
+			while (answer.hasMore()) {
+				SearchResult sr = (SearchResult) answer.next();
+				Attributes attrs = sr.getAttributes();
+				Attribute user = attrs.get(getUserNameAttribute());
+
+				for (int i = 0; i < user.size(); i++) {
+					Object value = user.get(i);
+
+					if (filter != null) {
+						if (value.toString().toLowerCase().contains(filter.toLowerCase())) {
+							users.add(value.toString());
+						}
+					} else {
+						users.add(value.toString());
+					}
+				}
+			}
+			answer.close();
+			return users;
+		} catch (NamingException ex) {
+			throw new IdentityManagementException("Error getting users", ex);
+		} finally {
+			if (ctx != null) {
+				try {
+					ctx.close();
+				} catch (NamingException ex) {
+				}
+			}
+		}
+	}
+
+	@SuppressWarnings("rawtypes")
+	public boolean userExists(String name) {
+		InitialLdapContext ctx = null;
+		try {
+			ctx = initialiseContext();
+
+			String[] userAttr = {getUserNameAttribute()};
+
+			SearchControls controls = new SearchControls();
+			controls.setSearchScope(searchScope);
+			controls.setReturningAttributes(userAttr);
+			controls.setTimeLimit(getSearchTimeLimit());
+
+			StringBuilder userFilter = new StringBuilder();
+
+			Object[] filterArgs = new Object[getUserObjectClasses().length];
+			for (int i = 0; i < getUserObjectClasses().length; i++) {
+				userFilter.append("(");
+				userFilter.append(getObjectClassAttribute());
+				userFilter.append("={");
+				userFilter.append(i);
+				userFilter.append("})");
+				filterArgs[i] = getUserObjectClasses()[i];
+			}
+
+			NamingEnumeration answer = ctx.search(getUserContextDN(), userFilter.toString(), filterArgs,
+					controls);
+			while (answer.hasMore()) {
+				SearchResult sr = (SearchResult) answer.next();
+				Attributes attrs = sr.getAttributes();
+				Attribute user = attrs.get(getUserNameAttribute());
+
+				for (int i = 0; i < user.size(); i++) {
+					Object value = user.get(i);
+					if (name.equals(value)) {
+						answer.close();
+						return true;
+					}
+				}
+			}
+			answer.close();
+			return false;
+		} catch (NamingException ex) {
+			throw new IdentityManagementException("Error getting users", ex);
+		} finally {
+			if (ctx != null) {
+				try {
+					ctx.close();
+				} catch (NamingException ex) {
+				}
+			}
+		}
+	}
+
+}

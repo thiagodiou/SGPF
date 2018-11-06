@@ -1,0 +1,123 @@
+package br.com.banestes.car.bean;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Date;
+
+public class ConsultaAgendaFiltroBean implements Serializable
+{
+	
+
+	private static final long serialVersionUID = -973788477044882191L;
+
+	private BigInteger idAdquirente;
+	
+	private BigInteger idBandeira;	
+	
+	private String cnpjCpfEstabelecimento;
+	
+	private String agenciaEstabelecimento;
+	
+	private String contaEstabelcimento;
+	
+	private Date dataInicial;
+	
+	private Date dataFinal;
+	
+	private BigDecimal valorInicial;
+	
+	private BigDecimal valorFinal;
+
+	
+	public boolean isEmpty()
+	{
+		if( idAdquirente.compareTo(BigInteger.ZERO) == 0 && idBandeira.compareTo(BigInteger.ZERO) == 0 && cnpjCpfEstabelecimento.isEmpty() &&
+			agenciaEstabelecimento.isEmpty() && contaEstabelcimento.isEmpty() && dataInicial == null && dataFinal == null && valorInicial.compareTo(BigDecimal.ZERO) == 0 &&
+			valorFinal.compareTo(BigDecimal.ZERO) == 0)
+		{
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public BigInteger getIdAdquirente() {		
+		return idAdquirente == null || idAdquirente.compareTo(BigInteger.ZERO) == 0 ? null : idAdquirente ;
+	}
+
+	public void setIdAdquirente(BigInteger idAdquirente) {
+		this.idAdquirente = idAdquirente;
+	}
+
+	public BigInteger getIdBandeira() {		
+		return idBandeira == null || idBandeira.compareTo(BigInteger.ZERO) == 0 ? null : idBandeira ;
+	}
+
+	public void setIdBandeira(BigInteger idBandeira) {
+		this.idBandeira = idBandeira;
+	}
+
+	public String getCnpjCpfEstabelecimento() {
+		return cnpjCpfEstabelecimento;
+	}
+
+	public void setCnpjCpfEstabelecimento(String cnpjCpfEstabelecimento) {
+		this.cnpjCpfEstabelecimento = cnpjCpfEstabelecimento;
+	}
+
+	public String getAgenciaEstabelecimento() {
+		return agenciaEstabelecimento;
+	}
+
+	public void setAgenciaEstabelecimento(String agenciaEstabelecimento) {
+		this.agenciaEstabelecimento = agenciaEstabelecimento;
+	}
+
+	public String getContaEstabelcimento() {
+		return contaEstabelcimento;
+	}
+
+	public void setContaEstabelcimento(String contaEstabelcimento) {
+		this.contaEstabelcimento = contaEstabelcimento;
+	}
+
+	public Date getDataInicial() {
+		return dataInicial;
+	}
+
+	public void setDataInicial(Date dataInicial) {
+		this.dataInicial = dataInicial;
+	}
+
+	public Date getDataFinal() {
+		return dataFinal;
+	}
+
+	public void setDataFinal(Date dataFinal) {
+		this.dataFinal = dataFinal;
+	}
+
+	public BigDecimal getValorInicial() {
+		return valorInicial == null || valorInicial.compareTo(BigDecimal.ZERO) == 0 ? null : valorInicial;
+	}
+
+	public void setValorInicial(BigDecimal valorInicial) {
+		this.valorInicial = valorInicial;
+	}
+
+	public BigDecimal getValorFinal() {		
+		return valorFinal == null || valorFinal.compareTo(BigDecimal.ZERO) == 0 ? null : valorFinal;
+	}
+
+	public void setValorFinal(BigDecimal valorFinal) {
+		this.valorFinal = valorFinal;
+	}
+	
+	
+	
+
+	
+		
+
+}

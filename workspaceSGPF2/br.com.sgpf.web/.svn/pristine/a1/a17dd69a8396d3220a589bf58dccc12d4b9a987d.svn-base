@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2016-08-06T12:08:38 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="HistoricoEstabelecimento" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c85b0886-65f3-4489-96e0-6cf2bdb582c4">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="CAR"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<parameter name="descricao" class="java.lang.String"/>
+	<parameter name="codigo" class="java.lang.String"/>
+	<parameter name="situacao" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+LPAD(TB_OCR.CDO_CD_CODIGO_OCORRENCIA,2,'0') AS CODIGO_OCORRENCIA,
+TB_OCR.CDO_DS_DESCRICAO_OCORRENCIA,
+DECODE(TB_OCR.CDO_TP_OCORRENCIA_CIP, 'E','ERRO','SUCESSO' ) AS TIPO_OCORRENCIA,
+DECODE (TB_OCR.CDO_FL_SITUACAO, 'A', 'Ativo', 'Inativo' ) AS SITUACAO_OCR
+FROM 
+TB_OCR_OCORRENCIA_CIP TB_OCR
+WHERE
+(($P{codigo} IS NOT NULL AND TB_OCR.CDO_CD_CODIGO_OCORRENCIA = $P{codigo}) OR ($P{codigo} IS NULL))
+AND
+(($P{descricao} IS NOT NULL AND  LOWER(TB_OCR.CDO_DS_DESCRICAO_OCORRENCIA) LIKE  '$P!{descricao}%') OR ($P{descricao} IS NULL))
+AND
+(($P{situacao} IS NOT NULL AND  TB_OCR.CDO_FL_SITUACAO = $P{situacao}) OR ($P{situacao} IS NULL))
+ORDER BY CODIGO_OCORRENCIA]]>
+	</queryString>
+	<field name="CODIGO_OCORRENCIA" class="java.lang.String"/>
+	<field name="CDO_DS_DESCRICAO_OCORRENCIA" class="java.lang.String"/>
+	<field name="TIPO_OCORRENCIA" class="java.lang.String"/>
+	<field name="SITUACAO_OCR" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="45" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="25" width="210" height="20" forecolor="#878787" backcolor="#969696" uuid="b72f539b-6f10-4fcb-90af-a241381ff3f5"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="210" y="25" width="201" height="20" forecolor="#878787" backcolor="#969696" uuid="32221f55-7c84-4418-b028-042012b93326"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="610" y="25" width="192" height="20" forecolor="#878787" backcolor="#969696" uuid="88c175a0-aafb-44e2-a96b-0ddcc7caaec7"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="5" y="25" width="195" height="20" uuid="c07858a1-bdc7-46b2-be1e-f56521577bac"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Código de Ocorrência - CIP
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="213" y="25" width="191" height="20" uuid="f79f7536-b6bc-479e-896b-da1e2043259b"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Descrição]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="615" y="25" width="164" height="20" uuid="c6f2c820-c6ef-4e3c-9e5e-0c23a60cd8cb"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Status]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="411" y="25" width="199" height="20" forecolor="#878787" backcolor="#969696" uuid="3a90e4ae-4108-4547-9bb6-8d38e21f839b"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="414" y="25" width="189" height="20" uuid="bff8c533-6191-4977-bb18-e67bacaac0f6"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tipo de Ocorrência]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="0" y="0" width="802" height="25" forecolor="#878787" backcolor="#969696" uuid="295f3df3-d104-471d-a04c-e77ec4a807a2"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="-40" width="780" height="24" forecolor="#030000" uuid="971c60b7-27b4-40b0-9d01-6acf100c521f"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="14" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Resultado Consulta - Código de Ocorrência]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="780" height="24" forecolor="#030000" uuid="89988929-4391-4c4d-b446-56daa9338fb0"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="14" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Resultado Consulta - Código de Ocorrência - CIP]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="210" height="20" uuid="f38e80e4-219a-4329-baad-ee21f99e47ee"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="210" y="0" width="201" height="20" uuid="eb44c7ba-8ef5-4db0-99fe-9848c6cc2a2b"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="411" y="0" width="199" height="20" uuid="5956d54c-fc7a-4e33-ad7a-8717ebff81d1"/>
+			</rectangle>
+			<textField>
+				<reportElement x="5" y="0" width="205" height="20" uuid="dc01900d-c0a1-41b0-8335-152e94d438f9"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{CODIGO_OCORRENCIA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="213" y="0" width="198" height="20" uuid="2490fac0-2c03-4686-a5c0-0c9344afd557"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{CDO_DS_DESCRICAO_OCORRENCIA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="414" y="0" width="196" height="20" uuid="b05823b1-a852-4181-af61-bbc79daa3ee6"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{TIPO_OCORRENCIA}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="610" y="0" width="192" height="20" uuid="973cd6a5-34f3-4b5e-b691-4ee1d424d07b"/>
+			</rectangle>
+			<textField>
+				<reportElement x="617" y="0" width="185" height="20" uuid="9263883b-9869-4f24-877f-1225334fad91"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{SITUACAO_OCR}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="53" splitType="Stretch">
+			<textField>
+				<reportElement x="702" y="10" width="100" height="30" uuid="a6feebfe-ba9b-4a87-8649-b0d2097c32a3"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA[String.format("Página %s",$V{PAGE_NUMBER})]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

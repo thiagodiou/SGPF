@@ -1,0 +1,67 @@
+package br.com.banestes.car.bean;
+
+import java.io.Serializable;
+import java.math.BigInteger;
+
+
+import br.com.banestes.car.jpa.core.jpa.enumeration.FinalidadeHistoricoContaCorrenteEnum;
+
+public class HistoricoContaCorrenteFiltroBean implements Serializable
+{
+
+	private static final long serialVersionUID = 3993687874716213434L;
+
+	public HistoricoContaCorrenteFiltroBean()
+	{
+		codigo = "";
+		finalidade = FinalidadeHistoricoContaCorrenteEnum.TODOS.valor;
+		descricao = "";		
+	}
+	
+	
+	private String descricao;
+
+	private String codigo;
+	
+	private String finalidade;
+	
+	private BigInteger idAdquirente;
+	
+	
+    
+	
+	public String getDescricao() {
+		return descricao;
+	}
+
+	public void setDescricao(String decricao) {
+		this.descricao = decricao;
+	}
+
+	public String getCodigo() {
+		return codigo;
+	}
+
+	public void setCodigo(String codigo) {		
+		this.codigo = codigo;
+		
+	}
+
+	public String getFinalidade() {
+		return finalidade;
+	}
+
+	public void setFinalidade(String finalidade) {
+		this.finalidade = finalidade;
+	}
+
+	public BigInteger getIdAdquirente() {
+		return idAdquirente == null || idAdquirente.compareTo(BigInteger.ZERO) == 0 ? null : idAdquirente;		
+	}
+
+	public void setIdAdquirente(BigInteger idAdquirente) {
+		this.idAdquirente = idAdquirente;
+	}
+
+	
+}

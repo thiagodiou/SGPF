@@ -1,0 +1,382 @@
+package br.com.banestes.car.bean;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.enterprise.inject.Produces;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.http.HttpSession;
+
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+
+import org.omnifaces.cdi.ViewScoped;
+import org.omnifaces.util.Messages;
+
+import br.com.banestes.car.core.bean.AbstractWebBean;
+import br.com.banestes.car.core.enumerators.OperacoesEnum;
+import br.com.banestes.car.core.enumerators.TipoArquivoEnum;
+import br.com.banestes.car.core.exportacao.ExportarDataModel;
+import br.com.banestes.car.core.paginacao.ParametroDataModel;
+import br.com.banestes.car.jpa.core.util.Constants;
+import br.com.banestes.car.jpa.core.util.DateUtil;
+import br.com.banestes.car.jpa.core.util.MessagesPropertiesUtil;
+import br.com.banestes.car.jpa.entity.AdquirenteEntity;
+import br.com.banestes.car.jpa.entity.BandeiraEntity;
+import br.com.banestes.car.jpa.entity.CodigoOcorrenciaBanestesEntity;
+import br.com.banestes.car.jpa.entity.DominioEntity;
+import br.com.banestes.car.jpa.entity.FuncaoEntity;
+import br.com.banestes.car.jpa.model.repository.aplicacao.AdquirenteRepository;
+import br.com.banestes.car.jpa.model.repository.aplicacao.ArquivoRepository;
+import br.com.banestes.car.jpa.model.repository.aplicacao.BandeiraRepository;
+import br.com.banestes.car.jpa.model.repository.aplicacao.DominioRepository;
+import br.com.banestes.car.jpa.model.repository.aplicacao.FuncaoRepository;
+import br.com.banestes.car.jpa.model.repository.aplicacao.HistoricoLiquidacaoRepository;
+import br.com.banestes.car.jpa.model.repository.aplicacao.OcorrenciaRepository;
+import br.com.banestes.car.jpa.vo.LiquidacaoRecVO;
+
+
+
+
+
+@Named
+@ViewScoped
+public class ConsultaLiquidacaoRecusadaWebBean extends AbstractWebBean{
+		
+	private static final long serialVersionUID = -615925764482157367L;
+	private ExportarDataModel exportar;
+	
+	@Named("liquidacaoRecDados")
+	@Produces
+	private ParametroDataModel<LiquidacaoRecVO> dados;	
+	private LiquidacaoRecVO liquidacao;
+	private ConsultaLiquidacaoRecusadaFiltroBean consultaLiqRecusadaFiltroBean;	
+	private List<AdquirenteEntity> listaAdquirentes;
+	private List<FuncaoEntity> listaFuncoes;
+	private List<BandeiraEntity> listaBandeira;
+	private List<DominioEntity> listaDominio;
+	private List<CodigoOcorrenciaBanestesEntity> listaOcorrenciaBanestes;	
+	
+	@Inject
+	private transient DominioRepository dominioRepository;
+	
+	@Inject
+	private transient OcorrenciaRepository ocorrenciaRepository;
+	
+	@Inject
+	private transient BandeiraRepository bandeiraRepository;
+	
+	@Inject
+	private transient FuncaoRepository funcaoRepository;
+
+	@Inject
+	private transient AdquirenteRepository adquirenteRepository;
+	
+	@Inject
+	private transient ArquivoRepository arquivoRepository;
+		
+	@Inject
+	private transient HistoricoLiquidacaoRepository historicoLiquidacaoRepository;	
+	
+	private List<LiquidacaoRecVO> dadosLiquidacao;
+	
+	private String tipoRelatorio;		
+	private int quantidadeLiquidacoes;
+
+	@PostConstruct
+	public void init() {
+				
+		HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
+		consultaLiqRecusadaFiltroBean = (ConsultaLiquidacaoRecusadaFiltroBean)session.getAttribute("filtrosLiquidacaoRecusada");
+		session.setAttribute("filtrosLiquidacaoRecusada", null);
+		
+	}		
+	
+	public void preRenderView() {
+		
+		if (!FacesContext.getCurrentInstance().isPostback()){									
+			if(consultaLiqRecusadaFiltroBean != null){
+			
+				filtrar();
+			}
+			else{
+				
+				consultaLiqRecusadaFiltroBean = new ConsultaLiquidacaoRecusadaFiltroBean();
+				this.setOperacao(OperacoesEnum.FILTRAGEM);		
+			}
+			
+			exportar = new ExportarDataModel();
+			preencheCombos();
+				
+		}
+	}
+		
+	public String filtrar() 
+	{		
+		tipoRelatorio = TipoArquivoEnum.PDF.valor;				
+		
+		if(!validarPeriodo())			
+			return null;
+		
+		dadosLiquidacao = historicoLiquidacaoRepository
+							.findByParametersRec(consultaLiqRecusadaFiltroBean.getNomeArquivo(), 
+												 consultaLiqRecusadaFiltroBean.getIdAdquirente(), 
+									 			 consultaLiqRecusadaFiltroBean.getCodigoFuncao(), 
+									 			 consultaLiqRecusadaFiltroBean.getStatusLiquidacao(), 
+									 			 consultaLiqRecusadaFiltroBean.getDataArquivo(), 
+									 			 consultaLiqRecusadaFiltroBean.getNumeroUnicoLiquidacao());
+		
+		quantidadeLiquidacoes = dadosLiquidacao.size();		
+		
+		if(dadosLiquidacao.size() == 0)
+		{
+			adicionarMensagemErro(
+					MessagesPropertiesUtil
+							.getMessage("label.consulta.vazia"),
+					"");
+			setOperacao(OperacoesEnum.FILTRAGEM);			
+			return null;
+		}
+		
+		dados = new ParametroDataModel<LiquidacaoRecVO>(dadosLiquidacao);
+		dados.redefinir();
+		dados.ativar();
+		dados.getLista();
+		dados.iniciarPesquisa();
+		setOperacao(OperacoesEnum.LISTAGEM);
+				
+		
+		return null;
+	}
+	
+	public String consultaLiquidacao(LiquidacaoRecVO liq)
+	{
+		String numeroUnico = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("numeroUnico");
+		ConsultaLiquidacaoFiltroBean filtroLiquidacao = new ConsultaLiquidacaoFiltroBean();
+		filtroLiquidacao.setNumeroUnicoLiquidacao(numeroUnico);		
+		
+		HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
+		session.setAttribute("filtrosLiquidacao", filtroLiquidacao);
+		
+		return "/pages/consultaLiquidacao/consultaLiquidacao.xhtml?faces-redirect=true";
+	}
+	
+	private boolean validarPeriodo()
+	{
+			
+		if( consultaLiqRecusadaFiltroBean.getDataArquivo() == null )
+		{
+			consultaLiqRecusadaFiltroBean.setDataArquivo(new Date());
+		}
+		
+		if( consultaLiqRecusadaFiltroBean.getDataArquivo() != null)
+		{
+			if(consultaLiqRecusadaFiltroBean.getDataArquivo().before(Constants.DATA_IMPLANTACAO))
+			{
+				adicionarMensagemErro(String.format("Consulta anterior a data de implantação do sistema %s. Favor utilizar o sistema DCO08, opção 70 e 54.",
+						DateUtil.dateToString(Constants.DATA_IMPLANTACAO,"dd/MM/yyyy")),	"");
+
+				return false;
+			}
+		}		
+		
+		return true;
+	}
+			
+	public String limpar(){
+		
+		this.consultaLiqRecusadaFiltroBean = new ConsultaLiquidacaoRecusadaFiltroBean();
+		return null;
+	}	
+		
+	public String cancelar(){
+		
+		dados = new ParametroDataModel<LiquidacaoRecVO>(dadosLiquidacao);
+		setOperacao(OperacoesEnum.FILTRAGEM);					
+		return null;
+	}
+	
+	private void preencheCombos(){
+		
+		this.listaAdquirentes = adquirenteRepository.getAll();
+		this.listaFuncoes = funcaoRepository.getAll();
+		this.listaDominio = dominioRepository.getAll();
+		this.listaBandeira = bandeiraRepository.getAll();
+		this.listaOcorrenciaBanestes = ocorrenciaRepository.getAllOcorrenciaBanestes();
+	}
+		
+	public String exportar()
+	{
+		
+		HashMap<String, Object> param = new HashMap<String, Object>();
+		String pathReport = "/pages/relatorio/ConsultaLiquidacaoRecusadaPDF.jrxml";
+		List<String> contents = new ArrayList<String>();
+		
+		if(tipoRelatorio.equals(TipoArquivoEnum.CSV.valor))
+		{								
+			contents.add(preencheCabecalhoCSV());
+			contents.add(preencheContentCSV());
+			exportar.exportar(tipoRelatorio, param, pathReport, this.arquivoRepository, contents);
+		}
+		else
+		{
+			JRBeanCollectionDataSource jrb = new JRBeanCollectionDataSource(dadosLiquidacao);
+			param.put("quantidadeLiquidacoes",quantidadeLiquidacoes);
+			exportar.exportar(tipoRelatorio, param, pathReport, this.arquivoRepository, contents, jrb);				
+		}
+												
+		
+		Messages.addInfo(null, MessagesPropertiesUtil.getMessage("label.exportado.sucesso"), "");
+		
+		tipoRelatorio = TipoArquivoEnum.PDF.valor;
+		
+		return null;
+	}
+	
+	public String preencheCabecalhoCSV()
+	{
+		StringBuilder cabecalho = new StringBuilder();
+		cabecalho.append("Total de Registros: ");
+		cabecalho.append(quantidadeLiquidacoes);
+		cabecalho.append("\n\n");		
+		cabecalho.append("Data do Arquivo;Nome do Arquivo;Sequencial;Adquirente;Função;Bandeira;N° Único Liquidação;Status Liquidacação; Código de Ocorrência - CIP;Descrição de Ocorrência - CIP;Código de Ocorrência - Banestes");
+		cabecalho.append("\n");
+		return cabecalho.toString();
+	}
+	
+	public String preencheContentCSV(){
+		
+		StringBuilder content = new StringBuilder();
+		for(LiquidacaoRecVO arq: this.dadosLiquidacao)
+		{						
+			content.append(arq.getDataArquivoTexto());
+			content.append(";");
+			content.append(arq.getNomeArquivo());
+			content.append(";");
+			content.append(arq.getSequencial());
+			content.append(";");
+			content.append(arq.getNomeAdquirente());
+			content.append(";");
+			content.append(arq.getNomeFuncao());
+			content.append(";");
+			content.append(arq.getNomeBandeira());
+			content.append(";");
+			content.append("=\""+arq.getNumeroUnicoLiquidacao()+"\"");
+			content.append(";");
+			content.append(arq.getStatusLiquidacao());
+			content.append(";");
+			content.append(arq.getCodigoOcorrenciaCIP() == null || arq.getCodigoOcorrenciaCIP().isEmpty() ? "-" : arq.getCodigoOcorrenciaCIP());
+			content.append(";");
+			content.append("-");
+			content.append(";");
+			content.append(arq.getCodigoOcorrenciaBanestes() == null || arq.getCodigoOcorrenciaBanestes().isEmpty() ? "-" : arq.getCodigoOcorrenciaBanestes());
+			content.append("\n");
+		}
+		
+		return content.toString();
+	}
+
+	
+	public ParametroDataModel<LiquidacaoRecVO> getDados() {
+		return dados;
+	}
+
+	public void setDados(ParametroDataModel<LiquidacaoRecVO> dados) {
+		this.dados = dados;
+	}
+
+	public String lpad(Integer valor){
+		
+		return valor.toString().length() < 2 ? String.format("%02d",valor) : valor.toString();
+		
+	}
+	
+	public ConsultaLiquidacaoRecusadaFiltroBean getConsultaLiqRecusadaFiltroBean() {
+		return consultaLiqRecusadaFiltroBean;
+	}
+
+	public void setConsultaLiqRecusadaFiltroBean(
+			ConsultaLiquidacaoRecusadaFiltroBean consultaLiqRecusadaFiltroBean) {
+		this.consultaLiqRecusadaFiltroBean = consultaLiqRecusadaFiltroBean;
+	}
+	
+	public List<CodigoOcorrenciaBanestesEntity> getListaOcorrenciaBanestes() {
+		return listaOcorrenciaBanestes;
+	}
+
+	public void setListaOcorrenciaBanestes(
+			List<CodigoOcorrenciaBanestesEntity> listaOcorrenciaBanestes) {
+		this.listaOcorrenciaBanestes = listaOcorrenciaBanestes;
+	}
+	
+	public List<AdquirenteEntity> getListaAdquirentes() {
+		return listaAdquirentes;
+	}
+
+	public void setListaAdquirentes(List<AdquirenteEntity> listaAdquirentes) {
+		this.listaAdquirentes = listaAdquirentes;
+	}
+
+	public List<FuncaoEntity> getListaFuncoes() {
+		return listaFuncoes;
+	}
+
+	public void setListaFuncoes(List<FuncaoEntity> listaFuncoes) {
+		this.listaFuncoes = listaFuncoes;
+	}
+	
+	public List<LiquidacaoRecVO> getDadosLiquidacao() {
+		return dadosLiquidacao;
+	}
+
+	public void setDadosLiquidacao(List<LiquidacaoRecVO> dadosLiquidacao) {
+		this.dadosLiquidacao = dadosLiquidacao;
+	}
+
+	public String getTipoRelatorio() {
+		return tipoRelatorio;
+	}
+
+	public void setTipoRelatorio(String tipoRelatorio) {
+		this.tipoRelatorio = tipoRelatorio;
+	}
+
+	public List<BandeiraEntity> getListaBandeira() {
+		return listaBandeira;
+	}
+
+	public void setListaBandeira(List<BandeiraEntity> listaBandeira) {
+		this.listaBandeira = listaBandeira;
+	}
+
+	public List<DominioEntity> getListaDominio() {
+		return listaDominio;
+	}
+
+	public void setListaDominio(List<DominioEntity> listaDominio) {
+		this.listaDominio = listaDominio;
+	}
+
+	public LiquidacaoRecVO getLiquidacao() {
+		return liquidacao;
+	}
+
+	public void setLiquidacao(LiquidacaoRecVO liquidacao) {
+		this.liquidacao = liquidacao;
+	}
+
+	
+	public int getQuantidadeLiquidacoes() {
+		return quantidadeLiquidacoes;
+	}
+
+	public void setQuantidadeLiquidacoes(int quantidadeLiquidacoes) {
+		this.quantidadeLiquidacoes = quantidadeLiquidacoes;
+	}
+
+		
+}

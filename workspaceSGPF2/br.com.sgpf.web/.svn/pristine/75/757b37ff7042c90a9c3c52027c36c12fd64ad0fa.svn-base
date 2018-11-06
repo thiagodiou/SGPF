@@ -1,0 +1,179 @@
+package br.com.banestes.car.bean;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Date;
+
+
+public class ConsultaLiquidacaoFiltroBean implements Serializable
+{
+	
+	public ConsultaLiquidacaoFiltroBean()
+	{
+		this.nomeEstabelecimento = "";
+		this.numeroUnicoLiquidacao = "";
+		this.conta = "";
+		this.cpfCnpj = "";
+		this.statusLiquidacao = "";
+	}
+	
+	
+	private static final long serialVersionUID = 4031471405149397721L;
+
+	private Date dataArquivo;
+	
+	private BigInteger codigoFuncao;
+	
+	private String nomeEstabelecimento;
+	
+	private String numeroUnicoLiquidacao;
+	
+	private Date dataInicio;
+	
+	private Date dataFim;
+	
+	private String conta;
+	
+	private BigInteger idAdquirente;
+	
+	private BigInteger idDominio;
+	
+	private String cpfCnpj;
+	
+	private String statusLiquidacao;
+	
+	private BigInteger idBandeira;
+	
+	private BigDecimal valor;
+	
+	private BigInteger idOcorrencia;
+
+	
+	public boolean isEmpty()
+	{
+		if (getCodigoFuncao() == null && nomeEstabelecimento.isEmpty() && numeroUnicoLiquidacao.isEmpty() && 
+		dataInicio == null && dataFim == null && conta.isEmpty() && getIdAdquirente() == null && getIdDominio() == null &&
+		cpfCnpj.isEmpty() && statusLiquidacao.isEmpty() && getIdBandeira() == null && getValor() == null && getIdOcorrencia() == null)
+			return true;
+		
+		return false;
+	}
+	
+	
+	public Date getDataArquivo() {
+		return dataArquivo;
+	}
+
+	public void setDataArquivo(Date dataArquivo) {
+		this.dataArquivo = dataArquivo;
+	}
+
+	public BigInteger getCodigoFuncao() {		
+		return codigoFuncao == null || codigoFuncao.compareTo(BigInteger.ZERO) == 0 ? null : codigoFuncao ;
+	}
+
+	public void setCodigoFuncao(BigInteger codigoFuncao) {
+		this.codigoFuncao = codigoFuncao;
+	}
+
+	public String getNomeEstabelecimento() {
+		return nomeEstabelecimento;
+	}
+
+	public void setNomeEstabelecimento(String nomeEstabelecimento) {
+		this.nomeEstabelecimento = nomeEstabelecimento;
+	}
+
+	public String getNumeroUnicoLiquidacao() {
+		return numeroUnicoLiquidacao;
+	}
+
+	public void setNumeroUnicoLiquidacao(String numeroUnicoLiquidacao) {
+		this.numeroUnicoLiquidacao = numeroUnicoLiquidacao;
+	}
+
+	public Date getDataInicio() {
+		return dataInicio;
+	}
+
+	public void setDataInicio(Date dataInicio) {
+		this.dataInicio = dataInicio;
+	}
+
+	public Date getDataFim() {
+		return dataFim;
+	}
+
+	public void setDataFim(Date dataFim) {
+		this.dataFim = dataFim;
+	}
+
+	public String getConta() {
+		return conta;
+	}
+
+	public void setConta(String conta) {
+		this.conta = conta;
+	}
+
+	public BigInteger getIdAdquirente() {		
+		return idAdquirente == null || idAdquirente.compareTo(BigInteger.ZERO) == 0 ? null : idAdquirente ;
+	}
+
+	public void setIdAdquirente(BigInteger idAdquirente) {
+		this.idAdquirente = idAdquirente;
+	}
+
+	public BigInteger getIdDominio() {		
+		return idDominio == null || idDominio.compareTo(BigInteger.ZERO) == 0 ? null : idDominio ;
+	}
+
+	public void setIdDominio(BigInteger idDominio) {
+		this.idDominio = idDominio;
+	}
+
+	public String getCpfCnpj() {
+		return cpfCnpj;
+	}
+
+	public void setCpfCnpj(String cpfCnpj) {
+		this.cpfCnpj = cpfCnpj;
+	}
+
+	public String getStatusLiquidacao() {
+		return statusLiquidacao;
+	}
+
+	public void setStatusLiquidacao(String statusLiquidacao) {
+		this.statusLiquidacao = statusLiquidacao;
+	}
+
+	public BigInteger getIdBandeira() {		
+		return idBandeira == null || idBandeira.compareTo(BigInteger.ZERO) == 0 ? null : idBandeira ;
+	}
+
+	public void setIdBandeira(BigInteger idBandeira) {
+		this.idBandeira = idBandeira;
+	}
+
+	public BigDecimal getValor() {		
+		return valor == null || valor.compareTo(BigDecimal.ZERO) == 0 ? null : valor ;
+	}
+
+	public void setValor(BigDecimal valor) {
+		this.valor = valor;
+	}
+
+	public BigInteger getIdOcorrencia() {		
+		return idOcorrencia == null || idOcorrencia.compareTo(BigInteger.ZERO) == 0 ? null : idOcorrencia ;
+	}
+
+	public void setIdOcorrencia(BigInteger idOcorrencia) {
+		this.idOcorrencia = idOcorrencia;
+	}
+	
+	
+	
+	
+}

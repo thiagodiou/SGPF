@@ -1,0 +1,47 @@
+.rich-panel-header {
+	border-width: 0px;
+	background-color: #F1F1F1;
+	background-image: none;
+	color: #000000;	
+}
+
+.colunaCentro {
+	text-align: center;
+}
+
+.colunaDireita {
+	text-align: right;
+}
+
+.colunaLink {
+	text-decoration: underline;
+	cursor:pointer;
+}
+
+label{	
+	display: inline-table;
+	font-weight: bold;
+}
+
+legend {
+	font-weight: bold;
+}
+
+/* alinhar conteúdo a direita em grid */
+.aDireita {
+	text-align: right;
+}
+
+/* alinhar conteúdo a esquerda em grid */
+.aEsquerda {
+	text-align: left;
+}
+
+/* alinhar conteúdo no centro em grid */
+.central {
+	text-align: center;
+}
+
+input[readonly], input[readonly="readonly"] {
+        
+}

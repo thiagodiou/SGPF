@@ -1,0 +1,76 @@
+package br.com.banestes.car.core.converter;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.text.DecimalFormat;
+
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.convert.FacesConverter;
+
+import org.apache.commons.lang.StringUtils;
+
+/**
+* 
+* @author
+* 
+*/
+@FacesConverter(value="cnpjConverter")   
+public class CNPJConverter implements javax.faces.convert.Converter {
+
+/*
+* (non-Javadoc)
+* 
+* @see
+* javax.faces.convert.Converter#getAsObject(javax.faces.context.FacesContext
+* , javax.faces.component.UIComponent, java.lang.String)
+*/
+@Override
+public Object getAsObject(FacesContext ctx, UIComponent comp, String value) {
+
+	if (value == null || "".equals(value))
+		
+	return null;
+	
+	value = value.replaceAll("\\.", "");
+	
+	value = value.replaceAll("\\-", "");
+
+	value = value.replaceAll("\\/", "");
+	
+	
+	
+	return value;
+
+}
+
+/*
+* (non-Javadoc)
+* 
+* @see
+* javax.faces.convert.Converter#getAsString(javax.faces.context.FacesContext
+* , javax.faces.component.UIComponent, java.lang.Object)
+*/
+@Override
+public String getAsString(FacesContext ctx, UIComponent comp, Object value) 
+{	
+		
+	if(value.toString().length() != 14)
+		return null;
+	
+	String str = value.toString();
+		
+	str = StringUtils.leftPad(str, 14, "0");
+	
+	String retorno = str.substring(0,2) + "."
+					+ str.substring(2, 5) 
+					+ "." + str.substring(5, 8)
+					+ "/" + str.substring(8,12) + "-"
+					+ str.substring(12,14);
+	
+	return retorno;
+	
+	
+}
+
+}

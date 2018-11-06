@@ -1,0 +1,10 @@
+package br.com.banestes.car.core.util.email;
+
+import java.io.Serializable;
+
+public interface Constants extends Serializable {
+
+	String _QUEBRAR_LINHA = "\n";
+	String _MAIL_REMETENTE = "RSP Gerencial";
+	
+}

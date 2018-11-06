@@ -1,0 +1,301 @@
+package br.com.banestes.car.bean;
+
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.enterprise.inject.Produces;
+import javax.faces.context.FacesContext;
+import javax.faces.event.AjaxBehaviorEvent;
+import javax.faces.model.SelectItem;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.omnifaces.cdi.ViewScoped;
+import org.omnifaces.util.Messages;
+
+import br.com.banestes.car.core.bean.AbstractWebBean;
+import br.com.banestes.car.core.enumerators.OperacoesEnum;
+import br.com.banestes.car.core.paginacao.ParametroDataModel;
+import br.com.banestes.car.core.util.autoComplete.AutoComplete;
+import br.com.banestes.car.jpa.core.jpa.enumeration.FinalidadeHistoricoContaCorrenteEnum;
+import br.com.banestes.car.jpa.core.util.MessagesPropertiesUtil;
+import br.com.banestes.car.jpa.core.util.StringUtil;
+import br.com.banestes.car.jpa.entity.AdquirenteEntity;
+import br.com.banestes.car.jpa.entity.CargaHistoricoContaCorrenteEntity;
+import br.com.banestes.car.jpa.entity.HistoricoContaCorrenteEntity;
+import br.com.banestes.car.jpa.model.repository.aplicacao.AdquirenteRepository;
+import br.com.banestes.car.jpa.model.repository.aplicacao.CargaHistoricoContaCorrenteRepository;
+import br.com.banestes.car.jpa.model.repository.aplicacao.HistoricoContaCorrenteRepository;
+import br.com.banestes.car.service.HistoricoContaCorrenteServiceBean;
+
+@ViewScoped
+@Named
+public class HistoricoContaCorrenteWebBean extends AbstractWebBean {
+
+	private static final long serialVersionUID = -5179780546407003193L;
+
+	@Inject
+	private transient HistoricoContaCorrenteRepository historicoContaCorrenteRepository;
+
+	@Inject
+	private transient HistoricoContaCorrenteServiceBean historicoContaCorrenteService;
+
+	@Inject
+	private transient AdquirenteRepository adquirenteRepository;
+	
+	@Inject
+	private transient CargaHistoricoContaCorrenteRepository cargaRepository;
+	
+	private List<AdquirenteEntity> listaAdquirente;
+
+	private String adquirente;
+
+	private List<HistoricoContaCorrenteEntity> historicosContaCorrente;	
+
+	private HistoricoContaCorrenteEntity historicoContaCorrente;
+
+	private HistoricoContaCorrenteFiltroBean historicoContaCorrenteFiltro;
+
+	private String finalidade;
+	
+	private AutoComplete autoComplete;	
+
+	@Named("historicoContaCorrenteDados")
+	@Produces
+	private ParametroDataModel<HistoricoContaCorrenteEntity> dados;
+
+	public void preRenderView() {
+		if (!FacesContext.getCurrentInstance().isPostback()) 
+		{
+			preencheCombo();
+			autoComplete = new AutoComplete(historicoContaCorrenteRepository.getAllDescriptions());	
+			historicoContaCorrenteFiltro = new HistoricoContaCorrenteFiltroBean();
+			this.setOperacao(OperacoesEnum.FILTRAGEM);
+		}
+	}
+
+	private void preencheCombo()
+	{
+		buscaAdquirentes();
+	}
+	
+	private void buscaAdquirentes()
+	{
+		this.listaAdquirente = adquirenteRepository.getAll();		
+	}
+
+	
+	public String incluir() {
+
+		historicoContaCorrente = new HistoricoContaCorrenteEntity();
+		setOperacao(OperacoesEnum.INSERCAO);		
+		return null;
+
+	}
+
+	public String filtrar() {
+
+
+		historicosContaCorrente = historicoContaCorrenteRepository
+				.findByParameters(historicoContaCorrenteFiltro.getCodigo(),
+						historicoContaCorrenteFiltro.getDescricao(),						
+						historicoContaCorrenteFiltro.getIdAdquirente(),
+						historicoContaCorrenteFiltro.getFinalidade());
+
+		dados = new ParametroDataModel<HistoricoContaCorrenteEntity>(
+				historicosContaCorrente);
+		
+		if(historicosContaCorrente.size() == 0)
+		{
+			adicionarMensagemErro(
+					MessagesPropertiesUtil
+							.getMessage("label.consulta.vazia"),
+					"");
+			setOperacao(OperacoesEnum.FILTRAGEM);
+			return null;
+		}
+		
+		dados.redefinir();
+		dados.ativar();
+		dados.getLista();
+		dados.iniciarPesquisa();
+		setOperacao(OperacoesEnum.LISTAGEM);
+		
+		return null;
+	}
+
+	public String alterar(HistoricoContaCorrenteEntity historico) {
+		this.historicoContaCorrente = historico;		
+		setOperacao(OperacoesEnum.ALTERACAO);
+		return null;
+	}
+
+	public String excluir(HistoricoContaCorrenteEntity historico) {
+		
+		this.historicoContaCorrente = historico;
+		
+		if(validaVinculo())
+			return null;		
+		
+		historicoContaCorrenteService.deletar(historico);		
+		Messages.addInfo(null, MessagesPropertiesUtil.getMessage("mensage.sucesso.exclusao"), "");
+		filtrar();
+		autoComplete = new AutoComplete(historicoContaCorrenteRepository.getAllDescriptions());	
+		return null;
+	}
+
+	
+	public String salvar() {		
+		
+		if (!validar()) 
+		{						
+			historicoContaCorrente = historicoContaCorrenteService
+					.gravar(historicoContaCorrente);
+			if(this.getOperacao().equals(OperacoesEnum.ALTERACAO)) 
+				Messages.addInfo(null, MessagesPropertiesUtil.getMessage("mensage.sucesso.alteracao"), "");		
+			else
+				Messages.addInfo(null, MessagesPropertiesUtil.getMessage("mensage.sucesso.insercao"), "");	
+			filtrar();			
+			autoComplete = new AutoComplete(historicoContaCorrenteRepository.getAllDescriptions());	
+			
+		}
+		return null;
+	}
+
+	private boolean validar() {
+		
+		boolean dadosJaExistentes = false;
+		boolean vinculoProcessoLiquidacao = false;
+		
+		if ( historicoContaCorrente.getDescricao() == null ||  historicoContaCorrente.getDescricao().isEmpty() )
+		{
+			Messages.addError(null, MessagesPropertiesUtil.getMessage("mensagem.erro.historico.nao.encontrado"), "");		
+			return true;
+		}
+		
+		dadosJaExistentes = historicoContaCorrenteRepository
+								.findDuplicateByParameters(	historicoContaCorrente.getCodigo(),
+															historicoContaCorrente.getFinalidade(),
+															historicoContaCorrente.getIdHistoricoContaCorrente()).size() > 0;
+																
+				
+		if(dadosJaExistentes)
+		{
+			Messages.addError(null, MessagesPropertiesUtil.getMessage("msg.erro.registro.duplicado"), "");		
+			return true;
+		}		
+		
+		vinculoProcessoLiquidacao = validaVinculo();
+		
+		if(vinculoProcessoLiquidacao)
+			return true;
+				
+		return false;
+	}
+	
+	public boolean validaVinculo()
+	{
+		
+		boolean vinculoProcessoLiquidacao = false;
+		vinculoProcessoLiquidacao = historicoContaCorrenteRepository
+				.findVinculoProcessosLiquidacao(historicoContaCorrente.getIdHistoricoContaCorrente());
+		
+		if(vinculoProcessoLiquidacao)
+		{
+			Messages.addError(null,String.format("%s não permitida. Existe(m) registro(s) associado(s) na(s) tabela(s): %s ", 
+					getOperacao().equals(OperacoesEnum.ALTERACAO) ? "Alteração" : "Exlcusão",
+					vinculoProcessoLiquidacao ? "TB_PRL_PROCESSO_LIQUIDACAO" : ""));
+			
+			return true;
+		}
+
+		return false;
+	}
+
+	public String limpar() {
+		this.historicoContaCorrenteFiltro = new HistoricoContaCorrenteFiltroBean();
+		return null;
+	}
+
+	public String cancelar() {
+		dados = new ParametroDataModel<HistoricoContaCorrenteEntity>(
+				historicosContaCorrente);
+		setOperacao(OperacoesEnum.FILTRAGEM);		
+
+		return filtrar();
+
+	}
+	
+	public void buscaDescricao(AjaxBehaviorEvent event)
+	{
+		
+		String codigo = StringUtil.lpad(this.historicoContaCorrente.getCodigo().toString(), 4, "0");
+		
+		this.historicoContaCorrente.setDescricao(cargaRepository.findByCodigo(codigo).getDescricao());
+				
+	}
+
+	public List<HistoricoContaCorrenteEntity> getHistoricosContaCorrente() {
+		return historicosContaCorrente;
+	}
+
+	public void setHistoricosContaCorrente(
+			List<HistoricoContaCorrenteEntity> historicosContaCorrente) {
+		this.historicosContaCorrente = historicosContaCorrente;
+	}
+
+	public HistoricoContaCorrenteFiltroBean getHistoricoContaCorrenteFiltro() {
+		return historicoContaCorrenteFiltro;
+	}
+
+	public void setHistoricoContaCorrenteFiltro(
+			HistoricoContaCorrenteFiltroBean historicoContaCorrenteFiltro) {
+		this.historicoContaCorrenteFiltro = historicoContaCorrenteFiltro;
+	}
+
+	public HistoricoContaCorrenteEntity getHistoricoContaCorrente() {
+		return historicoContaCorrente;
+	}
+
+	public void setHistoricoContaCorrente(
+			HistoricoContaCorrenteEntity historicoContaCorrente) {
+		this.historicoContaCorrente = historicoContaCorrente;
+	}
+
+	public String getFinalidade() {
+		return finalidade;
+	}
+
+	public void setFinalidade(String finalidade) {
+		this.finalidade = finalidade;
+	}
+	
+	
+
+	public List<AdquirenteEntity> getListaAdquirente() {
+		return listaAdquirente;
+	}
+
+	public void setListaAdquirente(List<AdquirenteEntity> listaAdquirente) {
+		this.listaAdquirente = listaAdquirente;
+	}
+
+	public String getAdquirente() {
+		return adquirente;
+	}
+
+	public void setAdquirente(String adquirente) {
+		this.adquirente = adquirente;
+	}
+
+	public AutoComplete getAutoComplete() {
+		return autoComplete;
+	}
+
+	public void setAutoComplete(AutoComplete autoComplete) {
+		this.autoComplete = autoComplete;
+	}
+	
+	
+	
+}
